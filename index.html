@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <title>每日任務清單 + 獎勵系統</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background: linear-gradient(90deg,rgba(150, 206, 255, 0.603),rgba(255, 206, 255, 0.589));
+      height: 100vh;
+      margin: 0;
+      color: rgb(0, 0, 0);
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+     
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border-bottom: 1px solid #444;
+      background: linear-gradient(90deg,rgba(150, 206, 255, 0.603),rgba(255, 206, 255, 0.589));
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      gap: 40px;
+      padding: 20px 30px;
+      box-sizing: border-box;
+      min-height: 0;
+    }
+    .todo-container {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      user-select: none;
+    }
+    #todo-list {
+      flex-grow: 1;
+      overflow-y: auto;
+      min-height: 0;
+    }
+    .todo-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+      user-select: none;
+    }
+    .todo-item input[type="checkbox"] {
+      transform: scale(1.3);
+      cursor: pointer;
+    }
+    .todo-text {
+      flex: 1;
+      font-size: 1.1em;
+      outline: none;
+      border-bottom: 1px dashed #ffffff33;
+      padding-bottom: 3px;
+      cursor: text;
+      word-break: break-word;
+      user-select: text;
+    }
+    button.delete-btn {
+      background: transparent;
+      border: none;
+      color: #e53935;
+      font-size: 1.4em;
+      cursor: pointer;
+      user-select: none;
+      padding: 0 6px;
+      line-height: 1;
+    }
+    button.delete-btn:hover {
+      color: #ff7961;
+    }
+    #add-button {
+      margin: 10px auto 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: hsl(215, 100%, 79%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 160px;
+      align-self: center;
+      user-select: none;
+    }
+    #add-button:hover {
+      background-color: hsl(212, 100%, 79%);
+    }
+    .stats-container {
+      flex: 1;
+      border-left: 2px solid #00000033;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      min-height: 0;
+    }
+    .stat-box {
+      margin-bottom: 15px;
+      font-size: 1.1em;
+    }
+    .highlight {
+      font-weight: bold;
+      color: #000000;
+    }
+    .money-controls button {
+      margin-right: 10px;
+      padding: 5px 10px;
+      background-color: #ff0303;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .money-controls button:hover {
+      background-color: #ff0000;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div>DATE：<span id="date"></span></div>
+    <div>TIME：<span id="clock"></span></div>
+  </div>
+
+  <div class="main-content">
+    <div class="todo-container">
+      <h1>平野のto-do</h1>
+      <button id="add-button">➕ 新增一項</button>
+      <div id="todo-list"></div>
+    </div>
+
+    <div class="stats-container">
+      <h2>統計</h2>
+      <div class="stat-box">連勝：<span id="streak" class="highlight">0</span> 天</div>
+      <div class="stat-box">總件數：<span id="total-done" class="highlight">0</span> 項</div>
+      <div class="stat-box">不知道：<span id="days-done" class="highlight">0</span> / <span id="days-total" class="highlight">0</span> 天</div>
+      <hr style="margin: 15px 0;" />
+      <h2>獎勵</h2>
+      <div class="stat-box">目前金額：<span id="money" class="highlight">$0</span></div>
+      <div class="money-controls">
+        <button onclick="spendMoney(50)">扣 50 元</button>
+        <button onclick="spendMoney(100)">扣 100 元</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'dailyChecklistData';
+    const REWARD_EVERY = 3;
+    const REWARD_AMOUNT = 100;
+
+    let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+      tasks: [],
+      stats: {
+        totalDone: 0,
+        streak: 0,
+        daysDone: 0,
+        daysTotal: 0,
+        lastClear: null,
+        rewardedDays: [],
+        money: 0,
+      },
+    };
+
+    const list = document.getElementById('todo-list');
+    const addBtn = document.getElementById('add-button');
+
+    function formatDate(date = new Date()) {
+      return date.toISOString().split('T')[0];
+    }
+
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function renderTasks() {
+      list.innerHTML = '';
+      data.tasks.forEach((task, i) => {
+        const item = document.createElement('div');
+        item.className = 'todo-item';
+        item.innerHTML = `
+          <input type="checkbox" ${task.checked ? 'checked' : ''} />
+          <div class="todo-text" contenteditable="true">${task.text}</div>
+          <button class="delete-btn" title="刪除此項目">🗑️</button>
+        `;
+
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        const text = item.querySelector('.todo-text');
+        const deleteBtn = item.querySelector('.delete-btn');
+
+        checkbox.addEventListener('change', () => {
+          task.checked = checkbox.checked;
+          if (checkbox.checked) data.stats.totalDone += 1;
+          save();
+          updateStats();
+        });
+
+        text.addEventListener('input', () => {
+          task.text = text.textContent;
+          save();
+        });
+
+        deleteBtn.addEventListener('click', () => {
+          data.tasks.splice(i, 1);
+          save();
+          renderTasks();
+          updateStats();
+        });
+
+        list.appendChild(item);
+      });
+    }
+
+    function addTask(text = '新增事項...') {
+      data.tasks.push({ text, checked: false });
+      save();
+      renderTasks();
+    }
+
+    function updateStats() {
+      document.getElementById('streak').textContent = data.stats.streak;
+      document.getElementById('total-done').textContent = data.stats.totalDone;
+      document.getElementById('days-done').textContent = data.stats.daysDone;
+      document.getElementById('days-total').textContent = data.stats.daysTotal;
+      document.getElementById('money').textContent = '$' + data.stats.money;
+    }
+
+    function checkNewDayReset() {
+      const now = new Date();
+      const today = formatDate(now);
+      const lastClear = data.stats.lastClear ? new Date(data.stats.lastClear) : null;
+      const needReset =
+        !lastClear ||
+        now - lastClear > 1000 * 60 * 60 * 24 ||
+        (now.getHours() >= 5 && formatDate(lastClear) !== today);
+
+      if (needReset) {
+        if (data.tasks.length > 0 && data.tasks.every((t) => t.checked)) {
+          data.stats.streak += 1;
+          data.stats.daysDone += 1;
+
+          // 給獎勵（每 3 天一次）
+          if (
+            data.stats.daysDone % REWARD_EVERY === 0 &&
+            !data.stats.rewardedDays.includes(data.stats.daysDone)
+          ) {
+            data.stats.money += REWARD_AMOUNT;
+            data.stats.rewardedDays.push(data.stats.daysDone);
+            alert(`🎉 恭喜完成 ${data.stats.daysDone} 天！你獲得了 $${REWARD_AMOUNT} 獎勵！`);
+          }
+        } else {
+          data.stats.streak = 0;
+        }
+
+        data.stats.daysTotal += 1;
+        data.tasks.forEach((task) => (task.checked = false));
+        data.stats.lastClear = now.toISOString();
+        save();
+      }
+    }
+
+    function spendMoney(amount) {
+      if (data.stats.money >= amount) {
+        data.stats.money -= amount;
+        save();
+        updateStats();
+      } else {
+        alert('❌ 錢不夠！');
+      }
+    }
+
+    function updateDateTime() {
+      const now = new Date();
+      const dateStr = `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`;
+      const timeStr = now.toLocaleTimeString('zh-TW');
+      document.getElementById('date').textContent = dateStr;
+      document.getElementById('clock').textContent = timeStr;
+    }
+
+    // 初始化
+    checkNewDayReset();
+    renderTasks();
+    updateStats();
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+    addBtn.addEventListener('click', () => {
+      addTask();
+    });
+  </script>
+</body>
+</html>
+
+
