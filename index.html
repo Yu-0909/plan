@@ -1,280 +1,285 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>平野のTo-do</title>
   <style>
     body {
-      background: #fff0f5;
-      font-family: "Segoe UI", sans-serif;
-      color: #555;
+      font-family: "辰宇落雁體", sans-serif;
+      background: #fff4f7;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
+
     h1 {
       text-align: center;
-      font-size: 2.5em;
-      color: #d36ba6;
-      margin: 1em 0 0.5em;
+      color: #c25f91;
+      margin-top: 20px;
     }
-    #time {
-      text-align: center;
-      font-size: 1.1em;
-      margin-bottom: 1em;
-      color: #888;
+
+    #info {
+      margin: 10px 0;
+      font-weight: bold;
+      color: #b94a7e;
     }
-    #stats {
-      text-align: center;
-      font-size: 1em;
-      margin-bottom: 1em;
-    }
-    .task-container {
+
+    #task-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 20px;
-      padding: 0 10px 40px;
+      gap: 16px;
+      margin-bottom: 60px;
     }
-    .task {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      background: #ffe4f0;
+
+    .task-card {
+      width: 120px;
+      height: 120px;
+      border-radius: 60px;
+      background-color: #ffd6e8;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      position: relative;
-      flex-direction: column;
-      transition: 0.3s;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
-    .task:hover {
-      transform: scale(1.05);
-    }
-    .task h3 {
-      font-size: 1em;
-      margin: 0;
-    }
-    .task .progress {
-      font-size: 0.8em;
-      color: #666;
-    }
-    .task input[type="color"] {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      border: none;
-      background: none;
-    }
-    .task-details {
-      display: none;
-      background: #fff6fa;
-      border-radius: 10px;
-      padding: 1em;
-      margin: 10px auto;
-      max-width: 400px;
-    }
-    .details-visible {
-      display: block;
-    }
-    .entry {
-      display: flex;
-      align-items: center;
-      margin-top: 5px;
-    }
-    .entry input[type="checkbox"] {
-      margin-right: 5px;
-    }
-    .entry input[type="text"] {
-      flex: 1;
-      border: none;
-      border-bottom: 1px solid #ccc;
-      background: transparent;
-      padding: 3px;
-    }
-    #newTaskForm {
+
+    .task-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #7a0b4a;
       text-align: center;
-      margin: 1em auto;
+      padding: 0 5px;
     }
-    #newTaskForm input, #newTaskForm button {
-      margin: 0.2em;
-      padding: 0.4em;
-      font-size: 1em;
+
+    .task-progress {
+      margin-top: 6px;
+      font-size: 16px;
+      color: #7a0b4a;
     }
-    .history {
-      max-width: 500px;
-      margin: auto;
-      background: #fff;
-      padding: 1em;
-      border-radius: 10px;
-      font-size: 0.9em;
-      margin-bottom: 3em;
+
+    #detail-box {
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
+      z-index: 100;
+      width: 320px;
+      display: none;
     }
-    .history h4 {
-      margin: 0.5em 0;
+
+    .record-entry {
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: #555;
+    }
+
+    #history-container {
+      margin-top: 20px;
+      max-width: 800px;
+      font-size: 14px;
+      color: #444;
+    }
+
+    #new-task-form {
+      margin: 20px;
+      text-align: center;
+    }
+
+    #color-preview {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-left: 8px;
+      border: 1px solid #aaa;
     }
   </style>
 </head>
 <body>
   <h1>平野のTo-do</h1>
-  <div id="time"></div>
-  <div id="stats"></div>
-
-  <div id="newTaskForm">
-    <input type="text" id="taskName" placeholder="任務名稱">
-    <input type="number" id="taskCount" min="1" value="1">
-    <button onclick="addTask()">新增任務</button>
+  <div id="info"></div>
+  <div id="new-task-form">
+    <input type="text" id="new-task-name" placeholder="任務名稱">
+    <input type="color" id="new-task-color" value="#ffd6e8">
+    <span id="color-preview" style="background-color:#ffd6e8"></span>
+    <input type="number" id="new-task-total" min="1" value="5">
+    <button onclick="addNewTask()">新增任務</button>
   </div>
-
-  <div class="task-container" id="taskList"></div>
-  <div class="history" id="historyLog"></div>
+  <div id="task-container"></div>
+  <div id="detail-box"></div>
+  <div id="history-container"></div>
 
   <script>
-    const taskListEl = document.getElementById("taskList");
-    const statsEl = document.getElementById("stats");
-    const historyEl = document.getElementById("historyLog");
-    const now = new Date();
-    const weekStart = new Date("2025-01-06");
-    const weekNumber = Math.floor((now - weekStart) / (7 * 24 * 60 * 60 * 1000)) + 1;
-
     let tasks = JSON.parse(localStorage.getItem("weeklyTasks") || "[]");
-    let state = JSON.parse(localStorage.getItem("weeklyState") || `{
-      "weekNumber": ${weekNumber},
-      "completedWeeks": 0,
-      "streak": 0,
-      "totalWeeks": ${weekNumber},
-      "money": 0,
-      "history": {},
-      "lastReset": ""
-    }`);
 
-    function save() {
+    function saveTasks() {
       localStorage.setItem("weeklyTasks", JSON.stringify(tasks));
-      localStorage.setItem("weeklyState", JSON.stringify(state));
     }
 
-    function updateTime() {
+    function getNow() {
       const now = new Date();
-      const date = now.toLocaleDateString("zh-TW", { weekday: "long", year: "numeric", month: "2-digit", day: "2-digit" });
-      const time = now.toLocaleTimeString("zh-TW");
-      document.getElementById("time").innerText = `${date} ${time}`;
+      const offset = now.getTimezoneOffset();
+      const local = new Date(now.getTime() - offset * 60000);
+      const hour = local.getHours();
+      if (local.getDay() === 1 && hour < 5) {
+        local.setDate(local.getDate() - 1);
+      }
+      return local;
+    }
+
+    function calculateCurrentWeek(date) {
+      const start = new Date("2025-07-28T05:00:00+08:00");
+      const diff = date - start;
+      const oneWeek = 7 * 24 * 60 * 60 * 1000;
+      return Math.floor(diff / oneWeek) + 1;
     }
 
     function renderTasks() {
-      taskListEl.innerHTML = "";
-      tasks.forEach((task, idx) => {
-        const done = task.entries.filter(e => e.checked).length;
-        const container = document.createElement("div");
-        container.className = "task";
-        container.style.background = task.color || "#ffe4f0";
-        container.innerHTML = `
-          <input type="color" value="${task.color}" onchange="setColor(${idx}, this.value)">
-          <h3>${task.name}</h3>
-          <div class="progress">${done} / ${task.count}</div>
-        `;
-        container.onclick = () => toggleDetails(idx);
-        taskListEl.appendChild(container);
+      const container = document.getElementById("task-container");
+      container.innerHTML = "";
+      const now = getNow();
+      const currentWeek = calculateCurrentWeek(now);
 
-        const details = document.createElement("div");
-        details.className = "task-details";
-        details.id = `details-${idx}`;
-        for (let i = 0; i < task.count; i++) {
-          const entry = document.createElement("div");
-          entry.className = "entry";
-          entry.innerHTML = `
-            <input type="checkbox" ${task.entries[i]?.checked ? "checked" : ""} onchange="toggleEntry(${idx}, ${i})">
-            <input type="text" placeholder="備註" value="${task.entries[i]?.text || ""}" oninput="updateText(${idx}, ${i}, this.value)">
-          `;
-          details.appendChild(entry);
-        }
-        taskListEl.appendChild(details);
+      tasks.forEach(task => {
+        const record = task.records.find(r => r.week === currentWeek) || { count: 0 };
+        const card = document.createElement("div");
+        card.className = "task-card";
+        card.style.backgroundColor = task.color;
+
+        const nameDiv = document.createElement("div");
+        nameDiv.className = "task-name";
+        nameDiv.textContent = task.name;
+        card.appendChild(nameDiv);
+
+        const progress = document.createElement("div");
+        progress.className = "task-progress";
+        progress.textContent = `${record.count} / ${task.totalCount}`;
+        card.appendChild(progress);
+
+        card.addEventListener("click", () => openDetailBox(task));
+        container.appendChild(card);
       });
-
-      const allDone = tasks.every(t => t.entries.filter(e => e.checked).length === t.count);
-      if (allDone && !state.history[`week${state.weekNumber}`]) {
-        state.completedWeeks++;
-        state.streak++;
-        state.money += 500;
-        state.history[`week${state.weekNumber}`] = tasks.map(t => ({
-          name: t.name,
-          time: new Date().toLocaleString("zh-TW")
-        }));
-        save();
-        renderStats();
-      }
     }
 
-    function toggleDetails(idx) {
-      const el = document.getElementById(`details-${idx}`);
-      el.classList.toggle("details-visible");
-    }
+    function openDetailBox(task) {
+      const box = document.getElementById("detail-box");
+      const now = getNow();
+      const currentWeek = calculateCurrentWeek(now);
+      const record = task.records.find(r => r.week === currentWeek) || { count: 0, logs: [] };
+      const logsHtml = (record.logs || []).map(log => `<div class='record-entry'>${log}</div>`).join("");
 
-    function addTask() {
-      const name = document.getElementById("taskName").value.trim();
-      const count = parseInt(document.getElementById("taskCount").value);
-      if (!name || isNaN(count) || count < 1) return;
-      tasks.push({ name, count, entries: Array(count).fill({ checked: false, text: "" }), color: "#ffe4f0" });
-      save();
-      renderTasks();
-    }
-
-    function toggleEntry(taskIdx, entryIdx) {
-      tasks[taskIdx].entries[entryIdx].checked = !tasks[taskIdx].entries[entryIdx].checked;
-      save();
-      renderTasks();
-    }
-
-    function updateText(taskIdx, entryIdx, val) {
-      tasks[taskIdx].entries[entryIdx].text = val;
-      save();
-    }
-
-    function setColor(idx, val) {
-      tasks[idx].color = val;
-      save();
-      renderTasks();
-    }
-
-    function renderStats() {
-      statsEl.innerHTML = `
-        🗓️ 第 ${state.weekNumber} 週　
-        ✅ 完成週數：${state.completedWeeks}　
-        🔁 連勝：${state.streak}　
-        💰 獎金：${state.money} 元
+      box.innerHTML = `
+        <h3>${task.name}</h3>
+        <p>進度：${record.count} / ${task.totalCount}</p>
+        <input type="text" id="log-content" placeholder="內容備註"><br><br>
+        <button onclick="addLog(${task.id})">+1 次</button>
+        <button onclick="deleteTask(${task.id})">刪除任務</button>
+        <div style="margin-top: 10px">${logsHtml}</div>
+        <button onclick="closeDetailBox()">關閉</button>
       `;
+      box.style.display = "block";
     }
 
-    function checkReset() {
-      const now = new Date();
-      const today = now.toISOString().split("T")[0];
-      const isMonday = now.getDay() === 1;
-      const isFive = now.getHours() >= 5;
-      if (isMonday && isFive && state.lastReset !== today) {
-        state.lastReset = today;
-        state.weekNumber++;
-        state.totalWeeks++;
-        tasks = [];
-        save();
-        renderTasks();
-        renderStats();
+    function addLog(taskId) {
+      const now = getNow();
+      const currentWeek = calculateCurrentWeek(now);
+      const task = tasks.find(t => t.id === taskId);
+      let record = task.records.find(r => r.week === currentWeek);
+      if (!record) {
+        record = { week: currentWeek, count: 0, logs: [] };
+        task.records.push(record);
       }
+      const content = document.getElementById("log-content").value.trim();
+      record.count++;
+      const log = `${now.toLocaleString()}：完成${content ? ` - ${content}` : ""}`;
+      record.logs.push(log);
+      saveTasks();
+      renderTasks();
+      openDetailBox(task);
+    }
+
+    function deleteTask(taskId) {
+      tasks = tasks.filter(t => t.id !== taskId);
+      saveTasks();
+      closeDetailBox();
+      renderTasks();
+      renderHistory();
+    }
+
+    function closeDetailBox() {
+      document.getElementById("detail-box").style.display = "none";
+    }
+
+    function renderInfo() {
+      const now = getNow();
+      const week = calculateCurrentWeek(now);
+      document.getElementById("info").textContent = `目前是第 ${week} 週（${now.toLocaleString()}）`;
     }
 
     function renderHistory() {
-      historyEl.innerHTML = "<h4>📖 歷史紀錄</h4>";
-      for (const [week, items] of Object.entries(state.history)) {
-        historyEl.innerHTML += `<strong>${week}</strong><ul>` + items.map(i => `<li>${i.name} 完成於 ${i.time}</li>`).join("") + "</ul>";
-      }
+      const container = document.getElementById("history-container");
+      container.innerHTML = "<h3>歷史紀錄</h3>";
+      const weekMap = {};
+
+      tasks.forEach(task => {
+        task.records.forEach(record => {
+          if (!weekMap[record.week]) weekMap[record.week] = [];
+          weekMap[record.week].push({ name: task.name, ...record });
+        });
+      });
+
+      const weeks = Object.keys(weekMap).sort((a,b) => a - b);
+      weeks.forEach(w => {
+        const startDate = new Date("2025-07-28T05:00:00+08:00");
+        startDate.setDate(startDate.getDate() + (w - 1) * 7);
+        const endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + 6);
+        container.innerHTML += `<div><strong>第 ${w} 週（${startDate.toLocaleDateString()} ~ ${endDate.toLocaleDateString()}）</strong></div>`;
+        weekMap[w].forEach(r => {
+          container.innerHTML += `<div>${r.name}：${r.count} 次<ul>${(r.logs || []).map(l => `<li>${l}</li>`).join("")}</ul></div>`;
+        });
+      });
     }
 
-    setInterval(updateTime, 1000);
-    setInterval(checkReset, 60 * 1000);
-    updateTime();
-    renderStats();
-    renderTasks();
-    renderHistory();
+    function addNewTask() {
+      const name = document.getElementById("new-task-name").value.trim();
+      const color = document.getElementById("new-task-color").value;
+      const totalCount = parseInt(document.getElementById("new-task-total").value);
+      if (!name || !totalCount) return;
+      const newTask = {
+        id: Date.now(),
+        name,
+        color,
+        totalCount,
+        records: []
+      };
+      tasks.push(newTask);
+      saveTasks();
+      renderTasks();
+      document.getElementById("new-task-name").value = "";
+    }
+
+    document.getElementById("new-task-color").addEventListener("input", e => {
+      document.getElementById("color-preview").style.backgroundColor = e.target.value;
+    });
+
+    function init() {
+      renderTasks();
+      renderInfo();
+      renderHistory();
+    }
+
+    init();
   </script>
 </body>
 </html>
