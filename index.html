@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>平野のTo-do</title>
+  <title>平野的To-do</title>
   <style>
     @font-face {
-  font-family: '辰宇落雁體';
-  src: url('https://raw.githubusercontent.com/Yu-0909/TSUKISHIMA/main/ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
+      font-family: '辰宇落雁體';
+      src: url('https://raw.githubusercontent.com/Yu-0909/TSUKISHIMA/main/ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
 
     body {
       font-family: "辰宇落雁體", sans-serif;
@@ -116,10 +116,10 @@
   <h1>平野的To-do</h1>
   <div id="info"></div>
   <div id="new-task-form">
-    <input type="text" id="new-task-name" placeholder="任務名稱">
-    <input type="color" id="new-task-color" value="#ffd6e8">
+    <input type="text" id="new-task-name" placeholder="任務名稱" />
+    <input type="color" id="new-task-color" value="#ffd6e8" />
     <span id="color-preview" style="background-color:#ffd6e8"></span>
-    <input type="number" id="new-task-total" min="1" value="5">
+    <input type="number" id="new-task-total" min="1" value="5" />
     <button onclick="addNewTask()">新增任務</button>
   </div>
   <div id="task-container"></div>
@@ -133,22 +133,27 @@
       localStorage.setItem("weeklyTasks", JSON.stringify(tasks));
     }
 
+    // 取得目前時間，週一凌晨5點前算成前一天（週日）
     function getNow() {
       const now = new Date();
-      const offset = now.getTimezoneOffset();
-      const local = new Date(now.getTime() - offset * 60000);
-      const hour = local.getHours();
-      if (local.getDay() === 1 && hour < 5) {
-        local.setDate(local.getDate() - 1);
+      const hour = now.getHours();
+      if (now.getDay() === 1 && hour < 5) {
+        const adjusted = new Date(now.getTime() - 24 * 3600 * 1000);
+        console.log("getNow 調整時間為:", adjusted.toString());
+        return adjusted;
       }
-      return local;
+      console.log("getNow 時間:", now.toString());
+      return now;
     }
 
+    // 計算週數，2025/7/28 05:00 當作第1週起點（本地時間）
     function calculateCurrentWeek(date) {
-      const start = new Date("2025-07-28T05:00:00+08:00");
+      const start = new Date(2025, 6, 28, 5, 0, 0); // 月份從0開始，6 = 7月
       const diff = date - start;
       const oneWeek = 7 * 24 * 60 * 60 * 1000;
-      return Math.floor(diff / oneWeek) + 1;
+      const week = Math.floor(diff / oneWeek) + 1;
+      console.log("calculateCurrentWeek 計算週數:", week);
+      return week;
     }
 
     function renderTasks() {
@@ -188,11 +193,11 @@
       box.innerHTML = `
         <h3>${task.name}</h3>
         <p>進度：${record.count} / ${task.totalCount}</p>
-        <input type="text" id="log-content" placeholder="內容備註"><br><br>
+        <input type="text" id="log-content" placeholder="內容備註" /><br /><br />
         <button onclick="addLog(${task.id})">+1 次</button>
-        <button onclick="deleteTask(${task.id})">刪除任務</button>
-        <div style="margin-top: 10px">${logsHtml}</div>
-        <button onclick="closeDetailBox()">關閉</button>
+        <button onclick="deleteTask(${task.id})" style="margin-left:10px; background:#f88; border:none; color:white; border-radius:4px; padding:5px 10px;">刪除任務</button>
+        <div style="margin-top: 10px; max-height: 150px; overflow-y:auto;">${logsHtml}</div>
+        <button onclick="closeDetailBox()" style="margin-top:10px;">關閉</button>
       `;
       box.style.display = "block";
     }
@@ -216,6 +221,7 @@
     }
 
     function deleteTask(taskId) {
+      if (!confirm("確定要刪除此任務嗎？此動作無法還原。")) return;
       tasks = tasks.filter(t => t.id !== taskId);
       saveTasks();
       closeDetailBox();
@@ -245,9 +251,9 @@
         });
       });
 
-      const weeks = Object.keys(weekMap).sort((a,b) => a - b);
+      const weeks = Object.keys(weekMap).sort((a, b) => a - b);
       weeks.forEach(w => {
-        const startDate = new Date("2025-07-28T05:00:00+08:00");
+        const startDate = new Date(2025, 6, 28, 5, 0, 0);
         startDate.setDate(startDate.getDate() + (w - 1) * 7);
         const endDate = new Date(startDate);
         endDate.setDate(endDate.getDate() + 6);
@@ -262,7 +268,7 @@
       const name = document.getElementById("new-task-name").value.trim();
       const color = document.getElementById("new-task-color").value;
       const totalCount = parseInt(document.getElementById("new-task-total").value);
-      if (!name || !totalCount) return;
+      if (!name || !totalCount) return alert("請輸入任務名稱與有效的總次數！");
       const newTask = {
         id: Date.now(),
         name,
@@ -290,6 +296,7 @@
   </script>
 </body>
 </html>
+
 
 
 
