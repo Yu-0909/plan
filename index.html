@@ -150,15 +150,15 @@
     }
 
     function getNow() {
-      const now = new Date();
-      const offset = now.getTimezoneOffset();
-      const local = new Date(now.getTime() - offset * 60000);
-      const hour = local.getHours();
-      if (local.getDay() === 1 && hour < 5) {
-        local.setDate(local.getDate() - 1);
-      }
-      return local;
-    }
+  const nowUTC = new Date();
+  const taiwanTime = new Date(nowUTC.getTime() + 8 * 60 * 60 * 1000); // UTC+8
+  const hour = taiwanTime.getHours();
+  const day = taiwanTime.getDay();
+  if (day === 1 && hour < 5) {
+    taiwanTime.setDate(taiwanTime.getDate() - 1);
+  }
+  return taiwanTime;
+}
 
     function calculateCurrentWeek(date) {
       const start = new Date("2025-07-28T05:00:00+08:00");
@@ -330,4 +330,5 @@
   </script>
 </body>
 </html>
+
 
