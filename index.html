@@ -151,7 +151,7 @@
 
     function getNow() {
   const nowUTC = new Date();
-  const taiwanTime = new Date(nowUTC.getTime() + 8 * 60 * 60 * 1000); // UTC+8
+  const taiwanTime = new Date  ; // UTC+8
   const hour = taiwanTime.getHours();
   const day = taiwanTime.getDay();
   if (day === 1 && hour < 5) {
@@ -330,5 +330,6 @@
   </script>
 </body>
 </html>
+
 
 
