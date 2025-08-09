@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>平野のTo-do（粉嫩版）</title>
+  <title>平野のTo-do（粉嫩日系優化版）</title>
   <style>
-    /* 字體：若你 host 的辰宇落雁體檔案正確，會套用；否則會 fallback */
     @font-face {
       font-family: '辰宇落雁體';
       src: url('https://raw.githubusercontent.com/Yu-0909/TSUKISHIMA/main/ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
@@ -18,108 +17,361 @@
       --accent:#e26a9a;
       --muted:#6b1f4a;
       --soft:#ffdfee;
-      --danger:#ff6b6b;
-      --glass: rgba(255,255,255,0.9);
+      --shadow-pink:rgba(226,106,154,0.24);
+      --shadow-soft-pink:rgba(255,182,193,0.3);
     }
-    *{box-sizing:border-box}
+    *{box-sizing:border-box;}
     body{
       margin:0;
-      font-family: "辰宇落雁體", "Noto Sans TC", "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(135deg,var(--bg1), #e8f6ff);
-      color:#333;
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
+      background: linear-gradient(135deg, var(--bg1), #e8f6ff);
+      color:#3c1f2b;
       display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding-bottom:40px;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 40px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    header{ text-align:center; margin-top:18px; }
-    h1{ color:var(--accent); margin:6px 0 0; font-size:30px; letter-spacing:1px }
+    header{
+      text-align:center;
+      margin-top:18px;
+      user-select:none;
+    }
+    h1{
+      color: var(--accent);
+      margin:6px 0 0;
+      font-size: 32px;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      text-shadow: 1px 1px 4px var(--shadow-pink);
+    }
     .topbar{
-      width:100%; max-width:1100px; display:flex; justify-content:space-between; align-items:center;
-      gap:10px; padding:12px 18px; margin-top:10px; font-size:14px;
-      backdrop-filter: blur(6px);
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      margin-top: 10px;
+      font-size: 15px;
+      color: var(--muted);
+      font-weight: 600;
     }
-    .badges{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .badges{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
     .badge{
-      background:var(--glass); padding:6px 10px; border-radius:16px; box-shadow:0 6px 18px rgba(0,0,0,0.06);
-      font-size:13px;
+      background:#fff;
+      padding: 8px 14px;
+      border-radius: 20px;
+      box-shadow: 0 6px 14px var(--shadow-soft-pink);
+      font-size: 15px;
+      user-select:none;
+      transition: background-color 0.3s ease;
+      cursor: default;
+    }
+    .badge:hover {
+      background-color: var(--soft);
     }
 
     /* controls */
-    .controls{ width:100%; max-width:1100px; display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap; padding:12px; }
-    input[type="text"], input[type="number"], input[type="color"]{
-      padding:8px; border-radius:10px; border:1px solid #efe; outline:none;
-      font-size:14px; background:white;
+    .controls{
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 14px 12px 18px;
+      background: #fff8fc;
+      border-radius: 16px;
+      box-shadow: 0 8px 28px var(--shadow-soft-pink);
+      user-select:none;
     }
-    button{ border:none; border-radius:10px; padding:8px 12px; font-size:14px; cursor:pointer; }
-    button.primary{ background:var(--accent); color:white; box-shadow:0 6px 14px rgba(226,106,154,0.18); }
-    button.ghost{ background:transparent; color:var(--muted); border:1px solid rgba(0,0,0,0.06); }
+    input[type="text"], input[type="number"], input[type="color"]{
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1.5px solid #f0d7e0;
+      outline:none;
+      font-size: 15px;
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
+      color: #4a2e44;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, input[type="color"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--shadow-pink);
+    }
+    button{
+      border:none;
+      border-radius: 14px;
+      padding: 10px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 700;
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
+      user-select:none;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 6px 14px var(--shadow-pink);
+    }
+    button.primary{
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 8px 18px var(--shadow-pink);
+    }
+    button.primary:hover {
+      background: #cf6087;
+      box-shadow: 0 10px 24px rgba(206,83,135,0.6);
+    }
+    button.ghost{
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid rgba(107,31,74,0.2);
+      box-shadow: none;
+      font-weight: 600;
+    }
+    button.ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 10px var(--shadow-pink);
+    }
+    .small {
+      font-size: 13px;
+      color: #a65d82;
+      user-select:none;
+    }
 
     /* board */
-    .board{ width:100%; max-width:1100px; display:flex; flex-wrap:wrap; gap:16px; justify-content:center; padding:18px; }
-    .card{
-      width:150px; height:150px; border-radius:999px; display:flex; flex-direction:column; align-items:center; justify-content:center;
-      text-align:center; padding:12px; cursor:pointer; box-shadow:0 12px 30px rgba(0,0,0,0.08); transition:transform .18s, box-shadow .18s;
-      position:relative; user-select:none;
+    .board{
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 18px 0;
+      user-select:none;
     }
-    .card:hover{ transform:translateY(-8px) scale(1.03); box-shadow:0 20px 46px rgba(0,0,0,0.12); }
-    .card .title{ font-weight:800; color:var(--muted); font-size:16px; margin-bottom:6px; }
-    .card .prog{ color:#444; font-size:14px; }
-    .card input[type="color"]{ position:absolute; top:8px; right:40px; width:28px; height:28px; border-radius:8px; border:none; padding:0; cursor:pointer }
-
-    /* delete button on card */
-    .delete-task-btn {
+    .card{
+      width: 150px;
+      height: 150px;
+      border-radius: 9999px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 14px 10px 10px;
+      cursor: pointer;
+      box-shadow: 0 10px 28px var(--shadow-pink);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      position: relative;
+      color: #591c45;
+      font-weight: 700;
+      font-size: 17px;
+      user-select:none;
+    }
+    .card:hover{
+      transform: translateY(-8px) scale(1.06);
+      box-shadow: 0 14px 38px rgba(226, 106, 154, 0.5);
+    }
+    .card .title{
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 17px;
+      margin-bottom: 8px;
+      text-shadow: 0 0 2px rgba(255,255,255,0.9);
+      user-select:text;
+    }
+    .card .prog{
+      color: #7b486d;
+      font-size: 15px;
+      font-weight: 600;
+      user-select:none;
+    }
+    .card input[type="color"]{
       position: absolute;
       top: 8px;
       right: 8px;
-      background: var(--danger);
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
       border: none;
-      color: white;
-      border-radius: 50%;
+      padding: 0;
+      cursor: pointer;
+    }
+    .card .delete-task-btn {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: #f38181;
+      border-radius: 12px;
+      border: none;
       width: 28px;
       height: 28px;
-      font-weight: bold;
-      cursor: pointer;
-      line-height: 22px;
       font-size: 18px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-      transition: transform .12s, background .12s;
-      z-index: 10;
+      color: white;
+      font-weight: 700;
+      line-height: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(243,129,129,0.7);
+      user-select:none;
+      transition: background-color 0.3s ease;
     }
-    .delete-task-btn:hover{ transform: scale(1.06); background: #ff3b3b }
+    .card .delete-task-btn:hover {
+      background: #d95555;
+    }
 
     /* detail modal (白色方匡) */
     .detail{
-      position:fixed; left:50%; top:12%; transform:translateX(-50%); width:420px; max-width:94%;
-      background:#fff; border-radius:14px; box-shadow:0 28px 64px rgba(0,0,0,0.26); display:none; z-index:999;
-      padding:16px;
+      position: fixed;
+      left: 50%;
+      top: 14%;
+      transform: translateX(-50%);
+      width: 380px;
+      max-width: 95%;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 22px 58px rgba(0,0,0,0.22);
+      display: none;
+      z-index: 999;
+      padding: 22px 24px;
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
+      color: #5a2d49;
+      user-select:text;
     }
-    .detail h3{ margin:0 0 6px; color:var(--accent); font-size:20px }
-    .detail .meta{ font-size:13px; color:#666; margin-bottom:8px; }
-    .detail .note{ width:100%; padding:10px; border-radius:10px; border:1px solid #eee; margin-bottom:8px; font-size:14px }
-    .detail .btns{ display:flex; gap:8px; }
-    .logs{ max-height:260px; overflow:auto; margin-top:10px; border-top:1px dashed #f0e9f2; padding-top:8px; }
-    .log-item{ font-size:13px; color:#444; padding:8px 6px; border-bottom:1px solid #fafafa; display:flex; align-items:flex-start; gap:8px; }
-    .log-item .muted{ color:#999; font-size:12px; width:115px; flex-shrink:0 }
-    .log-item .content{ flex:1; }
+    .detail h3{
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 24px;
+      letter-spacing: 0.04em;
+      user-select:text;
+    }
+    .detail .meta{
+      font-size: 15px;
+      color: #7b4a6f;
+      margin-bottom: 14px;
+      font-weight: 600;
+      user-select:none;
+    }
+    .detail .note{
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1.5px solid #eee;
+      margin-bottom: 14px;
+      font-size: 15px;
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
+      color: #6a3e61;
+      resize: vertical;
+      min-height: 48px;
+      user-select:text;
+    }
+    .detail .btns{
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+    .logs{
+      max-height: 240px;
+      overflow-y: auto;
+      margin-top: 10px;
+      border-top: 1.5px dashed #f0d7e0;
+      padding-top: 12px;
+      font-size: 14px;
+      color: #5a2d49;
+      font-weight: 500;
+      user-select:text;
+    }
+    .log-item{
+      padding: 8px 6px 6px;
+      border-bottom: 1px solid #fafafa;
+      line-height: 1.3em;
+    }
+    .log-item > div:first-child{
+      font-size: 13px;
+      color: #ad7d9c;
+      font-weight: 400;
+      margin-bottom: 4px;
+      user-select:none;
+    }
 
-    .delete-log-btn{
-      background:transparent; border:none; color:var(--danger); font-size:18px; font-weight:bold; cursor:pointer; padding:4px 6px; border-radius:6px;
+    /* 細項刪除按鈕 */
+    .log-item .del-log-btn {
+      float: right;
+      background: #f38181;
+      border: none;
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-size: 13px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select:none;
     }
-    .delete-log-btn:hover{ color:#a52a2a; background:rgba(255,107,107,0.06) }
+    .log-item .del-log-btn:hover {
+      background: #d95555;
+    }
 
     /* history */
-    .history{ width:100%; max-width:1100px; margin-top:18px; padding:12px; background:rgba(255,255,255,0.9); border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
-    .history h3{ margin:0 0 8px; color:var(--muted); }
-    .history-week{ background:#fff7fb; padding:10px; border-radius:8px; margin-bottom:8px; }
+    .history{
+      width: 100%;
+      max-width: 1100px;
+      margin-top: 20px;
+      padding: 18px 18px 24px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 18px;
+      box-shadow: 0 10px 28px rgba(226,106,154,0.15);
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
+      color: #5e3b5a;
+      user-select:text;
+    }
+    .history h3{
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 22px;
+      user-select:none;
+    }
+    .history-week{
+      background: #fff7fb;
+      padding: 14px 16px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 18px rgba(226,106,154,0.14);
+    }
+    .history-week > div:first-child {
+      font-weight: 700;
+      font-size: 17px;
+      margin-bottom: 10px;
+      user-select:none;
+    }
+    .history-week ul {
+      padding-left: 20px;
+      margin: 6px 0 0 4px;
+      color: #88527a;
+      font-size: 14px;
+      line-height: 1.3em;
+    }
 
     /* responsive */
     @media(max-width:520px){
-      .card{ width:120px; height:120px; }
-      .detail{ width:92%; top:6%; }
-      .log-item .muted{ display:none }
+      .card{ width: 130px; height: 130px; font-size: 15px; }
+      .detail{ width: 94%; top: 10%; }
+      .controls{ font-size: 14px; }
+      input[type="text"], input[type="number"], input[type="color"], button {
+        font-size: 14px;
+      }
+      .badge { font-size: 13px; padding: 6px 10px; }
     }
   </style>
 </head>
@@ -135,9 +387,9 @@
     </div>
     <div class="badges">
       <div class="badge">第 <span id="weekNo">--</span> 週</div>
-      <div class="badge">連勝：<span id="streak">0</span> 週</div>
-      <div class="badge">完成週數：<span id="doneWeeks">0</span></div>
-      <div class="badge">獎勳金：$<span id="money">0</span></div>
+      <div class="badge">連續完成週數：<span id="streak">0</span> 週</div>
+      <div class="badge">已完成週數：<span id="doneWeeks">0</span></div>
+      <div class="badge">獎勵金：$<span id="money">0</span></div>
     </div>
   </div>
 
@@ -148,7 +400,7 @@
     <input id="taskColor" type="color" value="#ffd6e8" />
     <button id="addTaskBtn" class="primary">新增任務</button>
     <input id="weeklyRewardInput" type="number" value="500" style="width:110px" />
-    <span class="small">每週完成獎勳金</span>
+    <span class="small">每週完成獎勵金</span>
     <button id="exportBtn" class="ghost">匯出備份</button>
     <input id="importFile" type="file" style="display:none" />
     <button id="importBtn" class="ghost">匯入備份</button>
@@ -157,7 +409,7 @@
   <div class="board" id="board"></div>
 
   <!-- detail modal -->
-  <div class="detail" id="detail">
+  <div class="detail" id="detail" role="dialog" aria-modal="true" aria-labelledby="detailTitle" tabindex="-1">
     <h3 id="detailTitle">任務</h3>
     <div class="meta"><span id="detailProg">0 / 0</span></div>
     <input id="noteInput" class="note" placeholder="輸入本次完成內容（可留空）" />
@@ -168,7 +420,7 @@
     <div class="logs" id="logs"></div>
   </div>
 
-  <div class="history" id="history">
+  <div class="history" id="history" aria-live="polite">
     <h3>歷史紀錄（每週）</h3>
     <div id="historyList"></div>
   </div>
@@ -211,297 +463,499 @@ function loadData(){
   return {
     meta: { startDate: BASE_WEEK_START, weeklyReward: 500, lastProcessedWeek: 0 },
     tasks: [],
-    stats: { money: 0, weeksDone: 0, streak: 0 }
+    stats: { money: 0, doneWeeks: 0, streak: 0 },
+    history: {}
   };
 }
-function saveData(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }
-
-/* 匯出 / 匯入 */
-function exportBackup(){
-  const blob = new Blob([JSON.stringify(DATA, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url;
-  a.download = `hirano-weekly-backup-${new Date().toISOString().slice(0,10)}.json`;
-  a.click(); URL.revokeObjectURL(url);
+function saveData(data){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
-function importBackupFile(file){
+
+/* 初始化資料 */
+let data = loadData();
+
+/* ---------- DOM Elements ---------- */
+const board = document.getElementById('board');
+const weekNoElem = document.getElementById('weekNo');
+const todayElem = document.getElementById('today');
+const clockElem = document.getElementById('clock');
+const streakElem = document.getElementById('streak');
+const doneWeeksElem = document.getElementById('doneWeeks');
+const moneyElem = document.getElementById('money');
+
+const taskNameInput = document.getElementById('taskName');
+const taskTotalInput = document.getElementById('taskTotal');
+const taskRewardInput = document.getElementById('taskReward');
+const taskColorInput = document.getElementById('taskColor');
+const addTaskBtn = document.getElementById('addTaskBtn');
+
+const weeklyRewardInput = document.getElementById('weeklyRewardInput');
+
+const detail = document.getElementById('detail');
+const detailTitle = document.getElementById('detailTitle');
+const detailProg = document.getElementById('detailProg');
+const noteInput = document.getElementById('noteInput');
+const completeOneBtn = document.getElementById('completeOneBtn');
+const closeDetailBtn = document.getElementById('closeDetailBtn');
+const logsDiv = document.getElementById('logs');
+
+const historyList = document.getElementById('historyList');
+
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+const importFile = document.getElementById('importFile');
+
+/* ---------- 功能變數 ---------- */
+let currentWeekNo = 0;
+let currentTaskId = null;
+
+/* ---------- 日期時間顯示 ---------- */
+function updateDateTime(){
+  const now = getTaiwanNow();
+  currentWeekNo = getWeekNumberFromDate(now);
+  weekNoElem.textContent = currentWeekNo || '--';
+
+  const y = now.getFullYear();
+  const m = now.getMonth()+1;
+  const d = now.getDate();
+  todayElem.textContent = `${y}/${m.toString().padStart(2,'0')}/${d.toString().padStart(2,'0')}`;
+
+  const hh = now.getHours().toString().padStart(2,'0');
+  const mm = now.getMinutes().toString().padStart(2,'0');
+  const ss = now.getSeconds().toString().padStart(2,'0');
+  clockElem.textContent = `${hh}:${mm}:${ss}`;
+}
+
+/* ---------- 週一 5:00 週切換重置 ---------- */
+/*
+  判斷是否跨週（以週一05:00為分界），若跨週則重置當週完成狀態，並存歷史紀錄
+*/
+function checkWeeklyReset(){
+  const now = getTaiwanNow();
+
+  // 本週週一05:00
+  const base = new Date(BASE_WEEK_START + 'T05:00:00+08:00');
+  const thisWeekMonday5 = new Date(base.getTime() + (currentWeekNo-1)*MS_PER_WEEK);
+
+  if(data.meta.lastProcessedWeek < currentWeekNo){
+    // 先存歷史，依據 lastProcessedWeek 對應資料
+    if(data.meta.lastProcessedWeek > 0) {
+      saveHistoryWeek(data.meta.lastProcessedWeek);
+    }
+    // 重置本週完成紀錄
+    data.tasks.forEach(t=>{
+      t.done = 0;
+      t.logs = [];
+    });
+    data.meta.lastProcessedWeek = currentWeekNo;
+    saveData(data);
+  }
+}
+
+/* 儲存指定週的歷史紀錄 */
+function saveHistoryWeek(weekNo){
+  if(weekNo <= 0) return;
+
+  // 只儲存本週完成的任務及次數、紀錄文字與時間
+  const record = {
+    dateRange: getWeekRange(weekNo),
+    tasks: []
+  };
+  data.tasks.forEach(t=>{
+    if(t.done > 0){
+      record.tasks.push({
+        id: t.id,
+        name: t.name,
+        done: t.done,
+        total: t.total,
+        reward: t.reward,
+        color: t.color,
+        logs: t.logs || []
+      });
+    }
+  });
+  if(Object.keys(record.tasks).length === 0){
+    // 該週無完成紀錄，不存
+    return;
+  }
+  data.history[weekNo] = record;
+  saveData(data);
+}
+
+/* ---------- 重新渲染版面 ---------- */
+function renderBoard(){
+  board.innerHTML = '';
+  if(data.tasks.length === 0){
+    board.innerHTML = '<p style="color:#9e4b74; font-weight:600; user-select:none;">目前沒有任務，請新增！</p>';
+    return;
+  }
+  data.tasks.forEach(task=>{
+    const card = document.createElement('div');
+    card.classList.add('card');
+    card.style.backgroundColor = task.color || '#ffd6e8';
+    card.setAttribute('data-id', task.id);
+    card.setAttribute('tabindex', '0');
+    card.title = `${task.name} ${task.done} / ${task.total}`;
+
+    // 文字區
+    const title = document.createElement('div');
+    title.classList.add('title');
+    title.textContent = task.name + ` （${task.total}次）`;
+    card.appendChild(title);
+
+    // 完成數量顯示
+    const prog = document.createElement('div');
+    prog.classList.add('prog');
+    prog.textContent = `${task.done} / ${task.total}`;
+    card.appendChild(prog);
+
+    // 顏色選擇器
+    const colorInput = document.createElement('input');
+    colorInput.type = 'color';
+    colorInput.value = task.color || '#ffd6e8';
+    colorInput.title = '變更任務顏色';
+    colorInput.addEventListener('click', e=>{
+      e.stopPropagation();
+    });
+    colorInput.addEventListener('input', e=>{
+      const newColor = e.target.value;
+      task.color = newColor;
+      saveData(data);
+      renderBoard();
+      if(currentTaskId === task.id){
+        detail.style.backgroundColor = newColor;
+      }
+    });
+    card.appendChild(colorInput);
+
+    // 刪除任務按鈕
+    const delBtn = document.createElement('button');
+    delBtn.classList.add('delete-task-btn');
+    delBtn.title = '刪除此任務';
+    delBtn.textContent = '×';
+    delBtn.addEventListener('click', e=>{
+      e.stopPropagation();
+      if(confirm(`確定刪除任務「${task.name}」？ 此動作無法復原。`)){
+        deleteTask(task.id);
+      }
+    });
+    card.appendChild(delBtn);
+
+    // 點擊卡片展開細項
+    card.addEventListener('click', ()=>{
+      openDetail(task.id);
+    });
+    card.addEventListener('keydown', e=>{
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        openDetail(task.id);
+      }
+    });
+
+    board.appendChild(card);
+  });
+}
+
+/* ---------- 新增任務 ---------- */
+function addTask(){
+  let name = taskNameInput.value.trim();
+  let total = parseInt(taskTotalInput.value);
+  let reward = parseInt(taskRewardInput.value);
+  let color = taskColorInput.value;
+
+  if(!name){
+    alert('請輸入任務名稱');
+    return;
+  }
+  if(isNaN(total) || total < 1){
+    alert('完成次數必須為大於等於 1 的整數');
+    return;
+  }
+  if(isNaN(reward) || reward < 0){
+    alert('每次獎勵金必須為大於等於 0 的數字');
+    return;
+  }
+
+  // 新任務id
+  let maxId = data.tasks.reduce((max, t) => t.id > max ? t.id : max, 0);
+  const newTask = {
+    id: maxId + 1,
+    name,
+    total,
+    done: 0,
+    reward,
+    color,
+    logs: []
+  };
+  data.tasks.push(newTask);
+  saveData(data);
+  renderBoard();
+
+  // 清空輸入
+  taskNameInput.value = '';
+  taskTotalInput.value = '7';
+  taskRewardInput.value = '10';
+  taskColorInput.value = '#ffd6e8';
+}
+
+/* ---------- 刪除任務 ---------- */
+function deleteTask(id){
+  const idx = data.tasks.findIndex(t=>t.id === id);
+  if(idx >= 0){
+    data.tasks.splice(idx, 1);
+    if(currentTaskId === id) closeDetail();
+    saveData(data);
+    renderBoard();
+    updateStats();
+  }
+}
+
+/* ---------- 顯示細節視窗 ---------- */
+function openDetail(id){
+  const task = data.tasks.find(t=>t.id === id);
+  if(!task) return;
+  currentTaskId = id;
+  detailTitle.textContent = task.name;
+  detailProg.textContent = `${task.done} / ${task.total}`;
+  detail.style.backgroundColor = task.color || '#ffd6e8';
+  noteInput.value = '';
+  renderLogs(task);
+  detail.style.display = 'block';
+  noteInput.focus();
+}
+
+/* ---------- 關閉細節視窗 ---------- */
+function closeDetail(){
+  currentTaskId = null;
+  detail.style.display = 'none';
+}
+
+/* ---------- 完成一次任務 ---------- */
+function completeOne(){
+  if(currentTaskId === null) return;
+  const task = data.tasks.find(t=>t.id === currentTaskId);
+  if(!task) return;
+  if(task.done >= task.total){
+    alert('此任務已完成所有次數');
+    return;
+  }
+  task.done++;
+  // 紀錄本次完成資訊與時間
+  task.logs.unshift({
+    time: getTaiwanNow().toISOString(),
+    note: noteInput.value.trim()
+  });
+  // 清空輸入
+  noteInput.value = '';
+
+  saveData(data);
+  renderLogs(task);
+  detailProg.textContent = `${task.done} / ${task.total}`;
+  renderBoard();
+  updateStats();
+}
+
+/* ---------- 刪除細項紀錄 ---------- */
+function deleteLog(taskId, logIndex){
+  const task = data.tasks.find(t=>t.id === taskId);
+  if(!task) return;
+  if(logIndex >= 0 && logIndex < task.logs.length){
+    task.logs.splice(logIndex,1);
+    task.done = task.logs.length; // 根據紀錄調整完成數量
+    saveData(data);
+    renderLogs(task);
+    detailProg.textContent = `${task.done} / ${task.total}`;
+    renderBoard();
+    updateStats();
+  }
+}
+
+/* ---------- 渲染細項紀錄 ---------- */
+function renderLogs(task){
+  logsDiv.innerHTML = '';
+  if(!task.logs || task.logs.length === 0){
+    logsDiv.textContent = '尚無完成紀錄';
+    return;
+  }
+  task.logs.forEach((log, idx)=>{
+    const div = document.createElement('div');
+    div.classList.add('log-item');
+
+    const dt = new Date(log.time);
+    const timeStr = dt.toLocaleString('zh-TW', {hour12:false, timeZone: 'Asia/Taipei'});
+
+    const timeDiv = document.createElement('div');
+    timeDiv.textContent = timeStr;
+
+    const noteDiv = document.createElement('div');
+    noteDiv.textContent = log.note || '(無備註)';
+
+    // 刪除細項按鈕
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '刪除';
+    delBtn.classList.add('del-log-btn');
+    delBtn.title = '刪除此完成紀錄';
+    delBtn.addEventListener('click', e=>{
+      e.stopPropagation();
+      if(confirm('確定刪除此完成紀錄？')){
+        deleteLog(task.id, idx);
+      }
+    });
+
+    div.appendChild(timeDiv);
+    div.appendChild(noteDiv);
+    div.appendChild(delBtn);
+
+    logsDiv.appendChild(div);
+  });
+}
+
+/* ---------- 更新並顯示統計 ---------- */
+function updateStats(){
+  let money = 0;
+  data.tasks.forEach(t=>{
+    money += t.done * t.reward;
+  });
+  // 檢查本週是否全部完成
+  const allDone = data.tasks.length > 0 && data.tasks.every(t=>t.done >= t.total);
+
+  if(allDone){
+    // 若已完成整週，增加週獎勵金且更新完成週數與連勝
+    if(data.stats.doneWeeks < currentWeekNo){
+      data.stats.doneWeeks++;
+      data.stats.streak++;
+      money += data.meta.weeklyReward;
+    }
+  } else {
+    // 未完成本週，重置連勝
+    if(data.stats.doneWeeks < currentWeekNo){
+      data.stats.streak = 0;
+    }
+  }
+  data.stats.money = money;
+
+  doneWeeksElem.textContent = data.stats.doneWeeks;
+  streakElem.textContent = data.stats.streak;
+  moneyElem.textContent = data.stats.money;
+
+  saveData(data);
+}
+
+/* ---------- 讀取並渲染歷史紀錄 ---------- */
+function renderHistory(){
+  historyList.innerHTML = '';
+  const weeks = Object.keys(data.history).map(n=>parseInt(n)).sort((a,b)=>b-a);
+
+  if(weeks.length === 0){
+    historyList.innerHTML = '<p style="color:#b68ea3; user-select:none;">尚無歷史紀錄</p>';
+    return;
+  }
+  weeks.forEach(weekNo=>{
+    const record = data.history[weekNo];
+    if(!record) return;
+
+    const container = document.createElement('div');
+    container.classList.add('history-week');
+
+    const title = document.createElement('div');
+    title.textContent = `第 ${weekNo} 週 (${record.dateRange})`;
+    container.appendChild(title);
+
+    const ul = document.createElement('ul');
+    record.tasks.forEach(t=>{
+      const li = document.createElement('li');
+      li.textContent = `${t.name}：完成 ${t.done} / ${t.total} 次`;
+      ul.appendChild(li);
+    });
+    container.appendChild(ul);
+
+    historyList.appendChild(container);
+  });
+}
+
+/* ---------- 匯出備份 ---------- */
+function exportData(){
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `平野週清單備份_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ---------- 匯入備份 ---------- */
+function importData(file){
   const reader = new FileReader();
   reader.onload = e => {
-    try{
+    try {
       const obj = JSON.parse(e.target.result);
-      if(obj && obj.tasks && obj.meta){
-        if(confirm('確認要以備份內容覆蓋目前資料嗎？（不可回復）')){
-          DATA = obj; saveData(); init(); alert('匯入完成');
+      if(obj && obj.tasks && obj.meta && obj.stats){
+        if(confirm('匯入備份會覆蓋現有資料，確定嗎？')){
+          data = obj;
+          saveData(data);
+          renderBoard();
+          updateStats();
+          renderHistory();
         }
-      } else alert('備份格式不正確');
-    }catch(err){ alert('讀取檔案失敗：'+err); }
+      } else {
+        alert('檔案格式不符');
+      }
+    } catch {
+      alert('讀取檔案失敗');
+    }
   };
   reader.readAsText(file);
 }
 
-/* 對一週做快照（歷史） */
-function snapshotWeek(weekNo){
-  return {
-    week: weekNo,
-    range: getWeekRange(weekNo),
-    tasks: DATA.tasks.map(t=>{
-      const rec = (t.records && t.records[weekNo]) ? t.records[weekNo] : {count:0, logs:[]};
-      return { id:t.id, name:t.name, total:t.totalPerWeek, done:rec.count||0, logs:rec.logs||[] };
-    })
-  };
-}
-
-/* 處理未結算週（即使關機沒開也會在下次開啟時把歷史結算補上） */
-function processPendingWeeks(){
-  const now = getTaiwanNow();
-  const currentWeek = getWeekNumberFromDate(now);
-  const isMondayBefore5 = (now.getDay() === 1 && now.getHours() < 5);
-  const lastEligibleWeek = currentWeek - (isMondayBefore5 ? 1 : 0);
-
-  let start = (DATA.meta.lastProcessedWeek || 0) + 1;
-  if(start < 1) start = 1;
-  for(let w = start; w <= lastEligibleWeek; w++){
-    let allDone = true;
-    for(const t of DATA.tasks){
-      const rec = (t.records && t.records[w]) ? t.records[w] : {count:0};
-      if((rec.count||0) < (t.totalPerWeek||0)){ allDone = false; break; }
-    }
-    if(allDone){
-      DATA.stats.money += (DATA.meta.weeklyReward || 0);
-      DATA.stats.weeksDone = (DATA.stats.weeksDone || 0) + 1;
-      DATA.stats.streak = (DATA.stats.streak || 0) + 1;
-    } else {
-      DATA.stats.streak = 0;
-    }
-    DATA.meta['history_'+w] = snapshotWeek(w);
-    DATA.meta.lastProcessedWeek = w;
+/* ---------- 事件監聽 ---------- */
+addTaskBtn.addEventListener('click', addTask);
+completeOneBtn.addEventListener('click', completeOne);
+closeDetailBtn.addEventListener('click', closeDetail);
+exportBtn.addEventListener('click', exportData);
+importBtn.addEventListener('click', ()=>importFile.click());
+importFile.addEventListener('change', e=>{
+  if(e.target.files.length > 0){
+    importData(e.target.files[0]);
   }
-  saveData();
-}
+});
 
-/* ------------ UI 與互動 ------------- */
-let DATA = loadData();
-const board = document.getElementById('board');
-const detail = document.getElementById('detail');
-const detailTitle = document.getElementById('detailTitle');
-const detailProg = document.getElementById('detailProg');
-const logsBox = document.getElementById('logs');
-const noteInput = document.getElementById('noteInput');
-let currentOpenTaskId = null;
+/* 點擊細節外部可關閉 */
+window.addEventListener('click', e=>{
+  if(detail.style.display === 'block' && !detail.contains(e.target)){
+    closeDetail();
+  }
+});
 
-/* 初始化 */
+/* ---------- 初始化 ---------- */
 function init(){
-  document.getElementById('weeklyRewardInput').value = DATA.meta.weeklyReward || 500;
-  processPendingWeeks(); // 補做未處理週
-  renderAll();
-  startClock();
-}
+  updateDateTime();
+  setInterval(() => {
+    updateDateTime();
+    checkWeeklyReset();
+    updateStats();
+  }, 1000);
 
-/* 時鐘（台灣時間） */
-function startClock(){
-  function tick(){
-    const now = getTaiwanNow();
-    document.getElementById('today').textContent = now.toLocaleDateString('zh-TW');
-    document.getElementById('clock').textContent = now.toLocaleTimeString('zh-TW');
-    document.getElementById('weekNo').textContent = getWeekNumberFromDate(now);
-    document.getElementById('money').textContent = DATA.stats.money || 0;
-    document.getElementById('streak').textContent = DATA.stats.streak || 0;
-    document.getElementById('doneWeeks').textContent = DATA.stats.weeksDone || 0;
-  }
-  tick(); setInterval(tick, 1000);
-}
+  // 設定週獎勵金
+  weeklyRewardInput.value = data.meta.weeklyReward;
+  weeklyRewardInput.addEventListener('change', e=>{
+    let val = parseInt(e.target.value);
+    if(isNaN(val) || val < 0) val = 500;
+    data.meta.weeklyReward = val;
+    saveData(data);
+    updateStats();
+  });
 
-/* 渲染整個版面 */
-function renderAll(){
   renderBoard();
+  updateStats();
   renderHistory();
 }
 
-/* Board（圓形卡片） */
-function renderBoard(){
-  board.innerHTML = '';
-  const now = getTaiwanNow();
-  const week = getWeekNumberFromDate(now);
-  DATA.tasks.forEach(t => {
-    const rec = (t.records && t.records[week]) ? t.records[week] : {count:0, logs:[]};
-    const div = document.createElement('div'); div.className='card'; div.style.background = t.color || '#ffd6e8';
-    div.innerHTML = `\n      <input type="color" value="${t.color||'#ffd6e8'}" onclick="event.stopPropagation()" onchange="changeColor(${t.id}, this.value)" />\n      <button class="delete-task-btn" title="刪除任務" onclick="deleteTask(${t.id}, event)">×</button>\n      <div class="title">${escapeHtml(t.name)}</div>\n      <div class="prog">${(rec.count||0)} / ${t.totalPerWeek}</div>`;
-    div.addEventListener('click', ()=>openDetail(t.id));
-    board.appendChild(div);
-  });
-}
-
-/* 改顏色 */
-function changeColor(id, color){
-  const t = DATA.tasks.find(x=>x.id===id);
-  if(!t) return;
-  t.color = color; saveData(); renderAll();
-}
-
-/* 開啟細項白色方匡 */
-function openDetail(taskId){
-  const t = DATA.tasks.find(x=>x.id===taskId);
-  if(!t) return;
-  currentOpenTaskId = taskId;
-  const now = getTaiwanNow(); const week = getWeekNumberFromDate(now);
-  const rec = (t.records && t.records[week]) ? t.records[week] : {count:0, logs:[]};
-  detailTitle.textContent = t.name;
-  detailProg.textContent = `${rec.count||0} / ${t.totalPerWeek}`;
-  noteInput.value = '';
-  logsBox.innerHTML = '';
-  const logs = (rec.logs || []);
-  // 反向顯示：最新在最上
-  for(let i = logs.length - 1; i >= 0; i--){
-    const l = logs[i];
-    const d = document.createElement('div'); d.className='log-item';
-    d.innerHTML = `\n      <div class="muted">${escapeHtml(l.time)}</div>\n      <div class="content">${escapeHtml(l.note)}</div>\n      <button class="delete-log-btn" title="刪除此筆記錄">×</button>`;
-    // 刪除按鈕綁定，stopPropagation 阻止點擊冒泡
-    d.querySelector('.delete-log-btn').addEventListener('click', (e)=>{ e.stopPropagation(); deleteLog(t.id, week, i); });
-    logsBox.appendChild(d);
-  }
-  detail.style.display = 'flex';
-}
-
-/* 關閉細項 */
-document.getElementById('closeDetailBtn').addEventListener('click', ()=>{ detail.style.display='none'; currentOpenTaskId=null; });
-
-/* 完成一次（加單位獎金） */
-document.getElementById('completeOneBtn').addEventListener('click', ()=>{
-  const t = DATA.tasks.find(x=>x.id===currentOpenTaskId);
-  if(!t) return;
-  const now = getTaiwanNow(); const week = getWeekNumberFromDate(now);
-  if(!t.records) t.records = {};
-  if(!t.records[week]) t.records[week] = {count:0, logs:[]};
-  const rec = t.records[week];
-  if(rec.count >= t.totalPerWeek){ alert('本週次數已達上限'); return; }
-  const note = noteInput.value.trim();
-  rec.count += 1;
-  rec.logs.push({ time: now.toLocaleString('zh-TW'), note });
-  // 每次完成就直接把該單位獎金加到錢包（若有設定）
-  DATA.stats.money += (t.unitReward || 0);
-  saveData();
-  // 若當週還沒結算過（或可結算），也嘗試檢查並 award weekly 勝利（safe）
-  const weekToCheck = getWeekNumberFromDate(now);
-  checkAndAwardWeeklyIfComplete(weekToCheck);
-  openDetail(t.id);
-  renderAll();
-});
-
-/* 刪除某一筆 log */
-function deleteLog(taskId, weekNo, logIndex){
-  const t = DATA.tasks.find(t => t.id === taskId);
-  if(!t || !t.records || !t.records[weekNo]) return;
-  if(!confirm('確定刪除此完成記錄？')) return;
-  const rec = t.records[weekNo];
-  if(!rec.logs || !rec.logs[logIndex]) return;
-  rec.logs.splice(logIndex, 1);
-  rec.count = Math.max(0, (rec.count||0) - 1);
-  saveData();
-  // 若當前 detail 正在開啟並對應這個任務，重新開啟以更新畫面
-  if(currentOpenTaskId === taskId){ openDetail(taskId); }
-  renderAll();
-}
-
-/* 檢查並給予週獎勵（只會對尚未處理的週做一次） */
-function checkAndAwardWeeklyIfComplete(weekToCheck){
-  if(weekToCheck <= (DATA.meta.lastProcessedWeek || 0)) return;
-  const allDone = DATA.tasks.length>0 && DATA.tasks.every(t=>{
-    const rec = (t.records && t.records[weekToCheck]) ? t.records[weekToCheck] : {count:0};
-    return (rec.count || 0) >= (t.totalPerWeek || 0);
-  });
-  if(allDone){
-    DATA.stats.money += (DATA.meta.weeklyReward || 0);
-    DATA.stats.weeksDone = (DATA.stats.weeksDone || 0) + 1;
-    DATA.stats.streak = (DATA.stats.streak || 0) + 1;
-  } else {
-    DATA.stats.streak = 0;
-  }
-  DATA.meta['history_'+weekToCheck] = snapshotWeek(weekToCheck);
-  DATA.meta.lastProcessedWeek = weekToCheck;
-  saveData();
-}
-
-/* 新增任務 */
-document.getElementById('addTaskBtn').addEventListener('click', ()=>{
-  const name = document.getElementById('taskName').value.trim();
-  const total = parseInt(document.getElementById('taskTotal').value,10) || 1;
-  const unitReward = Math.max(0, parseInt(document.getElementById('taskReward').value,10) || 0);
-  const color = document.getElementById('taskColor').value || '#ffd6e8';
-  if(!name){ alert('請輸入任務名稱'); return; }
-  const id = Date.now() + Math.floor(Math.random()*1000);
-  DATA.tasks.push({ id, name, color, totalPerWeek: total, unitReward, records: {} });
-  saveData(); renderAll();
-  document.getElementById('taskName').value=''; document.getElementById('taskTotal').value='1';
-});
-
-/* 刪除任務（支援 event.stopPropagation） */
-function deleteTask(id, event){
-  if(event && event.stopPropagation) event.stopPropagation();
-  if(!confirm('確定刪除此任務？其歷史也會移除')) return;
-  DATA.tasks = DATA.tasks.filter(t=>t.id!==id);
-  // 同步移除與該任務相關的歷史紀錄
-  // 由於 history 存在於 DATA.meta['history_#']，在 snapshot 時已經包含任務快照，因此移除任務不需要額外清理
-  saveData(); renderAll(); detail.style.display='none'; currentOpenTaskId = null;
-}
-
-/* 更改顏色 helper（支援在 card input 中變更） */
-window.changeColor = changeColor; // 讓 HTML inline onchange 可找到
-
-/* 匯出/匯入綁定 */
-document.getElementById('exportBtn').addEventListener('click', exportBackup);
-document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
-document.getElementById('importFile').addEventListener('change', (e)=>{ if(e.target.files && e.target.files[0]) importBackupFile(e.target.files[0]); });
-
-/* 更新每週獎金設定 */
-document.getElementById('weeklyRewardInput').addEventListener('change', (e)=>{
-  DATA.meta.weeklyReward = Math.max(0, parseInt(e.target.value,10) || 0);
-  saveData();
-});
-
-/* 歷史渲染：顯示已處理（結算）的週 */
-function renderHistory(){
-  const list = document.getElementById('historyList'); list.innerHTML = '';
-  const last = DATA.meta.lastProcessedWeek || 0;
-  for(let w = last; w >= 1; w--){
-    const snap = DATA.meta['history_'+w];
-    if(!snap) continue;
-    const div = document.createElement('div'); div.className='history-week';
-    let html = `<div style="font-weight:700">第 ${snap.week} 週（${snap.range}）</div>`;
-    snap.tasks.forEach(t=>{
-      html += `<div style="margin-left:8px">${escapeHtml(t.name)}：${t.done}/${t.total}`;
-      if((t.logs||[]).length>0){
-        html += `<ul>`;
-        t.logs.forEach(l=> html += `<li style="font-size:13px">${escapeHtml(l.time)} - ${escapeHtml(l.note)}</li>`);
-        html += `</ul>`;
-      }
-      html += `</div>`;
-    });
-    div.innerHTML = html; list.appendChild(div);
-  }
-  document.getElementById('money').textContent = DATA.stats.money || 0;
-  document.getElementById('streak').textContent = DATA.stats.streak || 0;
-  document.getElementById('doneWeeks').textContent = DATA.stats.weeksDone || 0;
-}
-
-/* 安全字串轉義 */
-function escapeHtml(s){ if(!s) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
-
-/* 當頁面載入時，若 DATA.tasks 為空可加入示例（選用） */
-if(typeof DATA === 'undefined'){
-  DATA = loadData();
-}
-if(DATA.tasks.length===0){
-  // 保留你原本結構，但不強制新增範例（若想要，取消註解）
-  // DATA.tasks.push({ id:Date.now(), name:'數學', color:'#ffd6e8', totalPerWeek:7, unitReward:10, records:{} });
-  // saveData();
-}
-
-/* init 與週期檢查 */
 init();
-/* 定期每分鐘再檢查一次是否出現新的可結算週 */
-setInterval(()=>{ processPendingWeeks(); renderAll(); }, 60*1000);
 </script>
 </body>
 </html>
+
+
 
 
