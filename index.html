@@ -18,27 +18,32 @@
       --accent:#e26a9a;
       --muted:#6b1f4a;
       --soft:#ffdfee;
+      --danger:#ff6b6b;
+      --glass: rgba(255,255,255,0.9);
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
+      font-family: "辰宇落雁體", "Noto Sans TC", "Segoe UI", Roboto, sans-serif;
       background: linear-gradient(135deg,var(--bg1), #e8f6ff);
       color:#333;
       display:flex;
       flex-direction:column;
       align-items:center;
       padding-bottom:40px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
     header{ text-align:center; margin-top:18px; }
-    h1{ color:var(--accent); margin:6px 0 0; font-size:28px; }
+    h1{ color:var(--accent); margin:6px 0 0; font-size:30px; letter-spacing:1px }
     .topbar{
       width:100%; max-width:1100px; display:flex; justify-content:space-between; align-items:center;
       gap:10px; padding:12px 18px; margin-top:10px; font-size:14px;
+      backdrop-filter: blur(6px);
     }
     .badges{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
     .badge{
-      background:#fff; padding:6px 10px; border-radius:16px; box-shadow:0 6px 18px rgba(0,0,0,0.06);
+      background:var(--glass); padding:6px 10px; border-radius:16px; box-shadow:0 6px 18px rgba(0,0,0,0.06);
       font-size:13px;
     }
 
@@ -46,7 +51,7 @@
     .controls{ width:100%; max-width:1100px; display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap; padding:12px; }
     input[type="text"], input[type="number"], input[type="color"]{
       padding:8px; border-radius:10px; border:1px solid #efe; outline:none;
-      font-size:14px;
+      font-size:14px; background:white;
     }
     button{ border:none; border-radius:10px; padding:8px 12px; font-size:14px; cursor:pointer; }
     button.primary{ background:var(--accent); color:white; box-shadow:0 6px 14px rgba(226,106,154,0.18); }
@@ -55,81 +60,55 @@
     /* board */
     .board{ width:100%; max-width:1100px; display:flex; flex-wrap:wrap; gap:16px; justify-content:center; padding:18px; }
     .card{
-      width:140px; height:140px; border-radius:999px; display:flex; flex-direction:column; align-items:center; justify-content:center;
-      text-align:center; padding:10px; cursor:pointer; box-shadow:0 8px 22px rgba(0,0,0,0.08); transition:transform .15s;
-      position:relative;
-      background: var(--card);
+      width:150px; height:150px; border-radius:999px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding:12px; cursor:pointer; box-shadow:0 12px 30px rgba(0,0,0,0.08); transition:transform .18s, box-shadow .18s;
+      position:relative; user-select:none;
     }
-    .card:hover{ transform:translateY(-6px) scale(1.03); box-shadow:0 12px 26px rgba(0,0,0,0.15); }
-
-    .card .title{ font-weight:700; color:var(--muted); font-size:15px; margin-bottom:6px; }
+    .card:hover{ transform:translateY(-8px) scale(1.03); box-shadow:0 20px 46px rgba(0,0,0,0.12); }
+    .card .title{ font-weight:800; color:var(--muted); font-size:16px; margin-bottom:6px; }
     .card .prog{ color:#444; font-size:14px; }
-    .card input[type="color"]{ position:absolute; top:8px; right:8px; width:28px; height:28px; border-radius:8px; border:none; padding:0; }
+    .card input[type="color"]{ position:absolute; top:8px; right:40px; width:28px; height:28px; border-radius:8px; border:none; padding:0; cursor:pointer }
 
-    /* 刪除大任務按鈕 */
+    /* delete button on card */
     .delete-task-btn {
       position: absolute;
-      top: 6px;
-      right: 6px;
-      background: #ff6b6b;
+      top: 8px;
+      right: 8px;
+      background: var(--danger);
       border: none;
       color: white;
       border-radius: 50%;
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       font-weight: bold;
       cursor: pointer;
-      line-height: 20px;
+      line-height: 22px;
       font-size: 18px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      transition: background 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      transition: transform .12s, background .12s;
       z-index: 10;
     }
-    .delete-task-btn:hover {
-      background: #ff3b3b;
-    }
+    .delete-task-btn:hover{ transform: scale(1.06); background: #ff3b3b }
 
     /* detail modal (白色方匡) */
     .detail{
-      position:fixed; left:50%; top:14%; transform:translateX(-50%); width:360px; max-width:92%;
-      background:#fff; border-radius:14px; box-shadow:0 18px 48px rgba(0,0,0,0.22); display:none; z-index:999;
+      position:fixed; left:50%; top:12%; transform:translateX(-50%); width:420px; max-width:94%;
+      background:#fff; border-radius:14px; box-shadow:0 28px 64px rgba(0,0,0,0.26); display:none; z-index:999;
       padding:16px;
-      font-size: 15px;
-      line-height: 1.5;
     }
-    .detail h3{ margin:0 0 6px; color:var(--accent); }
-    .detail .meta{ font-size:14px; color:#666; margin-bottom:8px; }
-    .detail .note{ width:100%; padding:10px; border-radius:10px; border:1px solid #eee; margin-bottom:8px; font-size: 15px; }
+    .detail h3{ margin:0 0 6px; color:var(--accent); font-size:20px }
+    .detail .meta{ font-size:13px; color:#666; margin-bottom:8px; }
+    .detail .note{ width:100%; padding:10px; border-radius:10px; border:1px solid #eee; margin-bottom:8px; font-size:14px }
     .detail .btns{ display:flex; gap:8px; }
-    .logs{ max-height:220px; overflow:auto; margin-top:10px; border-top:1px dashed #f0e9f2; padding-top:8px; }
-    .log-item{
-      font-size:14px;
-      color:#444;
-      padding:6px 6px 6px 2px;
-      border-bottom:1px solid #fafafa;
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .log-item div {
-      flex-grow: 1;
-    }
+    .logs{ max-height:260px; overflow:auto; margin-top:10px; border-top:1px dashed #f0e9f2; padding-top:8px; }
+    .log-item{ font-size:13px; color:#444; padding:8px 6px; border-bottom:1px solid #fafafa; display:flex; align-items:flex-start; gap:8px; }
+    .log-item .muted{ color:#999; font-size:12px; width:115px; flex-shrink:0 }
+    .log-item .content{ flex:1; }
 
-    /* 刪除細項按鈕 */
-    .delete-log-btn {
-      background: transparent;
-      border: none;
-      color: #d9534f;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      line-height: 1;
-      flex-shrink: 0;
+    .delete-log-btn{
+      background:transparent; border:none; color:var(--danger); font-size:18px; font-weight:bold; cursor:pointer; padding:4px 6px; border-radius:6px;
     }
-    .delete-log-btn:hover {
-      color: #a52a2a;
-    }
+    .delete-log-btn:hover{ color:#a52a2a; background:rgba(255,107,107,0.06) }
 
     /* history */
     .history{ width:100%; max-width:1100px; margin-top:18px; padding:12px; background:rgba(255,255,255,0.9); border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
@@ -139,9 +118,8 @@
     /* responsive */
     @media(max-width:520px){
       .card{ width:120px; height:120px; }
-      .detail{ width:92%; top:10%; font-size:14px; }
-      .detail .note{ font-size: 14px; }
-      .log-item{ font-size:13px; }
+      .detail{ width:92%; top:6%; }
+      .log-item .muted{ display:none }
     }
   </style>
 </head>
@@ -346,8 +324,184 @@ function renderBoard(){
   const week = getWeekNumberFromDate(now);
   DATA.tasks.forEach(t => {
     const rec = (t.records && t.records[week]) ? t.records[week] : {count:0, logs:[]};
-    const div = document.createElement('div');
-    div.className='card';
-    div.style.background = t.color || '#ffd6e8';
-    div.innerHTML = `
-      <button class="delete-task-btn" title="刪除任務" onclick="deleteTask(${t.id}, event
+    const div = document.createElement('div'); div.className='card'; div.style.background = t.color || '#ffd6e8';
+    div.innerHTML = `\n      <input type="color" value="${t.color||'#ffd6e8'}" onclick="event.stopPropagation()" onchange="changeColor(${t.id}, this.value)" />\n      <button class="delete-task-btn" title="刪除任務" onclick="deleteTask(${t.id}, event)">×</button>\n      <div class="title">${escapeHtml(t.name)}</div>\n      <div class="prog">${(rec.count||0)} / ${t.totalPerWeek}</div>`;
+    div.addEventListener('click', ()=>openDetail(t.id));
+    board.appendChild(div);
+  });
+}
+
+/* 改顏色 */
+function changeColor(id, color){
+  const t = DATA.tasks.find(x=>x.id===id);
+  if(!t) return;
+  t.color = color; saveData(); renderAll();
+}
+
+/* 開啟細項白色方匡 */
+function openDetail(taskId){
+  const t = DATA.tasks.find(x=>x.id===taskId);
+  if(!t) return;
+  currentOpenTaskId = taskId;
+  const now = getTaiwanNow(); const week = getWeekNumberFromDate(now);
+  const rec = (t.records && t.records[week]) ? t.records[week] : {count:0, logs:[]};
+  detailTitle.textContent = t.name;
+  detailProg.textContent = `${rec.count||0} / ${t.totalPerWeek}`;
+  noteInput.value = '';
+  logsBox.innerHTML = '';
+  const logs = (rec.logs || []);
+  // 反向顯示：最新在最上
+  for(let i = logs.length - 1; i >= 0; i--){
+    const l = logs[i];
+    const d = document.createElement('div'); d.className='log-item';
+    d.innerHTML = `\n      <div class="muted">${escapeHtml(l.time)}</div>\n      <div class="content">${escapeHtml(l.note)}</div>\n      <button class="delete-log-btn" title="刪除此筆記錄">×</button>`;
+    // 刪除按鈕綁定，stopPropagation 阻止點擊冒泡
+    d.querySelector('.delete-log-btn').addEventListener('click', (e)=>{ e.stopPropagation(); deleteLog(t.id, week, i); });
+    logsBox.appendChild(d);
+  }
+  detail.style.display = 'flex';
+}
+
+/* 關閉細項 */
+document.getElementById('closeDetailBtn').addEventListener('click', ()=>{ detail.style.display='none'; currentOpenTaskId=null; });
+
+/* 完成一次（加單位獎金） */
+document.getElementById('completeOneBtn').addEventListener('click', ()=>{
+  const t = DATA.tasks.find(x=>x.id===currentOpenTaskId);
+  if(!t) return;
+  const now = getTaiwanNow(); const week = getWeekNumberFromDate(now);
+  if(!t.records) t.records = {};
+  if(!t.records[week]) t.records[week] = {count:0, logs:[]};
+  const rec = t.records[week];
+  if(rec.count >= t.totalPerWeek){ alert('本週次數已達上限'); return; }
+  const note = noteInput.value.trim();
+  rec.count += 1;
+  rec.logs.push({ time: now.toLocaleString('zh-TW'), note });
+  // 每次完成就直接把該單位獎金加到錢包（若有設定）
+  DATA.stats.money += (t.unitReward || 0);
+  saveData();
+  // 若當週還沒結算過（或可結算），也嘗試檢查並 award weekly 勝利（safe）
+  const weekToCheck = getWeekNumberFromDate(now);
+  checkAndAwardWeeklyIfComplete(weekToCheck);
+  openDetail(t.id);
+  renderAll();
+});
+
+/* 刪除某一筆 log */
+function deleteLog(taskId, weekNo, logIndex){
+  const t = DATA.tasks.find(t => t.id === taskId);
+  if(!t || !t.records || !t.records[weekNo]) return;
+  if(!confirm('確定刪除此完成記錄？')) return;
+  const rec = t.records[weekNo];
+  if(!rec.logs || !rec.logs[logIndex]) return;
+  rec.logs.splice(logIndex, 1);
+  rec.count = Math.max(0, (rec.count||0) - 1);
+  saveData();
+  // 若當前 detail 正在開啟並對應這個任務，重新開啟以更新畫面
+  if(currentOpenTaskId === taskId){ openDetail(taskId); }
+  renderAll();
+}
+
+/* 檢查並給予週獎勵（只會對尚未處理的週做一次） */
+function checkAndAwardWeeklyIfComplete(weekToCheck){
+  if(weekToCheck <= (DATA.meta.lastProcessedWeek || 0)) return;
+  const allDone = DATA.tasks.length>0 && DATA.tasks.every(t=>{
+    const rec = (t.records && t.records[weekToCheck]) ? t.records[weekToCheck] : {count:0};
+    return (rec.count || 0) >= (t.totalPerWeek || 0);
+  });
+  if(allDone){
+    DATA.stats.money += (DATA.meta.weeklyReward || 0);
+    DATA.stats.weeksDone = (DATA.stats.weeksDone || 0) + 1;
+    DATA.stats.streak = (DATA.stats.streak || 0) + 1;
+  } else {
+    DATA.stats.streak = 0;
+  }
+  DATA.meta['history_'+weekToCheck] = snapshotWeek(weekToCheck);
+  DATA.meta.lastProcessedWeek = weekToCheck;
+  saveData();
+}
+
+/* 新增任務 */
+document.getElementById('addTaskBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('taskName').value.trim();
+  const total = parseInt(document.getElementById('taskTotal').value,10) || 1;
+  const unitReward = Math.max(0, parseInt(document.getElementById('taskReward').value,10) || 0);
+  const color = document.getElementById('taskColor').value || '#ffd6e8';
+  if(!name){ alert('請輸入任務名稱'); return; }
+  const id = Date.now() + Math.floor(Math.random()*1000);
+  DATA.tasks.push({ id, name, color, totalPerWeek: total, unitReward, records: {} });
+  saveData(); renderAll();
+  document.getElementById('taskName').value=''; document.getElementById('taskTotal').value='1';
+});
+
+/* 刪除任務（支援 event.stopPropagation） */
+function deleteTask(id, event){
+  if(event && event.stopPropagation) event.stopPropagation();
+  if(!confirm('確定刪除此任務？其歷史也會移除')) return;
+  DATA.tasks = DATA.tasks.filter(t=>t.id!==id);
+  // 同步移除與該任務相關的歷史紀錄
+  // 由於 history 存在於 DATA.meta['history_#']，在 snapshot 時已經包含任務快照，因此移除任務不需要額外清理
+  saveData(); renderAll(); detail.style.display='none'; currentOpenTaskId = null;
+}
+
+/* 更改顏色 helper（支援在 card input 中變更） */
+window.changeColor = changeColor; // 讓 HTML inline onchange 可找到
+
+/* 匯出/匯入綁定 */
+document.getElementById('exportBtn').addEventListener('click', exportBackup);
+document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', (e)=>{ if(e.target.files && e.target.files[0]) importBackupFile(e.target.files[0]); });
+
+/* 更新每週獎金設定 */
+document.getElementById('weeklyRewardInput').addEventListener('change', (e)=>{
+  DATA.meta.weeklyReward = Math.max(0, parseInt(e.target.value,10) || 0);
+  saveData();
+});
+
+/* 歷史渲染：顯示已處理（結算）的週 */
+function renderHistory(){
+  const list = document.getElementById('historyList'); list.innerHTML = '';
+  const last = DATA.meta.lastProcessedWeek || 0;
+  for(let w = last; w >= 1; w--){
+    const snap = DATA.meta['history_'+w];
+    if(!snap) continue;
+    const div = document.createElement('div'); div.className='history-week';
+    let html = `<div style="font-weight:700">第 ${snap.week} 週（${snap.range}）</div>`;
+    snap.tasks.forEach(t=>{
+      html += `<div style="margin-left:8px">${escapeHtml(t.name)}：${t.done}/${t.total}`;
+      if((t.logs||[]).length>0){
+        html += `<ul>`;
+        t.logs.forEach(l=> html += `<li style="font-size:13px">${escapeHtml(l.time)} - ${escapeHtml(l.note)}</li>`);
+        html += `</ul>`;
+      }
+      html += `</div>`;
+    });
+    div.innerHTML = html; list.appendChild(div);
+  }
+  document.getElementById('money').textContent = DATA.stats.money || 0;
+  document.getElementById('streak').textContent = DATA.stats.streak || 0;
+  document.getElementById('doneWeeks').textContent = DATA.stats.weeksDone || 0;
+}
+
+/* 安全字串轉義 */
+function escapeHtml(s){ if(!s) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+/* 當頁面載入時，若 DATA.tasks 為空可加入示例（選用） */
+if(typeof DATA === 'undefined'){
+  DATA = loadData();
+}
+if(DATA.tasks.length===0){
+  // 保留你原本結構，但不強制新增範例（若想要，取消註解）
+  // DATA.tasks.push({ id:Date.now(), name:'數學', color:'#ffd6e8', totalPerWeek:7, unitReward:10, records:{} });
+  // saveData();
+}
+
+/* init 與週期檢查 */
+init();
+/* 定期每分鐘再檢查一次是否出現新的可結算週 */
+setInterval(()=>{ processPendingWeeks(); renderAll(); }, 60*1000);
+</script>
+</body>
+</html>
+
+
