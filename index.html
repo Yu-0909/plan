@@ -33,13 +33,11 @@
     header{ text-align:center; margin-top:18px; }
     h1{ color:var(--accent); margin:6px 0 0; font-size:28px; }
     .topbar{
-      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
       width:100%; max-width:1100px; display:flex; justify-content:space-between; align-items:center;
       gap:10px; padding:12px 18px; margin-top:10px; font-size:14px;
     }
     .badges{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
     .badge{
-      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
       background:#fff; padding:6px 10px; border-radius:16px; box-shadow:0 6px 18px rgba(0,0,0,0.06);
       font-size:13px;
     }
@@ -47,63 +45,56 @@
     /* controls */
     .controls{ width:100%; max-width:1100px; display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap; padding:12px; }
     input[type="text"], input[type="number"], input[type="color"]{
-      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
       padding:8px; border-radius:10px; border:1px solid #efe; outline:none;
       font-size:14px;
     }
-    button{ 
-      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
-      border:none; border-radius:10px; padding:8px 12px; font-size:14px; cursor:pointer; }
-    button.primary{ 
-      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
-      background:var(--accent); color:white; box-shadow:0 6px 14px rgba(226,106,154,0.18); }
-    button.ghost{ 
-      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
-      background:transparent; color:var(--muted); border:1px solid rgba(0,0,0,0.06); }
+    button{ border:none; border-radius:10px; padding:8px 12px; font-size:14px; cursor:pointer; }
+    button.primary{ background:var(--accent); color:white; box-shadow:0 6px 14px rgba(226,106,154,0.18); }
+    button.ghost{ background:transparent; color:var(--muted); border:1px solid rgba(0,0,0,0.06); }
 
     /* board */
     .board{ width:100%; max-width:1100px; display:flex; flex-wrap:wrap; gap:16px; justify-content:center; padding:18px; }
     .card{
-      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
       width:140px; height:140px; border-radius:999px; display:flex; flex-direction:column; align-items:center; justify-content:center;
       text-align:center; padding:10px; cursor:pointer; box-shadow:0 8px 22px rgba(0,0,0,0.08); transition:transform .15s;
       position:relative;
+      font-size:16px;
     }
     .card:hover{ transform:translateY(-6px) scale(1.03); }
-    .card .title{ font-weight:700; color:var(--muted); font-size:15px; margin-bottom:6px; }
-    .card .prog{ color:#444; font-size:14px; }
-    .card input[type="color"]{ position:absolute; top:8px; right:8px; width:28px; height:28px; border-radius:8px; border:none; padding:0; cursor:pointer; }
+    .card .title{ font-weight:700; color:var(--muted); font-size:17px; margin-bottom:6px; }
+    .card .prog{ color:#444; font-size:15px; }
+    .card input[type="color"]{ position:absolute; top:8px; right:8px; width:28px; height:28px; border-radius:8px; border:none; padding:0; }
 
     /* detail modal (白色方匡) */
     .detail{
-      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
       position:fixed; left:50%; top:14%; transform:translateX(-50%); width:360px; max-width:92%;
       background:#fff; border-radius:14px; box-shadow:0 18px 48px rgba(0,0,0,0.22); display:none; z-index:999;
       padding:16px;
-      flex-direction: column;
+      font-size:16px;
     }
-    .detail h3{ margin:0 0 6px; color:var(--accent); }
-    .detail .meta{ font-size:13px; color:#666; margin-bottom:8px; }
-    .detail .note{ width:100%; padding:8px; border-radius:10px; border:1px solid #eee; margin-bottom:8px; font-size:14px; }
-    .detail .btns{ display:flex; gap:8px; justify-content:flex-end; margin-bottom:8px; }
+    .detail h3{ margin:0 0 6px; color:var(--accent); font-size:20px; }
+    .detail .meta{ font-size:15px; color:#666; margin-bottom:8px; }
+    .detail .note{ width:100%; padding:10px; border-radius:10px; border:1px solid #eee; margin-bottom:8px; font-size:15px; }
+    .detail .btns{ display:flex; gap:8px; justify-content:flex-end; }
+    .detail .btns button{ font-size:15px; padding:8px 14px; }
     .logs{ max-height:220px; overflow:auto; margin-top:10px; border-top:1px dashed #f0e9f2; padding-top:8px; font-size:14px; }
-    .log-item{ font-size:13px; color:#444; padding:6px 2px; border-bottom:1px solid #fafafa; }
+    .log-item{ color:#444; padding:6px 2px; border-bottom:1px solid #fafafa; }
 
     /* history */
-    .history{ width:100%; max-width:1100px; margin-top:18px; padding:12px; background:rgba(255,255,255,0.9); border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.06); font-size:14px; }
+    .history{ width:100%; max-width:1100px; margin-top:18px; padding:12px; background:rgba(255,255,255,0.9); border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.06); font-size:15px; }
     .history h3{ margin:0 0 8px; color:var(--muted); }
     .history-week{ background:#fff7fb; padding:10px; border-radius:8px; margin-bottom:8px; }
 
     /* responsive */
     @media(max-width:520px){
-      .card{ width:120px; height:120px; }
-      .detail{ width:92%; top:10%; }
+      .card{ width:120px; height:120px; font-size:14px; }
+      .detail{ width:92%; top:10%; font-size:14px; }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>To-do</h1>
+    <h1>平野のTo-do</h1>
   </header>
 
   <div class="topbar">
@@ -115,7 +106,7 @@
       <div class="badge">第 <span id="weekNo">--</span> 週</div>
       <div class="badge">連勝：<span id="streak">0</span> 週</div>
       <div class="badge">完成週數：<span id="doneWeeks">0</span></div>
-      <div class="badge">獎勵金：$<span id="money">0</span></div>
+      <div class="badge">獎勳金：$<span id="money">0</span></div>
     </div>
   </div>
 
@@ -126,7 +117,7 @@
     <input id="taskColor" type="color" value="#ffd6e8" />
     <button id="addTaskBtn" class="primary">新增任務</button>
     <input id="weeklyRewardInput" type="number" value="500" style="width:110px" />
-    <span class="small">每週完成獎勵金</span>
+    <span class="small">每週完成獎勳金</span>
     <button id="exportBtn" class="ghost">匯出備份</button>
     <input id="importFile" type="file" style="display:none" />
     <button id="importBtn" class="ghost">匯入備份</button>
@@ -142,6 +133,7 @@
     <div class="btns">
       <button id="completeOneBtn" class="primary">✅ 完成一次</button>
       <button id="closeDetailBtn" class="ghost">關閉</button>
+      <button id="deleteTaskBtn" class="ghost" style="margin-left:auto; color:#d9534f;">🗑 刪除任務</button>
     </div>
     <div class="logs" id="logs"></div>
   </div>
@@ -240,10 +232,16 @@ function processPendingWeeks(){
   if(start < 1) start = 1;
   for(let w = start; w <= lastEligibleWeek; w++){
     let allDone = true;
+    let weekRewardSum = 0; // 本週所有任務累計獎金
     for(const t of DATA.tasks){
       const rec = (t.records && t.records[w]) ? t.records[w] : {count:0};
-      if((rec.count||0) < (t.totalPerWeek||0)){ allDone = false; break; }
+      if((rec.count||0) < (t.totalPerWeek||0)) allDone = false;
+      weekRewardSum += (rec.count||0) * (t.unitReward || 0);
     }
+    // 加上本週任務獎金
+    DATA.stats.money += weekRewardSum;
+
+    // 若整週完成則加額外獎勵金
     if(allDone){
       DATA.stats.money += (DATA.meta.weeklyReward || 0);
       DATA.stats.weeksDone = (DATA.stats.weeksDone || 0) + 1;
@@ -302,201 +300,184 @@ function renderBoard(){
   const week = getWeekNumberFromDate(now);
   DATA.tasks.forEach(t => {
     const rec = (t.records && t.records[week]) ? t.records[week] : {count:0, logs:[]};
-    const div = document.createElement('div'); 
-    div.className='card'; 
-    div.style.background = t.color || '#ffd6e8';
-    div.innerHTML = `
-      <input type="color" value="${t.color||'#ffd6e8'}" onchange="changeColor(${t.id}, this.value)" />
+    const div = document.createElement('div'); div.className='card'; div.style.background = t.color || '#ffd6e8';
+    div.innerHTML = `<input type="color" value="${t.color||'#ffd6e8'}" onchange="changeColor(${t.id}, this.value)" />
       <div class="title">${escapeHtml(t.name)}</div>
-      <div class="prog">${(rec.count||0)} / ${t.totalPerWeek}</div>
-      <button class="delete-task-btn" title="刪除任務" style="position:absolute; bottom:6px; right:6px; background:#f88; border:none; border-radius:8px; color:#fff; font-weight:bold; cursor:pointer; padding:2px 6px;">✕</button>
-    `;
-    // 點擊色塊時不開啟細節視窗
-    div.querySelector('input[type=color]').addEventListener('click', e=>e.stopPropagation());
-    // 點擊刪除按鈕時刪除任務
-    div.querySelector('.delete-task-btn').addEventListener('click', e=>{
-      e.stopPropagation();
-      deleteTask(t.id);
-    });
-    // 點擊卡片其他區域開啟細節視窗
-    div.addEventListener('click', () => openDetail(t.id));
+      <div class="prog">${(rec.count||0)} / ${t.totalPerWeek}</div>`;
+    div.addEventListener('click', ()=>openDetail(t.id));
     board.appendChild(div);
   });
 }
 
-/* 更改任務顏色 */
+/* 改顏色 */
 function changeColor(id, color){
-  const t = DATA.tasks.find(x => x.id === id);
-  if(t){
-    t.color = color;
-    saveData();
-    renderBoard();
-  }
-}
-
-/* 刪除任務 */
-function deleteTask(id){
-  if(confirm('確定刪除任務嗎？（不可回復）')){
-    DATA.tasks = DATA.tasks.filter(t => t.id !== id);
-    saveData();
-    closeDetail();
-    renderAll();
-  }
-}
-
-/* 打開任務細節視窗 */
-function openDetail(id){
-  currentOpenTaskId = id;
-  const now = getTaiwanNow();
-  const week = getWeekNumberFromDate(now);
-  const t = DATA.tasks.find(x => x.id === id);
+  const t = DATA.tasks.find(x=>x.id===id);
   if(!t) return;
-  detailTitle.textContent = t.name;
+  t.color = color; saveData(); renderAll();
+}
+
+/* 開啟細項白色方匡 */
+function openDetail(taskId){
+  const t = DATA.tasks.find(x=>x.id===taskId);
+  if(!t) return;
+  currentOpenTaskId = taskId;
+  const now = getTaiwanNow(); 
+  const week = getWeekNumberFromDate(now);
   const rec = (t.records && t.records[week]) ? t.records[week] : {count:0, logs:[]};
+  detailTitle.textContent = t.name;
   detailProg.textContent = `${rec.count||0} / ${t.totalPerWeek}`;
   noteInput.value = '';
-  // 顯示完成紀錄
-  logsBox.innerHTML = '';
-  if(rec.logs && rec.logs.length > 0){
-    rec.logs.slice().reverse().forEach(log => {
-      const div = document.createElement('div');
-      div.className = 'log-item';
-      div.textContent = `${log.time}：${log.note || '(無)'}`;
-      logsBox.appendChild(div);
-    });
-  }
-  detail.style.display = 'flex';
+  renderLogs(rec.logs||[]);
+  detail.style.display = 'block';
 }
 
-/* 關閉任務細節視窗 */
-function closeDetail(){
-  currentOpenTaskId = null;
+/* 關閉細項 */
+document.getElementById('closeDetailBtn').addEventListener('click', ()=>{
   detail.style.display = 'none';
-}
-
-/* 完成一次 */
-function completeOne(){
-  if(currentOpenTaskId === null) return;
-  const now = getTaiwanNow();
-  const week = getWeekNumberFromDate(now);
-  const t = DATA.tasks.find(x => x.id === currentOpenTaskId);
-  if(!t) return;
-  if(!t.records) t.records = {};
-  if(!t.records[week]) t.records[week] = {count:0, logs:[]};
-  if(t.records[week].count < t.totalPerWeek){
-    t.records[week].count++;
-    t.records[week].logs.push({
-      time: now.toLocaleString('zh-TW'),
-      note: noteInput.value.trim()
-    });
-    noteInput.value = '';
-    saveData();
-    openDetail(currentOpenTaskId); // 重新整理細節視窗數據
-    renderBoard();
-  } else {
-    alert('本週任務已完成全部次數');
-  }
-}
+  currentOpenTaskId = null;
+});
 
 /* 新增任務 */
-function addTask(){
+document.getElementById('addTaskBtn').addEventListener('click', ()=>{
   const name = document.getElementById('taskName').value.trim();
-  const totalPerWeek = Number(document.getElementById('taskTotal').value);
-  const reward = Number(document.getElementById('taskReward').value);
-  const color = document.getElementById('taskColor').value;
   if(!name){ alert('請輸入任務名稱'); return; }
-  if(!totalPerWeek || totalPerWeek < 1){ alert('請輸入有效的總次數'); return; }
-  if(!reward || reward < 0){ alert('請輸入正確的獎勵金額'); return; }
-  const maxId = DATA.tasks.reduce((max, t) => t.id > max ? t.id : max, 0);
+  const total = parseInt(document.getElementById('taskTotal').value);
+  if(isNaN(total) || total<1){ alert('次數需為大於0的數字'); return; }
+  const reward = parseInt(document.getElementById('taskReward').value);
+  if(isNaN(reward) || reward < 0){ alert('獎勵金額需為非負數'); return; }
+  const color = document.getElementById('taskColor').value || '#ffd6e8';
+
+  // 新ID
+  let newId = 1;
+  if(DATA.tasks.length > 0) newId = Math.max(...DATA.tasks.map(x=>x.id)) + 1;
+
   DATA.tasks.push({
-    id: maxId + 1,
+    id: newId,
     name,
-    totalPerWeek,
-    reward,
+    totalPerWeek: total,
+    unitReward: reward,
     color,
     records: {}
   });
   saveData();
-  renderBoard();
+  renderAll();
+
+  // 清空輸入框
   document.getElementById('taskName').value = '';
-  document.getElementById('taskTotal').value = 7;
-  document.getElementById('taskReward').value = 10;
+  document.getElementById('taskTotal').value = '7';
+  document.getElementById('taskReward').value = '10';
   document.getElementById('taskColor').value = '#ffd6e8';
-}
-
-/* 更新獎勳金 */
-document.getElementById('weeklyRewardInput').addEventListener('change', e => {
-  const val = Number(e.target.value);
-  if(val >= 0){
-    DATA.meta.weeklyReward = val;
-    saveData();
-  }
 });
 
-/* 匯出匯入 */
-document.getElementById('exportBtn').addEventListener('click', exportBackup);
-document.getElementById('importBtn').addEventListener('click', () => {
-  document.getElementById('importFile').click();
-});
-document.getElementById('importFile').addEventListener('change', e => {
-  if(e.target.files.length > 0){
-    importBackupFile(e.target.files[0]);
+/* 完成一次（只增加次數與紀錄，但不加錢，錢等週結算） */
+document.getElementById('completeOneBtn').addEventListener('click', ()=>{
+  if(currentOpenTaskId === null) return;
+  const t = DATA.tasks.find(x=>x.id===currentOpenTaskId);
+  if(!t) return;
+  const now = getTaiwanNow();
+  const week = getWeekNumberFromDate(now);
+  if(!t.records) t.records = {};
+  if(!t.records[week]) t.records[week] = {count:0, logs:[]};
+  const rec = t.records[week];
+  if(rec.count >= t.totalPerWeek){
+    alert('本週次數已達上限');
+    return;
   }
+  const note = noteInput.value.trim();
+  rec.count++;
+  rec.logs.push({ time: now.toLocaleString('zh-TW'), note });
+  saveData();
+  openDetail(t.id);
+  renderAll();
 });
 
-/* 按鈕事件 */
-document.getElementById('addTaskBtn').addEventListener('click', addTask);
-document.getElementById('closeDetailBtn').addEventListener('click', closeDetail);
-document.getElementById('completeOneBtn').addEventListener('click', completeOne);
+/* 刪除任務 */
+document.getElementById('deleteTaskBtn').addEventListener('click', ()=>{
+  if(currentOpenTaskId === null) return;
+  if(!confirm('確定要刪除此任務嗎？該任務所有紀錄也會被刪除。')) return;
+  DATA.tasks = DATA.tasks.filter(x=>x.id !== currentOpenTaskId);
+  saveData();
+  detail.style.display = 'none';
+  currentOpenTaskId = null;
+  renderAll();
+});
 
-/* html escape 避免XSS */
-function escapeHtml(text){
-  return text.replace(/[&<>"']/g, m => ({
-    '&':'&amp;',
-    '<':'&lt;',
-    '>':'&gt;',
-    '"':'&quot;',
-    "'":'&#39;'
-  })[m]);
-}
-
-/* render 歷史紀錄 */
-function renderHistory(){
-  const historyList = document.getElementById('historyList');
-  historyList.innerHTML = '';
-  // 依週數倒序
-  const weeks = [];
-  for(let k in DATA.meta){
-    if(k.startsWith('history_')){
-      const w = parseInt(k.split('_')[1]);
-      weeks.push(w);
-    }
+/* 顯示完成紀錄 */
+function renderLogs(logs){
+  logsBox.innerHTML = '';
+  if(logs.length === 0){
+    logsBox.innerHTML = '<p style="color:#aaa;">尚無完成紀錄</p>';
+    return;
   }
-  weeks.sort((a,b)=>b-a);
-  weeks.forEach(w=>{
-    const snap = DATA.meta['history_'+w];
-    if(!snap) return;
+  logs.forEach(l=>{
     const div = document.createElement('div');
-    div.className = 'history-week';
-    div.innerHTML = `<strong>第${w}週 (${snap.range})</strong>`;
-    // 展開所有任務完成狀況
-    const ul = document.createElement('ul');
-    snap.tasks.forEach(t=>{
-      const li = document.createElement('li');
-      li.textContent = `${t.name}: ${t.done} / ${t.total} 次`;
-      ul.appendChild(li);
-    });
-    div.appendChild(ul);
-    historyList.appendChild(div);
+    div.className = 'log-item';
+    div.textContent = `${l.time} ${l.note ? '｜'+l.note : ''}`;
+    logsBox.appendChild(div);
   });
 }
 
-/* 啟動 */
-init();
+/* 歷史紀錄 */
+function renderHistory(){
+  const container = document.getElementById('historyList');
+  container.innerHTML = '';
+  const historyWeeks = [];
+  for(const key in DATA.meta){
+    if(key.startsWith('history_')){
+      const w = parseInt(key.split('_')[1]);
+      if(!isNaN(w)) historyWeeks.push(w);
+    }
+  }
+  historyWeeks.sort((a,b)=>b-a);
+  historyWeeks.forEach(w=>{
+    const h = DATA.meta['history_'+w];
+    if(!h) return;
+    const div = document.createElement('div');
+    div.className = 'history-week';
+    div.innerHTML = `<strong>第${w}週 (${h.range})</strong><br/>` +
+      h.tasks.map(t=>`${escapeHtml(t.name)}：${t.done} / ${t.total}`).join('，');
+    container.appendChild(div);
+  });
+}
+
+/* 幫助函式：HTML escape */
+function escapeHtml(text){
+  if(!text) return '';
+  return text.replace(/[&<>"']/g, function(m){
+    switch(m){
+      case '&': return '&amp;';
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '"': return '&quot;';
+      case "'": return '&#39;';
+      default: return m;
+    }
+  });
+}
+
+/* 每週獎勵金設定 */
+document.getElementById('weeklyRewardInput').addEventListener('change', e=>{
+  let v = parseInt(e.target.value);
+  if(isNaN(v) || v < 0) v = 500;
+  DATA.meta.weeklyReward = v;
+  saveData();
+});
+
+/* 匯出匯入按鈕 */
+document.getElementById('exportBtn').addEventListener('click', exportBackup);
+document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', e=>{
+  if(e.target.files.length>0){
+    importBackupFile(e.target.files[0]);
+    e.target.value = '';
+  }
+});
+
+/* 頁面載入 */
+window.addEventListener('load', init);
 </script>
 </body>
 </html>
-
 
 
 
