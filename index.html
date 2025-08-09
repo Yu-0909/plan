@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>平野のTo-do（粉嫩版）</title>
+  <title>To-do</title>
   <style>
     /* 字體：若你 host 的辰宇落雁體檔案正確，會套用；否則會 fallback */
     @font-face {
@@ -91,7 +91,7 @@
 </head>
 <body>
   <header>
-    <h1>平野のTo-do</h1>
+    <h1>To-do</h1>
   </header>
 
   <div class="topbar">
@@ -103,7 +103,7 @@
       <div class="badge">第 <span id="weekNo">--</span> 週</div>
       <div class="badge">連勝：<span id="streak">0</span> 週</div>
       <div class="badge">完成週數：<span id="doneWeeks">0</span></div>
-      <div class="badge">獎勳金：$<span id="money">0</span></div>
+      <div class="badge">獎勵金：$<span id="money">0</span></div>
     </div>
   </div>
 
@@ -114,7 +114,7 @@
     <input id="taskColor" type="color" value="#ffd6e8" />
     <button id="addTaskBtn" class="primary">新增任務</button>
     <input id="weeklyRewardInput" type="number" value="500" style="width:110px" />
-    <span class="small">每週完成獎勳金</span>
+    <span class="small">每週完成獎勵金</span>
     <button id="exportBtn" class="ghost">匯出備份</button>
     <input id="importFile" type="file" style="display:none" />
     <button id="importBtn" class="ghost">匯入備份</button>
@@ -448,3 +448,4 @@ setInterval(()=>{ processPendingWeeks(); renderAll(); }, 60*1000);
 </script>
 </body>
 </html>
+
