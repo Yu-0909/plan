@@ -33,11 +33,13 @@
     header{ text-align:center; margin-top:18px; }
     h1{ color:var(--accent); margin:6px 0 0; font-size:28px; }
     .topbar{
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
       width:100%; max-width:1100px; display:flex; justify-content:space-between; align-items:center;
       gap:10px; padding:12px 18px; margin-top:10px; font-size:14px;
     }
     .badges{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
     .badge{
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
       background:#fff; padding:6px 10px; border-radius:16px; box-shadow:0 6px 18px rgba(0,0,0,0.06);
       font-size:13px;
     }
@@ -45,16 +47,24 @@
     /* controls */
     .controls{ width:100%; max-width:1100px; display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap; padding:12px; }
     input[type="text"], input[type="number"], input[type="color"]{
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
       padding:8px; border-radius:10px; border:1px solid #efe; outline:none;
       font-size:14px;
     }
-    button{ border:none; border-radius:10px; padding:8px 12px; font-size:14px; cursor:pointer; }
-    button.primary{ background:var(--accent); color:white; box-shadow:0 6px 14px rgba(226,106,154,0.18); }
-    button.ghost{ background:transparent; color:var(--muted); border:1px solid rgba(0,0,0,0.06); }
+    button{ 
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
+      border:none; border-radius:10px; padding:8px 12px; font-size:14px; cursor:pointer; }
+    button.primary{ 
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
+      background:var(--accent); color:white; box-shadow:0 6px 14px rgba(226,106,154,0.18); }
+    button.ghost{ 
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
+      background:transparent; color:var(--muted); border:1px solid rgba(0,0,0,0.06); }
 
     /* board */
     .board{ width:100%; max-width:1100px; display:flex; flex-wrap:wrap; gap:16px; justify-content:center; padding:18px; }
     .card{
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
       width:140px; height:140px; border-radius:999px; display:flex; flex-direction:column; align-items:center; justify-content:center;
       text-align:center; padding:10px; cursor:pointer; box-shadow:0 8px 22px rgba(0,0,0,0.08); transition:transform .15s;
       position:relative;
@@ -66,6 +76,7 @@
 
     /* detail modal (白色方匡) */
     .detail{
+      font-family: "辰宇落雁體", "Noto Sans TC", sans-serif;
       position:fixed; left:50%; top:14%; transform:translateX(-50%); width:360px; max-width:92%;
       background:#fff; border-radius:14px; box-shadow:0 18px 48px rgba(0,0,0,0.22); display:none; z-index:999;
       padding:16px;
@@ -92,7 +103,7 @@
 </head>
 <body>
   <header>
-    <h1>平野のTo-do</h1>
+    <h1>To-do</h1>
   </header>
 
   <div class="topbar">
@@ -104,7 +115,7 @@
       <div class="badge">第 <span id="weekNo">--</span> 週</div>
       <div class="badge">連勝：<span id="streak">0</span> 週</div>
       <div class="badge">完成週數：<span id="doneWeeks">0</span></div>
-      <div class="badge">獎勳金：$<span id="money">0</span></div>
+      <div class="badge">獎勵金：$<span id="money">0</span></div>
     </div>
   </div>
 
@@ -115,7 +126,7 @@
     <input id="taskColor" type="color" value="#ffd6e8" />
     <button id="addTaskBtn" class="primary">新增任務</button>
     <input id="weeklyRewardInput" type="number" value="500" style="width:110px" />
-    <span class="small">每週完成獎勳金</span>
+    <span class="small">每週完成獎勵金</span>
     <button id="exportBtn" class="ghost">匯出備份</button>
     <input id="importFile" type="file" style="display:none" />
     <button id="importBtn" class="ghost">匯入備份</button>
@@ -485,6 +496,7 @@ init();
 </script>
 </body>
 </html>
+
 
 
 
