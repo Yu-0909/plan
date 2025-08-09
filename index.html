@@ -1,335 +1,485 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>平野のTo-do</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>平野のTo-do（每週）</title>
   <style>
-    @font-face {
-      font-family: '辰宇落雁體';
-      src: url('https://raw.githubusercontent.com/Yu-0909/TSUKISHIMA/main/ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
+    /* ----------------- 粉嫩風樣式（簡單） ----------------- */
+    :root{
+      --bg1:#fff0f5;
+      --card:#fff6fc;
+      --accent:#d86b9a;
+      --muted:#7a0b4a;
     }
-
-    body {
-      font-family: "辰宇落雁體", sans-serif;
-      background: #fff4f7;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    body{
+      margin:0; font-family: 'Arial','Noto Sans TC',sans-serif;
+      background:linear-gradient(135deg,var(--bg1),#e8f6ff);
+      color:#333;
+      display:flex; flex-direction:column; align-items:center; min-height:100vh;
     }
-
-    h1 {
-      text-align: center;
-      color: #c25f91;
-      margin-top: 20px;
+    h1{ margin:22px 0 6px; color:var(--accent); font-size:28px; }
+    .topbar{ width:100%; max-width:1100px; display:flex; justify-content:space-between; align-items:center;
+      padding:8px 16px; box-sizing:border-box; font-size:14px; color:#555;
     }
-
-    #info {
-      margin: 10px 0;
-      font-weight: bold;
-      color: #b94a7e;
+    .badges{ display:flex; gap:8px; flex-wrap:wrap; }
+    .badge{ background:#fff; padding:6px 10px; border-radius:14px; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
+    .controls{ margin:12px 0; display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:center;}
+    input[type="text"], input[type="number"]{ padding:6px 8px; border-radius:8px; border:1px solid #ddd; }
+    button{ background:var(--accent); color:white; border:none; padding:8px 12px; border-radius:12px; cursor:pointer;}
+    button.secondary{ background:#ffdfef; color:var(--muted); }
+    .board{ width:100%; max-width:1100px; display:flex; flex-wrap:wrap; gap:18px; justify-content:center; padding:18px; box-sizing:border-box;}
+    .circle{
+      width:140px; height:140px; border-radius:999px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      box-shadow:0 6px 18px rgba(0,0,0,0.08); cursor:pointer; position:relative; transition:transform .15s;
+      text-align:center; padding:8px; box-sizing:border-box;
     }
+    .circle:hover{ transform:scale(1.05); }
+    .circle .title{ font-weight:700; color:var(--muted); font-size:16px; }
+    .circle .prog{ margin-top:8px; color:#444; font-size:14px; }
+    .circle input[type="color"]{ position:absolute; top:8px; right:8px; border:none; width:28px; height:28px; padding:0; border-radius:6px; }
 
-    #task-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 60px;
+    /* 細項白色方匡（Modal-like） */
+    .detail{
+      position:fixed; left:50%; top:15%; transform:translateX(-50%); background:#fff; padding:16px; border-radius:12px; box-shadow:0 8px 28px rgba(0,0,0,0.18);
+      width:320px; max-width:90%; z-index:999; display:none; flex-direction:column;
     }
+    .detail h3{ margin:0 0 8px; color:var(--accent); }
+    .logs{ max-height:220px; overflow:auto; margin-top:8px; border-top:1px dashed #eee; padding-top:8px;}
+    .log-item{ font-size:13px; color:#444; margin-bottom:6px; }
+    .small{ font-size:13px; color:#666; }
 
-    .task-card {
-      width: 120px;
-      height: 120px;
-      border-radius: 60px;
-      background-color: #ffd6e8;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
+    /* 歷史 */
+    .history{ width:100%; max-width:1100px; margin:16px; padding:12px; background:#fff; border-radius:12px; box-shadow:0 4px 14px rgba(0,0,0,0.04); }
+    .history-week{ padding:8px; border-radius:8px; background:#fff6fb; margin-bottom:8px; }
+    .muted{ color:#666; }
 
-    .task-name {
-      font-size: 18px;
-      font-weight: bold;
-      color: #7a0b4a;
-      text-align: center;
-      padding: 0 5px;
-    }
-
-    .task-progress {
-      margin-top: 6px;
-      font-size: 16px;
-      color: #7a0b4a;
-    }
-
-    #detail-box {
-      position: fixed;
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.2);
-      z-index: 100;
-      width: 320px;
-      display: none;
-    }
-
-    .record-entry {
-      font-size: 14px;
-      margin-bottom: 4px;
-      color: #555;
-    }
-
-    #history-container {
-      margin-top: 20px;
-      max-width: 800px;
-      font-size: 14px;
-      color: #444;
-    }
-
-    #new-task-form {
-      margin: 20px;
-      text-align: center;
-    }
-
-    #color-preview {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      vertical-align: middle;
-      margin-left: 8px;
-      border: 1px solid #aaa;
-    }
-
-    .history-week {
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 10px;
-      background: #fff;
-    }
-
-    .history-title {
-      cursor: pointer;
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #c25f91;
+    /* 匯出匯入按鈕排版 */
+    .backup{ margin-top:8px; display:flex; gap:8px; justify-content:center; }
+    @media(max-width:520px){
+      .circle{ width:120px; height:120px; }
     }
   </style>
 </head>
 <body>
-  <h1>To-do</h1>
-  <div id="info"></div>
-  <div id="new-task-form">
-    <input type="text" id="new-task-name" placeholder="任務名稱">
-    <input type="color" id="new-task-color" value="#ffd6e8">
-    <span id="color-preview" style="background-color:#ffd6e8"></span>
-    <input type="number" id="new-task-total" min="1" value="5">
-    <button onclick="addNewTask()">新增任務</button>
-    <button onclick="clearAllTasks()">清空任務</button>
+  <h1>平野のTo-do（每週版）</h1>
+
+  <div class="topbar">
+    <div class="badges">
+      <div class="badge">今天：<span id="today">--</span></div>
+      <div class="badge">時間：<span id="clock">--</span></div>
+    </div>
+
+    <div class="badges">
+      <div class="badge">第 <span id="weekNo">--</span> 週</div>
+      <div class="badge">連勝：<span id="streak">0</span> 週</div>
+      <div class="badge">完成週數：<span id="doneWeeks">0</span></div>
+      <div class="badge">獎勳金：$<span id="money">0</span></div>
+    </div>
   </div>
-  <div id="task-container"></div>
-  <div id="detail-box"></div>
-  <div id="history-container"></div>
 
-  <script>
-    let tasks = JSON.parse(localStorage.getItem("weeklyTasks") || "[]");
+  <!-- 新增任務（含每次獎金） -->
+  <div class="controls">
+    <input id="taskName" type="text" placeholder="任務名稱（例：數學）" />
+    <input id="taskTotal" type="number" min="1" value="7" style="width:80px" />
+    <input id="taskReward" type="number" min="0" value="10" style="width:100px" /> <span class="small">每次$</span>
+    <input id="taskColor" type="color" value="#ffd6e8" />
+    <button id="addTaskBtn">新增任務</button>
 
-    function saveTasks() {
-      localStorage.setItem("weeklyTasks", JSON.stringify(tasks));
-    }
+    <div style="width:12px"></div>
 
-    function getNow() {
-  const nowUTC = new Date();
-  const taiwanTime = new Date  ; // UTC+8
-  const hour = taiwanTime.getHours();
-  const day = taiwanTime.getDay();
-  if (day === 1 && hour < 5) {
-    taiwanTime.setDate(taiwanTime.getDate() - 1);
-  }
-  return taiwanTime;
+    <input id="weeklyRewardInput" type="number" value="500" style="width:120px" />
+    <span class="small">每週完成獎勳金</span>
+
+    <button id="exportBtn" class="secondary">匯出備份</button>
+    <input id="importFile" type="file" style="display:none" />
+    <button id="importBtn" class="secondary">匯入備份</button>
+  </div>
+
+  <!-- 圓形卡片區 -->
+  <div class="board" id="board"></div>
+
+  <!-- 細項白色方匡 -->
+  <div class="detail" id="detail">
+    <h3 id="detailTitle">任務</h3>
+    <div><span id="detailProg">0 / 0</span></div>
+    <div style="margin-top:8px">
+      <input id="noteInput" type="text" placeholder="填寫本次完成內容（可留空）" style="width:100%; padding:8px; border-radius:8px; border:1px solid #eee" />
+    </div>
+    <div style="display:flex; gap:8px; margin-top:8px;">
+      <button id="completeOneBtn">✅ 完成一次</button>
+      <button id="closeDetailBtn" class="secondary">關閉</button>
+    </div>
+    <div class="logs" id="logs"></div>
+  </div>
+
+  <!-- 歷史 -->
+  <div class="history" id="history">
+    <h3>歷史紀錄（每週）</h3>
+    <div id="historyList"></div>
+  </div>
+
+<script>
+/* ----------------------- 資料結構與初始值 -----------------------
+data = {
+  meta: {
+    startDate: '2025-07-28',    // 週1起始基準
+    weeklyReward: 500,
+    lastProcessedWeek: 0        // 已處理（結算）到哪一週
+  },
+  tasks: [
+    { id, name, color, totalPerWeek, unitReward,
+      records: { "weekNo": { count:int, logs:[{time,note}] } , ... } }
+  ],
+  stats: { money, weeksDone, streak }
+}
+保存 key: 'hirano_weekly_v1'
+-------------------------------------------------------------*/
+
+// 常數：以 2025-07-28 當週一為第 1 週（00:00 台北時間）
+const STORAGE_KEY = 'hirano_weekly_v1';
+const BASE_WEEK_START = '2025-07-28'; // YYYY-MM-DD
+const MS_PER_DAY = 24*60*60*1000;
+const MS_PER_WEEK = 7*MS_PER_DAY;
+
+/* 取得台灣現在時間（可靠）：將本地時間轉成 UTC 再加 +8 */
+function getTaiwanNow(){
+  const local = new Date();
+  const utc = local.getTime() + (local.getTimezoneOffset() * 60000);
+  return new Date(utc + 8*3600000);
 }
 
-    function calculateCurrentWeek(date) {
-      const start = new Date("2025-07-28T05:00:00+08:00");
-      const diff = date - start;
-      const oneWeek = 7 * 24 * 60 * 60 * 1000;
-      return Math.floor(diff / oneWeek) + 1;
+/* 取得週數（以 BASE_WEEK_START 的當週為第1週）*/
+function getWeekNumberFromDate(date){
+  const base = new Date(BASE_WEEK_START + 'T00:00:00+08:00');
+  const diff = date.getTime() - base.getTime();
+  if(diff < 0) return 0;
+  return Math.floor(diff / MS_PER_WEEK) + 1;
+}
+
+/* 取得一週的起訖（給顯示用）*/
+function getWeekRange(weekNo){
+  const base = new Date(BASE_WEEK_START + 'T00:00:00+08:00');
+  const start = new Date(base.getTime() + (weekNo-1)*MS_PER_WEEK);
+  const end = new Date(start.getTime() + 6*MS_PER_DAY);
+  function f(d){ return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`; }
+  return `${f(start)} - ${f(end)}`;
+}
+
+/* 讀/存 */
+function loadData(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(raw) return JSON.parse(raw);
+  return {
+    meta: { startDate: BASE_WEEK_START, weeklyReward: 500, lastProcessedWeek: 0 },
+    tasks: [],
+    stats: { money: 0, weeksDone: 0, streak: 0 }
+  };
+}
+function saveData(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+}
+
+/* 匯出備份 */
+function exportBackup(){
+  const blob = new Blob([JSON.stringify(DATA, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `hirano-weekly-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* 匯入備份 */
+function importBackupFile(file){
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const obj = JSON.parse(e.target.result);
+      if(obj && obj.tasks && obj.meta){
+        if(confirm('確認要以備份內容覆蓋目前資料嗎？（不可回復）')){
+          DATA = obj;
+          saveData();
+          init(); alert('匯入完成');
+        }
+      } else alert('備份格式不正確');
+    }catch(err){ alert('讀取檔案失敗：'+err); }
+  };
+  reader.readAsText(file);
+}
+
+/* 處理過去未結算週（即使網頁沒開過）：
+   我們計算「可結算的週」為：
+   lastEligibleWeek = currentWeek - (現在是否尚未到週一 5:00 ? 1 : 0)
+   然後對每個尚未處理的週逐一檢查是否全部完成，並給予 weeklyReward 與每任務累計已得之 unitReward（這部分已在每次完成時即加）
+*/
+function processPendingWeeks(){
+  const taiwanNow = getTaiwanNow();
+  const currentWeek = getWeekNumberFromDate(taiwanNow);
+  // 如果是週一，但未滿 5:00，則目前週還沒結束（前一週才是可結算）
+  const isMondayBefore5 = (taiwanNow.getDay() === 1 && taiwanNow.getHours() < 5);
+  const lastEligibleWeek = currentWeek - (isMondayBefore5 ? 1 : 0);
+
+  let start = DATA.meta.lastProcessedWeek + 1;
+  if(start <= 0) start = 1;
+  for(let w = start; w <= lastEligibleWeek; w++){
+    // 檢查週 w 的任務是否全部達標
+    let allDone = true;
+    for(const t of DATA.tasks){
+      const rec = t.records && t.records[w] ? t.records[w] : {count:0};
+      if((rec.count || 0) < (t.totalPerWeek || 0)){ allDone = false; break; }
     }
-
-    function renderTasks() {
-      const container = document.getElementById("task-container");
-      container.innerHTML = "";
-      const now = getNow();
-      const currentWeek = calculateCurrentWeek(now);
-
-      tasks.forEach(task => {
-        const record = task.records.find(r => r.week === currentWeek) || { count: 0 };
-        const card = document.createElement("div");
-        card.className = "task-card";
-        card.style.backgroundColor = task.color;
-
-        const nameDiv = document.createElement("div");
-        nameDiv.className = "task-name";
-        nameDiv.textContent = task.name;
-        card.appendChild(nameDiv);
-
-        const progress = document.createElement("div");
-        progress.className = "task-progress";
-        progress.textContent = `${record.count} / ${task.totalCount}`;
-        card.appendChild(progress);
-
-        card.addEventListener("click", () => openDetailBox(task));
-        container.appendChild(card);
-      });
+    if(allDone){
+      DATA.stats.money += DATA.meta.weeklyReward; // 每週固定獎勳金
+      DATA.stats.weeksDone += 1;
+      DATA.stats.streak += 1;
+      // 記錄 history
+      DATA.meta['history_'+w] = snapshotWeek(w);
+    } else {
+      DATA.stats.streak = 0;
+      DATA.meta['history_'+w] = snapshotWeek(w);
     }
+    DATA.meta.lastProcessedWeek = w;
+  }
+  saveData();
+}
 
-    function openDetailBox(task) {
-      const box = document.getElementById("detail-box");
-      const now = getNow();
-      const currentWeek = calculateCurrentWeek(now);
-      const record = task.records.find(r => r.week === currentWeek) || { count: 0, logs: [] };
-      const logsHtml = (record.logs || []).map(log => `<div class='record-entry'>${log}</div>`).join("");
+/* 使用週號快照該週狀態（以便歷史顯示） */
+function snapshotWeek(weekNo){
+  const snap = {
+    week: weekNo,
+    range: getWeekRange(weekNo),
+    tasks: DATA.tasks.map(t => {
+      const rec = (t.records && t.records[weekNo]) ? t.records[weekNo] : {count:0, logs:[]};
+      return { id: t.id, name: t.name, total: t.totalPerWeek, done: rec.count || 0, logs: rec.logs || [] };
+    })
+  };
+  return snap;
+}
 
-      box.innerHTML = `
-        <h3>${task.name}</h3>
-        <p>進度：${record.count} / ${task.totalCount}</p>
-        <input type="text" id="log-content" placeholder="內容備註"><br><br>
-        <button onclick="addLog(${task.id})">+1 次</button>
-        <button onclick="deleteTask(${task.id})">刪除任務</button>
-        <div style="margin-top: 10px">${logsHtml}</div>
-        <button onclick="closeDetailBox()">關閉</button>
-      `;
-      box.style.display = "block";
-    }
+/* 基本 UI 與互動 */
+let DATA = loadData();
+const board = document.getElementById('board');
+const detail = document.getElementById('detail');
+const detailTitle = document.getElementById('detailTitle');
+const detailProg = document.getElementById('detailProg');
+const logsBox = document.getElementById('logs');
+const noteInput = document.getElementById('noteInput');
+let currentOpenTaskId = null;
 
-    function addLog(taskId) {
-      const now = getNow();
-      const currentWeek = calculateCurrentWeek(now);
-      const task = tasks.find(t => t.id === taskId);
-      let record = task.records.find(r => r.week === currentWeek);
-      if (!record) {
-        record = { week: currentWeek, count: 0, logs: [] };
-        task.records.push(record);
+/* init 入口 */
+function init(){
+  // 若 meta.weeklyReward 與頁面輸入不一致，先同步
+  document.getElementById('weeklyRewardInput').value = DATA.meta.weeklyReward || 500;
+
+  // 處理可能延後的週結算（即使關機沒開也會在此時做）
+  processPendingWeeks();
+
+  // 渲染
+  renderAll();
+  startClock();
+}
+
+/* 時鐘（用台灣時間） */
+function startClock(){
+  function tick(){
+    const now = getTaiwanNow();
+    document.getElementById('today').textContent = now.toLocaleDateString('zh-TW');
+    document.getElementById('clock').textContent = now.toLocaleTimeString('zh-TW');
+    document.getElementById('weekNo').textContent = getWeekNumberFromDate(now);
+    document.getElementById('money').textContent = DATA.stats.money;
+    document.getElementById('streak').textContent = DATA.stats.streak;
+    document.getElementById('doneWeeks').textContent = DATA.stats.weeksDone;
+  }
+  tick(); setInterval(tick, 1000);
+}
+
+/* 新增任務 */
+document.getElementById('addTaskBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('taskName').value.trim();
+  const total = parseInt(document.getElementById('taskTotal').value,10) || 1;
+  const unitReward = Math.max(0, parseInt(document.getElementById('taskReward').value,10) || 0);
+  const color = document.getElementById('taskColor').value || '#ffd6e8';
+  if(!name) { alert('請輸入任務名稱'); return; }
+  const id = Date.now() + Math.floor(Math.random()*1000);
+  DATA.tasks.push({ id, name, color, totalPerWeek: total, unitReward, records: {} });
+  saveData(); renderAll();
+  document.getElementById('taskName').value=''; document.getElementById('taskTotal').value='1';
+});
+
+/* 匯出匯入 */
+document.getElementById('exportBtn').addEventListener('click', exportBackup);
+document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', (e)=>{ if(e.target.files && e.target.files[0]) importBackupFile(e.target.files[0]); });
+
+/* 更新每週固定獎勵設定（同步到 DATA.meta） */
+document.getElementById('weeklyRewardInput').addEventListener('change', (e)=>{
+  DATA.meta.weeklyReward = Math.max(0, parseInt(e.target.value,10) || 0);
+  saveData();
+});
+
+/* 渲染整個看板 */
+function renderAll(){
+  renderBoard();
+  renderHistory();
+}
+
+/* Board（圓形卡片） */
+function renderBoard(){
+  board.innerHTML = '';
+  const now = getTaiwanNow();
+  const weekNo = getWeekNumberFromDate(now);
+  DATA.tasks.forEach(task=>{
+    const rec = (task.records && task.records[weekNo]) ? task.records[weekNo] : {count:0, logs:[]};
+    const div = document.createElement('div');
+    div.className = 'circle';
+    div.style.background = task.color;
+    div.innerHTML = `
+      <input type="color" value="${task.color}" onchange="changeColor(${task.id}, this.value)" />
+      <div class="title">${escapeHtml(task.name)}</div>
+      <div class="prog">${(rec.count||0)} / ${task.totalPerWeek}</div>
+    `;
+    div.addEventListener('click', ()=>openDetail(task.id));
+    board.appendChild(div);
+  });
+}
+
+/* 改顏色（直接在資料修改） */
+function changeColor(id, color){
+  const t = DATA.tasks.find(x=>x.id===id);
+  if(!t) return;
+  t.color = color; saveData(); renderAll();
+}
+
+/* 開啟細項白方匡 */
+function openDetail(taskId){
+  const task = DATA.tasks.find(t=>t.id===taskId);
+  if(!task) return;
+  currentOpenTaskId = taskId;
+  const now = getTaiwanNow(); const week = getWeekNumberFromDate(now);
+  const rec = (task.records && task.records[week]) ? task.records[week] : {count:0, logs:[]};
+  detailTitle.textContent = task.name;
+  detailProg.textContent = `${rec.count||0} / ${task.totalPerWeek}`;
+  noteInput.value = '';
+  logsBox.innerHTML = '';
+  (rec.logs || []).slice().reverse().forEach(l=>{
+    const div = document.createElement('div'); div.className='log-item';
+    div.innerHTML = `<div class="muted">${l.time}</div><div>${escapeHtml(l.note)}</div>`;
+    logsBox.appendChild(div);
+  });
+  detail.style.display = 'flex';
+}
+
+/* 關閉細項 */
+document.getElementById('closeDetailBtn').addEventListener('click', ()=>{ detail.style.display='none'; currentOpenTaskId = null; });
+
+/* 完成一次：會加 unitReward 並新增 log */
+document.getElementById('completeOneBtn').addEventListener('click', ()=>{
+  const task = DATA.tasks.find(t=>t.id===currentOpenTaskId);
+  if(!task) return;
+  const now = getTaiwanNow(); const week = getWeekNumberFromDate(now);
+  if(!task.records) task.records = {};
+  if(!task.records[week]) task.records[week] = {count:0, logs:[]};
+  const rec = task.records[week];
+  if(rec.count >= task.totalPerWeek){ alert('本週次數已達上限'); return; }
+  const note = document.getElementById('noteInput').value.trim();
+  rec.count += 1;
+  rec.logs.push({ time: now.toLocaleString('zh-TW'), note });
+  // 每次完成就直接把該單位獎金加到錢包
+  DATA.stats.money += (task.unitReward || 0);
+  saveData();
+  // 開啟後重新 render
+  openDetail(task.id);
+  renderAll();
+});
+
+/* 刪除任務 */
+function deleteTask(id){
+  if(!confirm('確定刪除此任務？該任務歷史也會移除')) return;
+  DATA.tasks = DATA.tasks.filter(t=>t.id!==id);
+  saveData(); renderAll(); detail.style.display='none';
+}
+
+/* 檢查並在必要時（每次 render）執行本週完成檢查（防止漏掉）*/
+function checkAndAwardWeeklyIfComplete(weekToCheck){
+  // 只在 weekToCheck> lastProcessedWeek 時才 award（避免重複）
+  if(weekToCheck <= (DATA.meta.lastProcessedWeek || 0)) return;
+  // 確認該週每個任務是否達標
+  const allDone = DATA.tasks.length>0 && DATA.tasks.every(t=>{
+    const rec = (t.records && t.records[weekToCheck]) ? t.records[weekToCheck] : {count:0};
+    return (rec.count || 0) >= (t.totalPerWeek || 0);
+  });
+  // 若達標則獎勵 weeklyReward 並記錄 snapshot
+  if(allDone){
+    DATA.stats.money += (DATA.meta.weeklyReward || 0);
+    DATA.stats.weeksDone = (DATA.stats.weeksDone || 0) + 1;
+    DATA.stats.streak = (DATA.stats.streak || 0) + 1;
+  } else {
+    DATA.stats.streak = 0;
+  }
+  DATA.meta['history_'+weekToCheck] = snapshotWeek(weekToCheck);
+  DATA.meta.lastProcessedWeek = weekToCheck;
+  saveData();
+}
+
+/* 每次 render 時，也嘗試處理到最新可處理的週（上面 processPendingWeeks 會先跑，但加一層保險） */
+function renderHistory(){
+  const list = document.getElementById('historyList'); list.innerHTML = '';
+  // 找出已處理週（meta.lastProcessedWeek）
+  const last = DATA.meta.lastProcessedWeek || 0;
+  // 依序顯示已處理週的歷史快照（若有）
+  for(let w = last; w >= 1; w--){
+    const snap = DATA.meta['history_'+w];
+    if(!snap) continue;
+    const div = document.createElement('div'); div.className='history-week';
+    let html = `<div style="font-weight:700">第 ${snap.week} 週（${snap.range}）</div>`;
+    snap.tasks.forEach(t=>{
+      html += `<div style="margin-left:8px">${escapeHtml(t.name)}：${t.done}/${t.total}`;
+      if((t.logs || []).length>0){
+        html += `<ul>`;
+        t.logs.forEach(l=> html += `<li style="font-size:13px">${escapeHtml(l.time)} - ${escapeHtml(l.note)}</li>`);
+        html += `</ul>`;
       }
-      const content = document.getElementById("log-content").value.trim();
-      record.count++;
-      const log = `${now.toLocaleString()}：完成${content ? ` - ${content}` : ""}`;
-      record.logs.push(log);
-      saveTasks();
-      renderTasks();
-      openDetailBox(task);
-    }
-
-    function deleteTask(taskId) {
-      tasks = tasks.filter(t => t.id !== taskId);
-      saveTasks();
-      closeDetailBox();
-      renderTasks();
-      renderHistory();
-    }
-
-    function clearAllTasks() {
-      tasks = [];
-      saveTasks();
-      renderTasks();
-      renderHistory();
-    }
-
-    function closeDetailBox() {
-      document.getElementById("detail-box").style.display = "none";
-    }
-
-    function renderInfo() {
-      const now = getNow();
-      const week = calculateCurrentWeek(now);
-      document.getElementById("info").textContent = `目前是第 ${week} 週（${now.toLocaleString()}）`;
-    }
-
-    function renderHistory() {
-      const container = document.getElementById("history-container");
-      container.innerHTML = "<h3>歷史紀錄</h3>";
-      const weekMap = {};
-
-      tasks.forEach(task => {
-        task.records.forEach(record => {
-          if (!weekMap[record.week]) weekMap[record.week] = [];
-          weekMap[record.week].push({ name: task.name, ...record });
-        });
-      });
-
-      const weeks = Object.keys(weekMap).sort((a,b) => b - a);
-      weeks.forEach(w => {
-        const startDate = new Date("2025-07-28T05:00:00+08:00");
-        startDate.setDate(startDate.getDate() + (w - 1) * 7);
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + 6);
-
-        const weekDiv = document.createElement("div");
-        weekDiv.className = "history-week";
-
-        const title = document.createElement("div");
-        title.className = "history-title";
-        title.textContent = `第 ${w} 週（${startDate.toLocaleDateString()} ~ ${endDate.toLocaleDateString()}）`;
-        title.onclick = () => {
-          detailDiv.style.display = detailDiv.style.display === "none" ? "block" : "none";
-        };
-
-        const detailDiv = document.createElement("div");
-        detailDiv.style.display = "none";
-        weekMap[w].forEach(r => {
-          const logList = (r.logs || []).map(l => `<li>${l}</li>`).join("");
-          detailDiv.innerHTML += `<div>${r.name}：${r.count} 次<ul>${logList}</ul></div>`;
-        });
-
-        weekDiv.appendChild(title);
-        weekDiv.appendChild(detailDiv);
-        container.appendChild(weekDiv);
-      });
-    }
-
-    function addNewTask() {
-      const name = document.getElementById("new-task-name").value.trim();
-      const color = document.getElementById("new-task-color").value;
-      const totalCount = parseInt(document.getElementById("new-task-total").value);
-      if (!name || !totalCount) return;
-      const newTask = {
-        id: Date.now(),
-        name,
-        color,
-        totalCount,
-        records: []
-      };
-      tasks.push(newTask);
-      saveTasks();
-      renderTasks();
-      document.getElementById("new-task-name").value = "";
-    }
-
-    document.getElementById("new-task-color").addEventListener("input", e => {
-      document.getElementById("color-preview").style.backgroundColor = e.target.value;
+      html += `</div>`;
     });
+    div.innerHTML = html;
+    list.appendChild(div);
+  }
+  // 同時更新頁上統計
+  document.getElementById('money').textContent = DATA.stats.money || 0;
+  document.getElementById('streak').textContent = DATA.stats.streak || 0;
+  document.getElementById('doneWeeks').textContent = DATA.stats.weeksDone || 0;
+}
 
-    function init() {
-      renderTasks();
-      renderInfo();
-      renderHistory();
-    }
+/* 安全字串轉義（避免 html 注入） */
+function escapeHtml(s){ if(!s) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 
-    init();
-  </script>
+/* 每次載入時，先處理 pending weeks，接著 render */
+init();
+
+/* 在頁面任何時間（每分鐘）再次檢查是否有新的「可處理週」產生（例如跨到週一 5:00） */
+setInterval(()=>{ processPendingWeeks(); renderAll(); }, 60*1000);
+
+/* 對外提供一些工具按鈕：匯出/匯入（已綁） */
+/* 另外綁定新增任務按鈕可以刪掉重複綁定 */
+document.getElementById('exportBtn').addEventListener('click', exportBackup);
+document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', (e)=>{ if(e.target.files && e.target.files[0]) importBackupFile(e.target.files[0]); });
+
+/* 小提示：若你想在載入時自動新增範例任務（只第一次），可在下方加上 */
+if(DATA.tasks.length===0){
+  DATA.tasks.push({
+    id: Date.now(),
+    name: '數學',
+    color: '#ffd6e8',
+    totalPerWeek: 7,
+    unitReward: 10,
+    records: {}
+  });
+  saveData();
+  renderAll();
+}
+</script>
 </body>
 </html>
-
-
-
