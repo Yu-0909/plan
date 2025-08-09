@@ -6,6 +6,16 @@
   <title>To-do</title>
   <style>
     /* 字體：若你 host 的辰宇落雁體檔案正確，會套用；否則會 fallback */
+    /* 先確保全頁面都套用「辰宇落雁體」 */
+html, body, div, span, input, button, h1, h2, h3, p, ul, li {
+  font-family: '辰宇落雁體', 'Noto Sans TC', sans-serif !important;
+}
+
+/* 針對 detail 這個 modal 也強制套用 */
+.detail {
+  font-family: '辰宇落雁體', 'Noto Sans TC', sans-serif !important;
+}
+
     @font-face {
       font-family: '辰宇落雁體';
       src: url('https://raw.githubusercontent.com/Yu-0909/TSUKISHIMA/main/ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
@@ -478,6 +488,7 @@ window.addEventListener('load', init);
 </script>
 </body>
 </html>
+
 
 
 
