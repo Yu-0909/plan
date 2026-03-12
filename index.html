@@ -1,239 +1,190 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 <head>
-<meta charset="utf-8">
-<title>10天段考讀書計畫</title>
+<meta charset="UTF-8">
+<title>段考10天計畫</title>
 
 <style>
-
 body{
-font-family: "Helvetica",sans-serif;
-background: linear-gradient(135deg,#eef2ff,#fdf2f8);
-padding:30px;
-color:#333;
+font-family: "Noto Sans", sans-serif;
+background:#f6f7fb;
+padding:20px;
 }
 
 h1{
 text-align:center;
-margin-bottom:30px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,0.08);
 }
 
 table{
-border-collapse:collapse;
 width:100%;
-background:white;
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 5px 20px rgba(0,0,0,0.08);
-margin-bottom:40px;
+border-collapse:collapse;
+margin-top:20px;
 }
 
-th,td{
-padding:12px;
-text-align:center;
+td,th{
+padding:10px;
 border-bottom:1px solid #eee;
 }
 
 th{
-background:#6366f1;
-color:white;
+background:#f2f4ff;
 }
 
-.weekend th{
-background:#f97316;
-}
-
-.competition{
-background:#fff7ed;
-}
-
-input[type="checkbox"]{
-transform:scale(1.3);
-cursor:pointer;
-}
-
-.progress-container{
+.progress{
 width:100%;
-background:#e5e7eb;
-border-radius:20px;
-margin-bottom:30px;
-overflow:hidden;
+background:#eee;
+border-radius:10px;
+margin-top:10px;
 }
 
-.progress-bar{
-height:20px;
+.bar{
+height:15px;
 width:0%;
-background:linear-gradient(90deg,#6366f1,#ec4899);
-transition:0.3s;
+background:#7c8cff;
+border-radius:10px;
 }
 
-.progress-text{
-text-align:center;
-margin-top:8px;
+.day{
 font-weight:bold;
 }
 
 </style>
 </head>
 
-
 <body>
 
-<h1>📚 段考10天讀書計畫</h1>
+<div class="container">
 
-<div class="progress-container">
-<div class="progress-bar" id="progressBar"></div>
+<h1>📚 段考10天計畫</h1>
+
+總進度
+<div class="progress">
+<div class="bar" id="bar"></div>
 </div>
-
-<div class="progress-text">
-完成度：<span id="progressText">0%</span>
-</div>
-
-
-<h2>平日</h2>
 
 <table>
 
 <tr>
 <th>Day</th>
-<th>日文早上</th>
-<th>理科</th>
-<th>數學</th>
-<th>英文</th>
-<th>國文</th>
-<th>完成</th>
-</tr>
-
-<tr>
-<td>Day1 週五</td>
-<td><input type="checkbox"></td>
-<td><input type="checkbox"> 物理5-1</td>
-<td><input type="checkbox"> 3-1前</td>
-<td><input type="checkbox"> L1</td>
-<td><input type="checkbox"> L6</td>
-<td><input type="checkbox"></td>
-</tr>
-
-<tr>
-<td>Day4 週一</td>
-<td><input type="checkbox"></td>
-<td><input type="checkbox"> 化學9-1</td>
-<td><input type="checkbox"> 3-1後</td>
-<td><input type="checkbox"> L2</td>
-<td><input type="checkbox"> L7</td>
-<td><input type="checkbox"></td>
-</tr>
-
-<tr>
-<td>Day5 週二</td>
-<td><input type="checkbox"></td>
-<td><input type="checkbox"> 物理5-1題</td>
-<td><input type="checkbox"> 3-2前</td>
-<td><input type="checkbox"> 文法3</td>
-<td><input type="checkbox"> 字詞</td>
-<td><input type="checkbox"></td>
-</tr>
-
-<tr>
-<td>Day6 週三</td>
-<td><input type="checkbox"></td>
-<td><input type="checkbox"> 物理5-2</td>
-<td><input type="checkbox"> 3-2後</td>
-<td><input type="checkbox"> 文法4</td>
-<td><input type="checkbox"> 默寫</td>
-<td><input type="checkbox"></td>
-</tr>
-
-<tr>
-<td>Day7 週四</td>
-<td><input type="checkbox"></td>
-<td><input type="checkbox"> 化學9-1題</td>
-<td><input type="checkbox"> L3</td>
-<td><input type="checkbox"> 校單</td>
-<td><input type="checkbox"> 閱讀</td>
-<td><input type="checkbox"></td>
-</tr>
-
-</table>
-
-
-<h2>假日 / 比賽</h2>
-
-<table class="weekend">
-
-<tr>
-<th>Day</th>
-<th>日文</th>
 <th>任務</th>
-<th>完成</th>
-</tr>
-
-<tr class="competition">
-<td>Day2 週六（比賽）</td>
-<td><input type="checkbox"> 單字</td>
-<td><input type="checkbox"> 英文30分</td>
-<td><input type="checkbox"></td>
-</tr>
-
-<tr class="competition">
-<td>Day3 週日（比賽）</td>
-<td><input type="checkbox"> 單字</td>
-<td><input type="checkbox"> 英文閱讀</td>
-<td><input type="checkbox"></td>
 </tr>
 
 <tr>
-<td>Day8</td>
-<td><input type="checkbox"></td>
-<td><input type="checkbox"> 物理6-1 + 數學4-2</td>
-<td><input type="checkbox"></td>
+<td class="day">Day1</td>
+<td>
+<input type="checkbox"> 日文文法1-2<br>
+<input type="checkbox"> 日文單字20<br>
+<input type="checkbox"> 英文單字 4-11～13
+</td>
 </tr>
 
 <tr>
-<td>Day9</td>
-<td><input type="checkbox"></td>
-<td><input type="checkbox"> 物理6-2 + 數學4-3</td>
-<td><input type="checkbox"></td>
+<td class="day">Day2（比賽）</td>
+<td>
+<input type="checkbox"> 日文文法3<br>
+<input type="checkbox"> 英文單字 4-14
+</td>
 </tr>
 
 <tr>
-<td>Day10</td>
-<td><input type="checkbox"></td>
-<td><input type="checkbox"> 全科複習</td>
-<td><input type="checkbox"></td>
+<td class="day">Day3（比賽）</td>
+<td>
+<input type="checkbox"> 日文文法4<br>
+<input type="checkbox"> 英文單字 4-15
+</td>
+</tr>
+
+<tr>
+<td class="day">Day4</td>
+<td>
+<input type="checkbox"> 日文文法5-6<br>
+<input type="checkbox"> 日文單字20<br>
+<input type="checkbox"> 英文單字 4-16～17
+</td>
+</tr>
+
+<tr>
+<td class="day">Day5</td>
+<td>
+<input type="checkbox"> 日文文法7<br>
+<input type="checkbox"> 英文單字 4-18
+</td>
+</tr>
+
+<tr>
+<td class="day">Day6</td>
+<td>
+<input type="checkbox"> 日文文法8-9<br>
+<input type="checkbox"> 英文單字 4-19
+</td>
+</tr>
+
+<tr>
+<td class="day">Day7</td>
+<td>
+<input type="checkbox"> 日文文法10<br>
+<input type="checkbox"> 英文單字 4-20
+</td>
+</tr>
+
+<tr>
+<td class="day">Day8</td>
+<td>
+<input type="checkbox"> 日文文法11-12<br>
+<input type="checkbox"> 英文單字 4-21
+</td>
+</tr>
+
+<tr>
+<td class="day">Day9</td>
+<td>
+<input type="checkbox"> 日文複習<br>
+<input type="checkbox"> 英文單字 5-1
+</td>
+</tr>
+
+<tr>
+<td class="day">Day10</td>
+<td>
+<input type="checkbox"> N4總複習<br>
+<input type="checkbox"> 英文單字 5-2
+</td>
 </tr>
 
 </table>
 
+</div>
 
 <script>
 
 const checkboxes = document.querySelectorAll("input[type='checkbox']");
-const progressBar = document.getElementById("progressBar");
-const progressText = document.getElementById("progressText");
+const bar = document.getElementById("bar");
 
-function updateProgress(){
+checkboxes.forEach(box=>{
+box.addEventListener("change",update);
+});
 
+function update(){
+let checked = document.querySelectorAll("input[type='checkbox']:checked").length;
 let total = checkboxes.length;
-let checked = 0;
 
-checkboxes.forEach(cb=>{
-if(cb.checked) checked++;
-});
+let percent = (checked/total)*100;
 
-let percent = Math.round((checked/total)*100);
-
-progressBar.style.width = percent + "%";
-progressText.innerText = percent + "%";
-
+bar.style.width = percent + "%";
 }
-
-checkboxes.forEach(cb=>{
-cb.addEventListener("change",updateProgress);
-});
 
 </script>
 
-
+</body>
+</html>
 </body>
 </html>
