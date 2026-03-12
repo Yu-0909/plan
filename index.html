@@ -1,213 +1,239 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌸 我的可愛學習集點卡 🌸</title>
-    <style>
-        /* 可愛風配色與字體 */
-        :root {
-            --main-pink: #ffafbd;
-            --soft-yellow: #ffedbc;
-            --text-brown: #6d4c41;
-            --bg-color: #fff5f7;
-        }
+<meta charset="utf-8">
+<title>10天段考讀書計畫</title>
 
-        body {
-            font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(#ffcad4 1px, transparent 1px);
-            background-size: 20px 20px;
-            color: var(--text-brown);
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
+<style>
 
-        .container {
-            max-width: 500px;
-            width: 100%;
-            background: white;
-            padding: 25px;
-            border-radius: 30px;
-            box-shadow: 0 10px 20px rgba(255, 175, 189, 0.3);
-            border: 4px solid var(--main-pink);
-        }
+body{
+font-family: "Helvetica",sans-serif;
+background: linear-gradient(135deg,#eef2ff,#fdf2f8);
+padding:30px;
+color:#333;
+}
 
-        h2 {
-            text-align: center;
-            color: #ff748c;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
+h1{
+text-align:center;
+margin-bottom:30px;
+}
 
-        .category-tag {
-            background: var(--main-pink);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            display: inline-block;
-            margin-top: 15px;
-            margin-bottom: 10px;
-        }
+table{
+border-collapse:collapse;
+width:100%;
+background:white;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 5px 20px rgba(0,0,0,0.08);
+margin-bottom:40px;
+}
 
-        .item-row {
-            display: flex;
-            align-items: center;
-            background: #fff9fa;
-            margin-bottom: 8px;
-            padding: 10px 15px;
-            border-radius: 15px;
-            transition: transform 0.2s;
-        }
+th,td{
+padding:12px;
+text-align:center;
+border-bottom:1px solid #eee;
+}
 
-        .item-row:hover {
-            transform: scale(1.02);
-            background: #ffeef1;
-        }
+th{
+background:#6366f1;
+color:white;
+}
 
-        .item-name {
-            flex: 2;
-            font-size: 15px;
-            font-weight: bold;
-        }
+.weekend th{
+background:#f97316;
+}
 
-        .item-points {
-            flex: 1;
-            font-size: 12px;
-            color: #ffa4b5;
-        }
+.competition{
+background:#fff7ed;
+}
 
-        input[type="number"] {
-            width: 50px;
-            border: 2px solid #ffcad4;
-            border-radius: 10px;
-            padding: 5px;
-            text-align: center;
-            outline: none;
-            color: var(--text-brown);
-        }
+input[type="checkbox"]{
+transform:scale(1.3);
+cursor:pointer;
+}
 
-        input[type="number"]:focus {
-            border-color: #ff748c;
-        }
+.progress-container{
+width:100%;
+background:#e5e7eb;
+border-radius:20px;
+margin-bottom:30px;
+overflow:hidden;
+}
 
-        /* 總分區域 */
-        .result-area {
-            margin-top: 25px;
-            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
-            padding: 20px;
-            border-radius: 20px;
-            color: white;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(255, 175, 189, 0.4);
-        }
+.progress-bar{
+height:20px;
+width:0%;
+background:linear-gradient(90deg,#6366f1,#ec4899);
+transition:0.3s;
+}
 
-        .total-score {
-            font-size: 48px;
-            font-weight: 900;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-        }
+.progress-text{
+text-align:center;
+margin-top:8px;
+font-weight:bold;
+}
 
-        #comment {
-            margin-top: 10px;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        button {
-            width: 100%;
-            background: #ff748c;
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-            box-shadow: 0 4px 0px #d65a70;
-            transition: all 0.1s;
-        }
-
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0px #d65a70;
-        }
-
-        .emoji { font-size: 20px; }
-    </style>
+</style>
 </head>
+
+
 <body>
 
-<div class="container">
-    <h2>✨ 今日學習果實 ✨</h2>
-    
-    <div id="calculator-form">
-        <div class="category-tag">📐 數學特訓</div>
-        <div class="item-row"><span class="item-name">數學講義</span><span class="item-points">50pt</span><input type="number" data-point="50" min="0"></div>
-        <div class="item-row"><span class="item-name">數學習作</span><span class="item-points">20pt</span><input type="number" data-point="20" min="0"></div>
-        <div class="item-row"><span class="item-name">數學課本</span><span class="item-points">15pt</span><input type="number" data-point="15" min="0"></div>
-        <div class="item-row"><span class="item-name">數學哇哇哇</span><span class="item-points">30pt</span><input type="number" data-point="30" min="0"></div>
-        <div class="item-row"><span class="item-name">數學考卷</span><span class="item-points">25pt</span><input type="number" data-point="25" min="0"></div>
+<h1>📚 段考10天讀書計畫</h1>
 
-        <div class="category-tag">📖 國文點滴</div>
-        <div class="item-row"><span class="item-name">國文考卷</span><span class="item-points">70pt</span><input type="number" data-point="70" min="0"></div>
-        <div class="item-row"><span class="item-name">語文演練</span><span class="item-points">20pt</span><input type="number" data-point="20" min="0"></div>
-        <div class="item-row"><span class="item-name">閱讀測驗</span><span class="item-points">10pt</span><input type="number" data-point="10" min="0"></div>
-        <div class="item-row"><span class="item-name">背注釋(10條)</span><span class="item-points">15pt</span><input type="number" data-point="15" min="0"></div>
-
-        <div class="category-tag">🌍 外語超人</div>
-        <div class="item-row"><span class="item-name">日文單字/文法</span><span class="item-points">10/20pt</span><input type="number" data-point="10" min="0" placeholder="單字"></div>
-        <div class="item-row"><span class="item-name">英文單字(10個)</span><span class="item-points">10pt</span><input type="number" data-point="10" min="0"></div>
-        <div class="item-row"><span class="item-name">英文雜誌/課文</span><span class="item-points">25/20pt</span><input type="number" data-point="25" min="0"></div>
-        <div class="item-row"><span class="item-name">單字卷</span><span class="item-points">40pt</span><input type="number" data-point="40" min="0"></div>
-
-        <div class="category-tag">🧪 理化實驗室</div>
-        <div class="item-row"><span class="item-name">物化講義/白本</span><span class="item-points">25pt</span><input type="number" data-point="25" min="0"></div>
-        <div class="item-row"><span class="item-name">筆記整理</span><span class="item-points">20pt</span><input type="number" data-point="20" min="0"></div>
-
-        <div class="category-tag">⏰ 努力時光</div>
-        <div class="item-row"><span class="item-name">唸書 1 小時</span><span class="item-points">10pt</span><input type="number" data-point="10" min="0"></div>
-    </div>
-
-    <button onclick="calculateTotal()">🌸 結算今日成果 🌸</button>
-
-    <div class="result-area">
-        <div style="font-weight: bold; letter-spacing: 2px;">TODAY'S POINTS</div>
-        <div class="total-score" id="totalScore">0</div>
-        <div id="comment">今天也要加油喔！</div>
-    </div>
+<div class="progress-container">
+<div class="progress-bar" id="progressBar"></div>
 </div>
 
-<script>
-function calculateTotal() {
-    let total = 0;
-    const inputs = document.querySelectorAll('input[type="number"]');
-    
-    inputs.forEach(input => {
-        const point = parseInt(input.getAttribute('data-point'));
-        const val = parseInt(input.value) || 0;
-        total += point * val;
-    });
+<div class="progress-text">
+完成度：<span id="progressText">0%</span>
+</div>
 
-    document.getElementById('totalScore').innerText = total;
-    
-    const commentBox = document.getElementById('comment');
-    if (total === 0) {
-        commentBox.innerText = "準備好要開始努力了嗎？ (๑•̀ㅂ•́)و✧";
-    } else if (total < 50) {
-        commentBox.innerText = "進步了一點點，繼續保持！ 🌱";
-    } else if (total < 150) {
-        commentBox.innerText = "好棒！今天的你很有動力喔！ ✨";
-    } else if (total < 300) {
-        commentBox.innerText = "太厲害了！簡直是學習小超人！ 🚀";
-    } else {
-        commentBox.innerText = "膜拜學霸！今天辛苦了，早點休息吧！ 👑";
-    }
+
+<h2>平日</h2>
+
+<table>
+
+<tr>
+<th>Day</th>
+<th>日文早上</th>
+<th>理科</th>
+<th>數學</th>
+<th>英文</th>
+<th>國文</th>
+<th>完成</th>
+</tr>
+
+<tr>
+<td>Day1 週五</td>
+<td><input type="checkbox"></td>
+<td><input type="checkbox"> 物理5-1</td>
+<td><input type="checkbox"> 3-1前</td>
+<td><input type="checkbox"> L1</td>
+<td><input type="checkbox"> L6</td>
+<td><input type="checkbox"></td>
+</tr>
+
+<tr>
+<td>Day4 週一</td>
+<td><input type="checkbox"></td>
+<td><input type="checkbox"> 化學9-1</td>
+<td><input type="checkbox"> 3-1後</td>
+<td><input type="checkbox"> L2</td>
+<td><input type="checkbox"> L7</td>
+<td><input type="checkbox"></td>
+</tr>
+
+<tr>
+<td>Day5 週二</td>
+<td><input type="checkbox"></td>
+<td><input type="checkbox"> 物理5-1題</td>
+<td><input type="checkbox"> 3-2前</td>
+<td><input type="checkbox"> 文法3</td>
+<td><input type="checkbox"> 字詞</td>
+<td><input type="checkbox"></td>
+</tr>
+
+<tr>
+<td>Day6 週三</td>
+<td><input type="checkbox"></td>
+<td><input type="checkbox"> 物理5-2</td>
+<td><input type="checkbox"> 3-2後</td>
+<td><input type="checkbox"> 文法4</td>
+<td><input type="checkbox"> 默寫</td>
+<td><input type="checkbox"></td>
+</tr>
+
+<tr>
+<td>Day7 週四</td>
+<td><input type="checkbox"></td>
+<td><input type="checkbox"> 化學9-1題</td>
+<td><input type="checkbox"> L3</td>
+<td><input type="checkbox"> 校單</td>
+<td><input type="checkbox"> 閱讀</td>
+<td><input type="checkbox"></td>
+</tr>
+
+</table>
+
+
+<h2>假日 / 比賽</h2>
+
+<table class="weekend">
+
+<tr>
+<th>Day</th>
+<th>日文</th>
+<th>任務</th>
+<th>完成</th>
+</tr>
+
+<tr class="competition">
+<td>Day2 週六（比賽）</td>
+<td><input type="checkbox"> 單字</td>
+<td><input type="checkbox"> 英文30分</td>
+<td><input type="checkbox"></td>
+</tr>
+
+<tr class="competition">
+<td>Day3 週日（比賽）</td>
+<td><input type="checkbox"> 單字</td>
+<td><input type="checkbox"> 英文閱讀</td>
+<td><input type="checkbox"></td>
+</tr>
+
+<tr>
+<td>Day8</td>
+<td><input type="checkbox"></td>
+<td><input type="checkbox"> 物理6-1 + 數學4-2</td>
+<td><input type="checkbox"></td>
+</tr>
+
+<tr>
+<td>Day9</td>
+<td><input type="checkbox"></td>
+<td><input type="checkbox"> 物理6-2 + 數學4-3</td>
+<td><input type="checkbox"></td>
+</tr>
+
+<tr>
+<td>Day10</td>
+<td><input type="checkbox"></td>
+<td><input type="checkbox"> 全科複習</td>
+<td><input type="checkbox"></td>
+</tr>
+
+</table>
+
+
+<script>
+
+const checkboxes = document.querySelectorAll("input[type='checkbox']");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+
+function updateProgress(){
+
+let total = checkboxes.length;
+let checked = 0;
+
+checkboxes.forEach(cb=>{
+if(cb.checked) checked++;
+});
+
+let percent = Math.round((checked/total)*100);
+
+progressBar.style.width = percent + "%";
+progressText.innerText = percent + "%";
+
 }
+
+checkboxes.forEach(cb=>{
+cb.addEventListener("change",updateProgress);
+});
+
 </script>
+
 
 </body>
 </html>
