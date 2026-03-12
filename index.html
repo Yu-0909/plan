@@ -1,18 +1,16 @@
+}
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>段考10天計畫</title>
+<title>🌸 段考讀書計畫</title>
 
 <style>
-body{
-font-family: "Noto Sans", sans-serif;
-background:#f6f7fb;
-padding:20px;
-}
 
-h1{
-text-align:center;
+body{
+font-family: "Arial";
+background: linear-gradient(135deg,#ffd6ec,#e4e8ff);
+padding:20px;
 }
 
 .container{
@@ -20,8 +18,26 @@ max-width:900px;
 margin:auto;
 background:white;
 padding:25px;
-border-radius:15px;
-box-shadow:0 5px 20px rgba(0,0,0,0.08);
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+h1{
+text-align:center;
+}
+
+.progress{
+width:100%;
+background:#eee;
+border-radius:10px;
+margin:10px 0;
+}
+
+.bar{
+height:18px;
+width:0%;
+background:#ff8ac9;
+border-radius:10px;
 }
 
 table{
@@ -36,37 +52,29 @@ border-bottom:1px solid #eee;
 }
 
 th{
-background:#f2f4ff;
-}
-
-.progress{
-width:100%;
-background:#eee;
-border-radius:10px;
-margin-top:10px;
-}
-
-.bar{
-height:15px;
-width:0%;
-background:#7c8cff;
-border-radius:10px;
+background:#ffe6f5;
 }
 
 .day{
 font-weight:bold;
 }
 
+label{
+display:block;
+margin:4px 0;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>📚 段考10天計畫</h1>
+<h1>🌸 段考10天讀書計畫</h1>
 
-總進度
+<h3>總進度</h3>
 <div class="progress">
 <div class="bar" id="bar"></div>
 </div>
@@ -81,82 +89,89 @@ font-weight:bold;
 <tr>
 <td class="day">Day1</td>
 <td>
-<input type="checkbox"> 日文文法1-2<br>
-<input type="checkbox"> 日文單字20<br>
-<input type="checkbox"> 英文單字 4-11～13
+<label><input type="checkbox"> 🇯🇵 日文文法1-2</label>
+<label><input type="checkbox"> 🇯🇵 日文單字20</label>
+<label><input type="checkbox"> 🇬🇧 英文單字 4-11～13</label>
+<label><input type="checkbox"> 🔬 物理1</label>
 </td>
 </tr>
 
 <tr>
 <td class="day">Day2（比賽）</td>
 <td>
-<input type="checkbox"> 日文文法3<br>
-<input type="checkbox"> 英文單字 4-14
+<label><input type="checkbox"> 🇯🇵 文法3</label>
+<label><input type="checkbox"> 🇬🇧 英文4-14</label>
 </td>
 </tr>
 
 <tr>
 <td class="day">Day3（比賽）</td>
 <td>
-<input type="checkbox"> 日文文法4<br>
-<input type="checkbox"> 英文單字 4-15
+<label><input type="checkbox"> 🇯🇵 文法4</label>
+<label><input type="checkbox"> 🇬🇧 英文4-15</label>
 </td>
 </tr>
 
 <tr>
 <td class="day">Day4</td>
 <td>
-<input type="checkbox"> 日文文法5-6<br>
-<input type="checkbox"> 日文單字20<br>
-<input type="checkbox"> 英文單字 4-16～17
+<label><input type="checkbox"> 🇯🇵 文法5-6</label>
+<label><input type="checkbox"> 🇬🇧 英文4-16～17</label>
+<label><input type="checkbox"> 🧪 化學1</label>
 </td>
 </tr>
 
 <tr>
 <td class="day">Day5</td>
 <td>
-<input type="checkbox"> 日文文法7<br>
-<input type="checkbox"> 英文單字 4-18
+<label><input type="checkbox"> 🇯🇵 文法7</label>
+<label><input type="checkbox"> 🇬🇧 英文4-18</label>
+<label><input type="checkbox"> 🔬 物理2</label>
 </td>
 </tr>
 
 <tr>
 <td class="day">Day6</td>
 <td>
-<input type="checkbox"> 日文文法8-9<br>
-<input type="checkbox"> 英文單字 4-19
+<label><input type="checkbox"> 🇯🇵 文法8-9</label>
+<label><input type="checkbox"> 🇬🇧 英文4-19</label>
+<label><input type="checkbox"> 🧪 化學2</label>
 </td>
 </tr>
 
 <tr>
 <td class="day">Day7</td>
 <td>
-<input type="checkbox"> 日文文法10<br>
-<input type="checkbox"> 英文單字 4-20
+<label><input type="checkbox"> 🇯🇵 文法10</label>
+<label><input type="checkbox"> 🇬🇧 英文4-20</label>
+<label><input type="checkbox"> 🔬 物理3</label>
 </td>
 </tr>
 
 <tr>
 <td class="day">Day8</td>
 <td>
-<input type="checkbox"> 日文文法11-12<br>
-<input type="checkbox"> 英文單字 4-21
+<label><input type="checkbox"> 🇯🇵 文法11-12</label>
+<label><input type="checkbox"> 🇬🇧 英文4-21</label>
+<label><input type="checkbox"> 🧪 化學3</label>
 </td>
 </tr>
 
 <tr>
 <td class="day">Day9</td>
 <td>
-<input type="checkbox"> 日文複習<br>
-<input type="checkbox"> 英文單字 5-1
+<label><input type="checkbox"> 🇯🇵 日文複習</label>
+<label><input type="checkbox"> 🇬🇧 英文5-1</label>
+<label><input type="checkbox"> 🔬 理科複習</label>
 </td>
 </tr>
 
 <tr>
 <td class="day">Day10</td>
 <td>
-<input type="checkbox"> N4總複習<br>
-<input type="checkbox"> 英文單字 5-2
+<label><input type="checkbox"> 🇯🇵 N4總複習</label>
+<label><input type="checkbox"> 🇬🇧 英文5-2</label>
+<label><input type="checkbox"> 🔬 理科題目</label>
 </td>
 </tr>
 
@@ -166,25 +181,21 @@ font-weight:bold;
 
 <script>
 
-const checkboxes = document.querySelectorAll("input[type='checkbox']");
+const boxes = document.querySelectorAll("input[type='checkbox']");
 const bar = document.getElementById("bar");
 
-checkboxes.forEach(box=>{
-box.addEventListener("change",update);
+boxes.forEach(b=>{
+b.addEventListener("change",update);
 });
 
 function update(){
-let checked = document.querySelectorAll("input[type='checkbox']:checked").length;
-let total = checkboxes.length;
-
+let checked = document.querySelectorAll("input:checked").length;
+let total = boxes.length;
 let percent = (checked/total)*100;
-
-bar.style.width = percent + "%";
+bar.style.width = percent+"%";
 }
 
 </script>
-
 </body>
 </html>
-</body>
-</html>
+:::
