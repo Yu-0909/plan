@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>讀書計畫 - 帳號同步版</title>
+<title>讀書計畫</title>
 
 <style>
-    /* 沿用你最初的視覺風格 */
     body {
         font-family: "Arial", "Microsoft JhengHei", sans-serif;
         background: linear-gradient(135deg, #ffd6ec, #e4e8ff);
@@ -16,21 +15,17 @@
     }
 
     .container {
-        max-width: 900px;
+        max-width: 950px;
         margin: auto;
         background: white;
         padding: 25px;
         border-radius: 20px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        display: none; /* 登入前隱藏 */
+        display: none;
     }
 
-    h1 {
-        text-align: center;
-        color: #333;
-    }
+    h1 { text-align: center; color: #333; }
 
-    /* 登入介面風格同步 */
     #login-overlay {
         position: fixed;
         inset: 0;
@@ -50,123 +45,55 @@
     }
 
     .login-box input {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        width: 200px;
-        margin-bottom: 15px;
-        outline: none;
+        padding: 10px; border: 1px solid #ddd; border-radius: 10px; width: 200px; margin-bottom: 15px; outline: none;
     }
 
-    /* 進度條樣式 - 100% 還原 */
-    .progress-section {
-        margin-bottom: 25px;
-    }
+    .progress-section { margin-bottom: 25px; }
+    .progress { width: 100%; background: #eee; border-radius: 10px; margin: 10px 0; }
+    .bar { height: 18px; width: 0%; background: #ff8ac9; border-radius: 10px; transition: width 0.4s ease; }
 
-    .progress {
-        width: 100%;
-        background: #eee;
-        border-radius: 10px;
-        margin: 10px 0;
-    }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th { background: #ffe6f5; padding: 12px; border-bottom: 1px solid #eee; }
+    .day-row { border-bottom: 1px solid #eee; }
+    .day-info { padding: 15px; font-weight: bold; vertical-align: top; width: 140px; }
+    .task-cell { padding: 15px; }
 
-    .bar {
-        height: 18px;
-        width: 0%;
-        background: #ff8ac9;
-        border-radius: 10px;
-        transition: width 0.4s ease;
-    }
+    label { display: flex; align-items: center; margin: 6px 0; cursor: pointer; }
+    input[type="checkbox"] { margin-right: 10px; accent-color: #ff8ac9; }
+    .editable-text { outline: none; padding: 2px 5px; border-radius: 4px; }
+    .editable-text:focus { background: #fff0f7; }
 
-    /* 表格與卡片設計整合 */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-
-    th {
-        background: #ffe6f5;
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .day-row {
-        border-bottom: 1px solid #eee;
-    }
-
-    .day-info {
-        padding: 15px;
-        font-weight: bold;
-        vertical-align: top;
-        width: 150px;
-    }
-
-    .task-cell {
-        padding: 15px;
-    }
-
-    label {
+    /* 照片顯示區 */
+    .photo-area {
+        margin-top: 15px;
         display: flex;
-        align-items: center;
-        margin: 6px 0;
-        cursor: pointer;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
-    input[type="checkbox"] {
-        margin-right: 10px;
-        accent-color: #ff8ac9;
+    .photo-preview {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 2px solid #ffe6f5;
     }
 
-    .editable-text {
-        outline: none;
-        padding: 2px 5px;
-        border-radius: 4px;
-    }
-
-    .editable-text:focus {
-        background: #fff0f7;
-    }
-
-    /* 日期選擇器樣式微調 */
-    input[type="date"] {
-        border: 1px solid #ffe6f5;
-        font-family: "Arial";
-        padding: 3px;
+    .upload-btn {
+        display: inline-block;
+        padding: 5px 10px;
+        background: #f0f0f0;
         border-radius: 5px;
+        font-size: 11px;
+        cursor: pointer;
         margin-top: 5px;
     }
 
-    /* 按鈕樣式 */
-    .btn {
-        background: #ff8ac9;
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: 0.2s;
-    }
+    .upload-btn:hover { background: #e0e0e0; }
 
-    .btn:hover { background: #ff6eb7; }
-
-    .btn-add-day {
-        display: block;
-        width: 100%;
-        margin-top: 20px;
-        padding: 15px;
-        background: #fdfdfd;
-        color: #ff8ac9;
-        border: 2px dashed #ff8ac9;
-    }
-
-    .user-tag {
-        text-align: right;
-        font-size: 12px;
-        color: #888;
-        margin-bottom: 10px;
-    }
+    .btn { background: #ff8ac9; color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+    .btn-add-day { display: block; width: 100%; margin-top: 20px; padding: 15px; background: #fff; color: #ff8ac9; border: 2px dashed #ff8ac9; }
+    .user-tag { text-align: right; font-size: 12px; color: #888; margin-bottom: 10px; }
 </style>
 </head>
 
@@ -174,40 +101,29 @@
 
 <div id="login-overlay">
     <div class="login-box">
-        <h2 style="color: #ff8ac9;">🌸 讀書計畫登入</h2>
-        <input type="text" id="username-input" placeholder="請輸入您的帳號">
+        <h2 style="color: #ff8ac9;">登入</h2>
+        <input type="text" id="username-input" placeholder="請輸入帳號名稱">
         <br>
         <button class="btn" onclick="login()">進入系統</button>
     </div>
 </div>
 
 <div class="container" id="main-app">
-    <div class="user-tag">
-        當前帳號：<span id="display-user"></span> 
-        | <a href="javascript:location.reload()" style="color:#ff8ac9">切換帳號</a>
-    </div>
-
+    <div class="user-tag">帳號：<span id="display-user"></span> | <a href="javascript:location.reload()" style="color:#ff8ac9">切換帳號</a></div>
     <h1>讀書計畫</h1>
 
     <div class="progress-section">
         <h3 id="progress-percent">總進度 0%</h3>
-        <div class="progress">
-            <div class="bar" id="bar"></div>
-        </div>
+        <div class="progress"><div class="bar" id="bar"></div></div>
     </div>
 
     <table>
         <thead>
-            <tr>
-                <th>日期 / 天數</th>
-                <th>任務內容 (點擊文字可編輯)</th>
-            </tr>
+            <tr><th>日期 / 天數</th><th>計畫與筆記照片</th></tr>
         </thead>
-        <tbody id="plan-list">
-            </tbody>
+        <tbody id="plan-list"></tbody>
     </table>
-
-    <button class="btn btn-add-day" onclick="addDay()">＋ 新增一天的計畫日期</button>
+    <button class="btn btn-add-day" onclick="addDay()">＋ 新增日期計畫</button>
 </div>
 
 <script>
@@ -216,38 +132,27 @@
 
     function login() {
         const input = document.getElementById('username-input').value.trim();
-        if (!input) return alert("請輸入帳號名稱！");
-        
+        if (!input) return alert("請輸入帳號！");
         currentUser = input;
         document.getElementById('display-user').innerText = currentUser;
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
 
-        const savedData = localStorage.getItem('study_v3_' + currentUser);
-        if (savedData) {
-            userPlans = JSON.parse(savedData);
-        } else {
-            // 預設第一天
-            userPlans = [{ date: new Date().toISOString().split('T')[0], tasks: [{text: "新任務", done: false}] }];
-        }
+        const savedData = localStorage.getItem('study_v4_' + currentUser);
+        userPlans = savedData ? JSON.parse(savedData) : [{ date: new Date().toISOString().split('T')[0], tasks: [{text: "新任務", done: false}], photos: [] }];
         render();
     }
 
     function render() {
         const list = document.getElementById('plan-list');
         list.innerHTML = '';
-
         userPlans.forEach((day, dIdx) => {
             const tr = document.createElement('tr');
             tr.className = 'day-row';
-            
             tr.innerHTML = `
                 <td class="day-info">
                     Day ${dIdx + 1}<br>
                     <input type="date" value="${day.date}" onchange="updateDate(${dIdx}, this.value)">
-                    <div style="margin-top:10px">
-                        <button class="btn" style="background:#eee; color:#666; font-size:10px" onclick="deleteDay(${dIdx})">刪除此天</button>
-                    </div>
                 </td>
                 <td class="task-cell">
                     <div id="tasks-${dIdx}">
@@ -258,7 +163,12 @@
                             </label>
                         `).join('')}
                     </div>
-                    <button class="btn" style="padding:4px 10px; font-size:11px; margin-top:5px;" onclick="addTask(${dIdx})">+ 新增任務</button>
+                    <button class="btn" style="padding:4px 10px; font-size:11px" onclick="addTask(${dIdx})">+ 任務</button>
+                    <label class="upload-btn">📷 上傳照片<input type="file" style="display:none" accept="image/*" onchange="handleUpload(${dIdx}, this)"></label>
+                    
+                    <div class="photo-area" id="photos-${dIdx}">
+                        ${(day.photos || []).map((img, imgIdx) => `<img src="${img}" class="photo-preview" title="點擊刪除" onclick="deletePhoto(${dIdx}, ${imgIdx})">`).join('')}
+                    </div>
                 </td>
             `;
             list.appendChild(tr);
@@ -266,54 +176,45 @@
         save();
     }
 
-    function save() {
-        localStorage.setItem('study_v3_' + currentUser, JSON.stringify(userPlans));
-        
-        const allTasks = userPlans.flatMap(p => p.tasks);
-        const doneCount = allTasks.filter(t => t.done).length;
-        const total = allTasks.length;
-        const percent = total > 0 ? Math.round((doneCount / total) * 100) : 0;
-
-        document.getElementById('bar').style.width = percent + "%";
-        document.getElementById('progress-percent').innerText = `總進度 ${percent}% (${doneCount}/${total})`;
+    function handleUpload(dIdx, input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            if (!userPlans[dIdx].photos) userPlans[dIdx].photos = [];
+            userPlans[dIdx].photos.push(e.target.result);
+            render();
+        };
+        reader.readAsDataURL(file);
     }
 
-    function addDay() {
-        const lastDate = userPlans.length > 0 ? userPlans[userPlans.length-1].date : new Date().toISOString().split('T')[0];
-        const nextDate = new Date(lastDate);
-        nextDate.setDate(nextDate.getDate() + 1);
-        
-        userPlans.push({ date: nextDate.toISOString().split('T')[0], tasks: [{text: "新任務", done: false}] });
-        render();
-    }
-
-    function deleteDay(idx) {
-        if(confirm("確定刪除這天的所有計畫？")) {
-            userPlans.splice(idx, 1);
+    function deletePhoto(dIdx, imgIdx) {
+        if(confirm("要刪除這張照片嗎？")) {
+            userPlans[dIdx].photos.splice(imgIdx, 1);
             render();
         }
     }
 
-    function addTask(dIdx) {
-        userPlans[dIdx].tasks.push({text: "新任務", done: false});
+    function save() {
+        localStorage.setItem('study_v4_' + currentUser, JSON.stringify(userPlans));
+        const allTasks = userPlans.flatMap(p => p.tasks);
+        const doneCount = allTasks.filter(t => t.done).length;
+        const percent = allTasks.length > 0 ? Math.round((doneCount / allTasks.length) * 100) : 0;
+        document.getElementById('bar').style.width = percent + "%";
+        document.getElementById('progress-percent').innerText = `總進度 ${percent}% (${doneCount}/${allTasks.length})`;
+    }
+
+    // 其他基礎功能
+    function addDay() {
+        const lastDate = userPlans.length > 0 ? userPlans[userPlans.length-1].date : new Date().toISOString().split('T')[0];
+        const nextDate = new Date(lastDate); nextDate.setDate(nextDate.getDate() + 1);
+        userPlans.push({ date: nextDate.toISOString().split('T')[0], tasks: [{text: "新任務", done: false}], photos: [] });
         render();
     }
-
-    function toggleTask(dIdx, tIdx) {
-        userPlans[dIdx].tasks[tIdx].done = !userPlans[dIdx].tasks[tIdx].done;
-        save();
-    }
-
-    function updateTaskText(dIdx, tIdx, val) {
-        userPlans[dIdx].tasks[tIdx].text = val;
-        save();
-    }
-
-    function updateDate(dIdx, val) {
-        userPlans[dIdx].date = val;
-        save();
-    }
+    function addTask(dIdx) { userPlans[dIdx].tasks.push({text: "新任務", done: false}); render(); }
+    function toggleTask(dIdx, tIdx) { userPlans[dIdx].tasks[tIdx].done = !userPlans[dIdx].tasks[tIdx].done; save(); }
+    function updateTaskText(dIdx, tIdx, val) { userPlans[dIdx].tasks[tIdx].text = val; save(); }
+    function updateDate(dIdx, val) { userPlans[dIdx].date = val; save(); }
 </script>
-
 </body>
 </html>
