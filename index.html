@@ -3,104 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>計畫</title>
+<title>讀書計畫 - 晨雲落雁版</title>
 
 <style>
-    /* ✅ 修正版字體載入 */
+    /* 載入指定字體 - 請確保 .ttf 檔案與 HTML 放在同一個資料夾 */
     @font-face {
-      font-family: 'CWLoYen';
-      src: url('ChenYuluoyan-2.0-Thin.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
+        font-family: 'ChenYuluoyan';
+        src: url('ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
     }
 
     :root {
         --pink: #ff8ac9;
-        --blue: #a2b2fc;
-        --gray: #f4f4f4;
+        --soft-bg: linear-gradient(135deg, #ffd6ec, #e4e8ff);
     }
 
     body {
-        font-family: "Arial", "Microsoft JhengHei", sans-serif;
-        background: linear-gradient(135deg, #ffd6ec, #e4e8ff);
-        margin: 0; padding: 20px; min-height: 100vh;
+        font-family: 'ChenYuluoyan', "Arial", "Microsoft JhengHei", sans-serif;
+        background: var(--soft-bg);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
     }
 
     .container {
-        max-width: 800px; margin: auto; background: white;
-        padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        max-width: 900px;
+        margin: auto;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         display: none;
     }
 
-    /* 登入樣式 */
+    /* 登入介面 */
     #login-overlay {
-        position: fixed; inset: 0; background: linear-gradient(135deg, #ffd6ec, #e4e8ff);
+        position: fixed; inset: 0; background: var(--soft-bg);
         display: flex; justify-content: center; align-items: center; z-index: 100;
     }
-    .login-box { background: white; padding: 40px; border-radius: 20px; text-align: center; }
+    .login-box { 
+        background: white; padding: 40px; border-radius: 20px; text-align: center;
+        font-family: 'ChenYuluoyan', sans-serif;
+    }
 
-    /* 每日卡片樣式 */
+    h1, h2, h3 { color: #444; font-weight: normal; }
+
+    /* 進度條樣式 */
+    .progress-section { margin-bottom: 20px; }
+    .progress { width: 100%; background: #eee; border-radius: 10px; height: 18px; margin: 10px 0; overflow: hidden; }
+    .bar { height: 100%; width: 0%; background: var(--pink); transition: width 0.5s ease; }
+
+    /* 卡片式清單 */
     .day-card {
-        background: #fff; border: 1px solid #eee; border-radius: 15px;
-        margin-bottom: 20px; padding: 15px; position: relative;
-        transition: 0.3s;
+        background: #fff; border: 1px solid #ffe6f5; border-radius: 15px;
+        padding: 20px; margin-bottom: 20px; position: relative;
     }
 
-    .day-header {
+    .card-header {
         display: flex; justify-content: space-between; align-items: center;
-        border-bottom: 2px solid #fff5f9; padding-bottom: 10px; margin-bottom: 10px;
+        border-bottom: 1.5px solid #fff0f7; margin-bottom: 15px; padding-bottom: 10px;
     }
 
-    /* 獨立進度條 */
-    .mini-progress-bg {
-        width: 100px; height: 8px; background: #eee; border-radius: 5px; overflow: hidden;
-    }
-    .mini-bar {
-        height: 100%; background: var(--pink); width: 0%; transition: 0.4s;
+    .date-picker {
+        font-family: 'ChenYuluoyan', sans-serif;
+        border: 1px solid #ffd6ec; border-radius: 5px; padding: 5px; font-size: 1.1em;
     }
 
-    .task-item { display: flex; align-items: center; margin: 8px 0; gap: 10px; }
-    input[type="checkbox"] { accent-color: var(--pink); width: 18px; height: 18px; }
+    .task-list { margin-bottom: 15px; }
+    .task-item { display: flex; align-items: center; margin: 8px 0; gap: 10px; font-size: 1.2em; }
+    input[type="checkbox"] { accent-color: var(--pink); width: 20px; height: 20px; }
 
-    /* 按鈕 */
+    /* 照片區 */
+    .photo-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+    .photo-thumb { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 2px solid #fff5f9; cursor: pointer; }
+
+    /* 按鈕樣式 */
     .btn {
-        border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer;
-        font-weight: bold; transition: 0.2s;
+        font-family: 'ChenYuluoyan', sans-serif; cursor: pointer; border: none;
+        padding: 8px 18px; border-radius: 12px; transition: 0.3s; font-size: 1.1em;
     }
     .btn-pink { background: var(--pink); color: white; }
-    .btn-group { background: var(--blue); color: white; margin-top: 10px; }
+    .btn-pink:hover { opacity: 0.8; }
+    .btn-outline { background: none; border: 1.5px dashed var(--pink); color: var(--pink); width: 100%; padding: 15px; }
 
-    /* 隱藏過期提醒 */
-    .alert-box {
-        background: #fff3cd; color: #856404; padding: 10px; border-radius: 10px;
-        margin-bottom: 20px; display: none; font-size: 14px;
-    }
+    .upload-label { font-size: 0.9em; color: #888; cursor: pointer; text-decoration: underline; }
 </style>
 </head>
 <body>
 
 <div id="login-overlay">
     <div class="login-box">
-        <h2 style="color: var(--pink);"計劃書"</h2>
-        <input type="text" id="username-input" placeholder="輸入帳號" style="padding:10px; border-radius:8px; border:1px solid #ddd; width:200px;"><br><br>
-        <button class="btn btn-pink" onclick="login()">和朋友一起</button>
+        <h2 style="color: var(--pink);">🌸 晨雲落雁計畫室</h2>
+        <input type="text" id="username" placeholder="輸入您的帳號" style="padding:10px; border-radius:8px; border:1px solid #ddd; font-family:'ChenYuluoyan'"><br><br>
+        <button class="btn btn-pink" onclick="login()">開始規劃</button>
     </div>
 </div>
 
 <div class="container" id="main-app">
-    <div id="cleanup-alert" class="alert-box">
-        ⚠️ 偵測到一週前的舊資料，是否 <a href="javascript:void(0)" onclick="autoCleanup()">點此清理</a> 以保持頁面清爽？
+    <div style="text-align: right; font-size: 0.9em; color: #999;">
+        帳號：<span id="display-user"></span> | <a href="javascript:location.reload()" style="color:var(--pink)">登出</a>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-        <h1>我的計畫</h1>
-        <div>
-            <button class="btn btn-group" onclick="exportData()">🔗 分享進度給好友</button>
-        </div>
+    <h1>讀書計畫進度</h1>
+
+    <div class="progress-section">
+        <h3 id="percent-text">目前總進度 0%</h3>
+        <div class="progress"><div class="bar" id="main-bar"></div></div>
     </div>
 
     <div id="plan-list"></div>
-    <button class="btn btn-pink" style="width:100%; padding:15px; margin-top:20px;" onclick="addDay()">＋ 新增今日挑戰</button>
+
+    <button class="btn btn-outline" onclick="addDay()">＋ 增加新的日期計畫</button>
 </div>
 
 <script>
@@ -108,39 +120,18 @@
     let userPlans = [];
 
     function login() {
-        const input = document.getElementById('username-input').value.trim();
-        if (!input) return;
-        currentUser = input;
+        const name = document.getElementById('username').value.trim();
+        if (!name) return alert("請輸入帳號！");
+        currentUser = name;
+        document.getElementById('display-user').innerText = currentUser;
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
 
-        const savedData = localStorage.getItem('study_v5_' + currentUser);
-        userPlans = savedData ? JSON.parse(savedData) : [];
-        
-        checkOldData();
+        const saved = localStorage.getItem('study_final_' + currentUser);
+        userPlans = saved ? JSON.parse(saved) : [];
         render();
     }
 
-    // 1. 自動檢查一週前的資料
-    function checkOldData() {
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        
-        const hasOld = userPlans.some(p => new Date(p.date) < oneWeekAgo);
-        if (hasOld) {
-            document.getElementById('cleanup-alert').style.display = 'block';
-        }
-    }
-
-    function autoCleanup() {
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        userPlans = userPlans.filter(p => new Date(p.date) >= oneWeekAgo);
-        document.getElementById('cleanup-alert').style.display = 'none';
-        render();
-    }
-
-    // 2. 渲染 (含獨立進度條)
     function render() {
         const list = document.getElementById('plan-list');
         list.innerHTML = '';
@@ -153,60 +144,85 @@
             const card = document.createElement('div');
             card.className = 'day-card';
             card.innerHTML = `
-                <div class="day-header">
+                <div class="card-header">
                     <div>
-                        <strong>${day.date}</strong> 
-                        <span style="font-size:12px; color:#999; margin-left:10px;">進度：${percent}%</span>
+                        <span style="font-size:1.3em">Day ${dIdx + 1}</span>
+                        <input type="date" class="date-picker" value="${day.date}" onchange="updateDate(${dIdx}, this.value)">
                     </div>
-                    <div class="mini-progress-bg">
-                        <div class="mini-bar" style="width: ${percent}%"></div>
-                    </div>
+                    <div style="color: var(--pink)">本日完成度：${percent}%</div>
                 </div>
-                <div id="tasks-${dIdx}">
+                
+                <div class="task-list">
                     ${day.tasks.map((t, tIdx) => `
                         <div class="task-item">
                             <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${dIdx}, ${tIdx})">
-                            <span contenteditable="true" onblur="updateText(${dIdx}, ${tIdx}, this.innerText)">${t.text}</span>
+                            <span contenteditable="true" onblur="editTask(${dIdx}, ${tIdx}, this.innerText)">${t.text}</span>
                         </div>
                     `).join('')}
                 </div>
-                <div style="margin-top:10px;">
-                    <button class="btn" style="background:#f0f0f0; font-size:11px;" onclick="addTask(${dIdx})">+ 任務</button>
-                    <button class="btn" style="background:#fff1f1; color:red; font-size:11px;" onclick="deleteDay(${dIdx})">刪除此天</button>
+
+                <div style="display:flex; gap:15px; align-items:center">
+                    <button class="btn btn-pink" style="font-size:0.8em; padding:5px 10px" onclick="addTask(${dIdx})">+ 任務</button>
+                    <label class="upload-label">📷 上傳筆記照片
+                        <input type="file" style="display:none" accept="image/*" onchange="uploadPhoto(${dIdx}, this)">
+                    </label>
+                    <button class="btn" style="background:#fff1f1; color:red; font-size:0.8em; margin-left:auto" onclick="deleteDay(${dIdx})">刪除此天</button>
+                </div>
+
+                <div class="photo-gallery">
+                    ${(day.photos || []).map((img, iIdx) => `
+                        <img src="${img}" class="photo-thumb" onclick="deletePhoto(${dIdx}, ${iIdx})" title="點擊刪除照片">
+                    `).join('')}
                 </div>
             `;
             list.appendChild(card);
         });
-        localStorage.setItem('study_v5_' + currentUser, JSON.stringify(userPlans));
+        save();
     }
 
-    // 3. 好友監督 (匯出功能)
-    function exportData() {
-        const dataStr = JSON.stringify({user: currentUser, plans: userPlans});
-        const blob = new Blob([dataStr], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        
-        // 這裡我們用簡單的複製到剪貼簿模擬
-        const dummy = document.createElement("textarea");
-        document.body.appendChild(dummy);
-        dummy.value = dataStr;
-        dummy.select();
-        document.execCommand("copy");
-        document.body.removeChild(dummy);
-        
-        alert("進度代碼已複製！你可以傳給好友，讓他們知道你有多拼。");
-    }
-
-    // 基礎功能
+    // --- 功能邏輯 ---
     function addDay() {
-        const today = new Date().toISOString().split('T')[0];
-        userPlans.unshift({ date: today, tasks: [{text: "讀書任務", done: false}] });
+        const lastDate = userPlans.length > 0 ? userPlans[userPlans.length-1].date : new Date().toISOString().split('T')[0];
+        const next = new Date(lastDate);
+        next.setDate(next.getDate() + 1);
+        userPlans.push({ date: next.toISOString().split('T')[0], tasks: [{text:"新計畫", done:false}], photos: [] });
         render();
     }
+
+    function uploadPhoto(dIdx, input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if (!userPlans[dIdx].photos) userPlans[dIdx].photos = [];
+            userPlans[dIdx].photos.push(e.target.result);
+            render();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function deletePhoto(dIdx, pIdx) {
+        if (confirm("確定刪除這張照片筆記嗎？")) {
+            userPlans[dIdx].photos.splice(pIdx, 1);
+            render();
+        }
+    }
+
+    function save() {
+        localStorage.setItem('study_final_' + currentUser, JSON.stringify(userPlans));
+        const all = userPlans.flatMap(p => p.tasks);
+        const done = all.filter(t => t.done).length;
+        const percent = all.length > 0 ? Math.round((done / all.length) * 100) : 0;
+        document.getElementById('main-bar').style.width = percent + "%";
+        document.getElementById('percent-text').innerText = `目前總進度 ${percent}% (${done}/${all.length})`;
+    }
+
+    function deleteDay(idx) { if(confirm("確定要刪除這整天的計畫嗎？")) { userPlans.splice(idx, 1); render(); } }
     function toggleTask(dIdx, tIdx) { userPlans[dIdx].tasks[tIdx].done = !userPlans[dIdx].tasks[tIdx].done; render(); }
-    function updateText(dIdx, tIdx, val) { userPlans[dIdx].tasks[tIdx].text = val; }
-    function addTask(dIdx) { userPlans[dIdx].tasks.push({text: "新任務", done: false}); render(); }
-    function deleteDay(idx) { if(confirm("確定刪除？")) { userPlans.splice(idx, 1); render(); } }
+    function editTask(dIdx, tIdx, val) { userPlans[dIdx].tasks[tIdx].text = val; save(); }
+    function updateDate(dIdx, val) { userPlans[dIdx].date = val; save(); }
+    function addTask(dIdx) { userPlans[dIdx].tasks.push({text:"新任務", done:false}); render(); }
 </script>
+
 </body>
 </html>
