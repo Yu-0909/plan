@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>讀書計畫 - 晨雲落雁版</title>
-
+<title>讀書計畫</title>
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
 <style>
     /* 載入指定字體 - 請確保 .ttf 檔案與 HTML 放在同一個資料夾 */
     @font-face {
@@ -92,7 +93,7 @@
 
 <div id="login-overlay">
     <div class="login-box">
-        <h2 style="color: var(--pink);">🌸 晨雲落雁計畫室</h2>
+        <h2 style="color: var(--pink);">進度表</h2>
         <input type="text" id="username" placeholder="輸入您的帳號" style="padding:10px; border-radius:8px; border:1px solid #ddd; font-family:'ChenYuluoyan'"><br><br>
         <button class="btn btn-pink" onclick="login()">開始規劃</button>
     </div>
