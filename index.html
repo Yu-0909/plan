@@ -117,6 +117,15 @@
 </div>
 
 <script>
+    const firebaseConfig = {
+    apiKey: "你的API金鑰",
+    authDomain: "你的專案ID.firebaseapp.com",
+    databaseURL: "https://你的專案ID-default-rtdb.firebaseio.com",
+    projectId: "你的專案ID",
+    storageBucket: "你的專案ID.appspot.com",
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
     let currentUser = "";
     let userPlans = [];
 
