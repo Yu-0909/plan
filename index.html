@@ -181,8 +181,6 @@
         <h3 style="margin: 0 0 8px 0; color: #444; font-size: 1.2em;">公告</h3>
         <p style="margin: 0; color: #666; font-size: 1.1em; line-height: 1.4;">
             後臺資料庫隨時可能炸掉，為避免功虧一簣不要一次加太多東西<br>
-            如上所說，所以30天前的東西會被刪掉ㄛ<br>
-            進入後建議將手機改成橫向<br>
             小心隱私問題<br>
             有任何問題請不要聯繫作者<br>
             特別感謝 <a href="https://www.instagram.com/chenyu.otf/" target="_blank" style="color: var(--purple); font-weight: bold; text-decoration: underline;">辰宇落雁體作者</a> 提供的手寫字體
@@ -218,7 +216,7 @@
 
     <h1 id="page-main-title">讀書計畫管理</h1>
 
-    <!-- 📅 核心組件：月曆排程 -->
+    <!-- 📅 月曆組件 -->
     <div class="calendar-wrapper">
         <div class="calendar-header">
             <button class="btn btn-purple btn-sm" onclick="moveMonth(-1)">◀ 上個月</button>
@@ -258,77 +256,22 @@
     
     let currentUser = "";
     let viewingUser = ""; 
-    let userPlans = []; // 結構保持不變: [{date: 'YYYY-MM-DD', tasks:[...], photos:[...]}, ...]
+    let userPlans = []; 
     let userData = { avatar: "🐱", exp: 0 }; 
     let selectedAvatar = "🐱"; 
     let isRegisterMode = false;
 
     // 月曆內部狀態
     let currentCalYear = 2026;
-    let currentCalMonth = 5; // 0-11, 5 代表 6 月
-    let selectedDateStr = ""; // 目前選中的日期 'YYYY-MM-DD'
+    let currentCalMonth = 5; 
+    let selectedDateStr = ""; 
 
     // 初始化當前系統時間
     const today = new Date();
     currentCalYear = today.getFullYear();
     currentCalMonth = today.getMonth();
     selectedDateStr = today.toISOString().split('T')[0];
-function enterApp(name) {
-        currentUser = name;
-        viewingUser = name;
-        document.getElementById('display-user').innerText = currentUser;
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('main-app').style.display = 'block';
 
-        // 🚀【核心防炸機制】登入時自動清理 30 天前的過期歷史計畫
-        cleanupExpiredPlans(currentUser);
-
-        // 監聽自己的個人頭像與 EXP
-        db.ref('users/' + currentUser).on('value', (snapshot) => {
-            if (snapshot.exists() && viewingUser === currentUser) {
-                const data = snapshot.val();
-                userData.avatar = data.avatar || "🐱";
-                userData.exp = data.exp || 0;
-                updateLevelUI(userData.avatar, userData.exp);
-            }
-        });
-
-        // 監聽自己的讀書計畫
-        db.ref('plans/' + currentUser).on('value', (snapshot) => {
-            if (viewingUser === currentUser) {
-                userPlans = snapshot.val() || [];
-                render(); 
-            }
-        });
-    }
-
-    // 🧹 自動大掃除函數：只保留 30 天內的計畫，經驗值完全不受影響！
-    function cleanupExpiredPlans(username) {
-        db.ref('plans/' + username).once('value', (snapshot) => {
-            if (!snapshot.exists()) return;
-            
-            const currentPlans = snapshot.val() || [];
-            
-            // 計算 30 天前的日期界線
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-            
-            // 將原本的陣列過濾，只留下「大於等於 30 天前」或「日期格式不正確」的資料
-            const filteredPlans = currentPlans.filter(plan => {
-                if (!plan || !plan.date) return false; // 異常資料直接丟棄
-                
-                const planDate = new Date(plan.date);
-                // 如果這天計畫的日期比 30 天前還要新，就保留 (true)
-                return planDate >= thirtyDaysAgo;
-            });
-            
-            // 如果數量有變少，代表有成功刪除老舊資料，這時才同步回雲端
-            if (filteredPlans.length !== currentPlans.length) {
-                db.ref('plans/' + username).set(filteredPlans);
-                console.log(`🧹 歷史資料大掃除完成！已自動清空 ${currentPlans.length - filteredPlans.length} 天前的過期備忘與圖片。`);
-            }
-        });
-    }
     // --- 2. 登入與註冊切換邏輯 ---
     function toggleAuthMode(toRegister) {
         isRegisterMode = toRegister;
@@ -405,6 +348,10 @@ function enterApp(name) {
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
 
+        // 🧹 登入時自動執行「完全拔除式」30天大掃除，防止爆容量
+        cleanupExpiredPlans(currentUser);
+
+        // 監聽自己的個人頭像與 EXP
         db.ref('users/' + currentUser).on('value', (snapshot) => {
             if (snapshot.exists() && viewingUser === currentUser) {
                 const data = snapshot.val();
@@ -414,10 +361,43 @@ function enterApp(name) {
             }
         });
 
+        // 監聽自己的讀書計畫
         db.ref('plans/' + currentUser).on('value', (snapshot) => {
             if (viewingUser === currentUser) {
                 userPlans = snapshot.val() || [];
                 render(); 
+            }
+        });
+    }
+
+    // 🧹 核心防炸大掃除（修正 Firebase 陣列尾端殘留 Bug 版）
+    function cleanupExpiredPlans(username) {
+        db.ref('plans/' + username).once('value', (snapshot) => {
+            if (!snapshot.exists()) return;
+            
+            const currentPlans = snapshot.val() || [];
+            
+            // 計算 30 天前的日期界線
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            // 篩選：只留下 30 天之內的計畫
+            const filteredPlans = currentPlans.filter(plan => {
+                if (!plan || !plan.date) return false; 
+                const planDate = new Date(plan.date);
+                return planDate >= thirtyDaysAgo;
+            });
+            
+            // 如果數量變少了，代表有過期老資料
+            if (filteredPlans.length !== currentPlans.length) {
+                // 1. 先徹底連根拔除舊的 plans 房間，消除尾端殘留
+                db.ref('plans/' + username).remove().then(() => {
+                    // 2. 重新塞入篩選後乾淨無毒的新陣列
+                    if (filteredPlans.length > 0) {
+                        db.ref('plans/' + username).set(filteredPlans);
+                    }
+                    console.log(`🧹 大掃除完成！已清空 ${currentPlans.length - filteredPlans.length} 天前的過期資料與照片。`);
+                });
             }
         });
     }
@@ -479,7 +459,7 @@ function enterApp(name) {
         }
     }
 
-    // --- 4. 等級與 EXP 核心加減系統 ---
+    // --- 4. 等級與 EXP 核心系統 ---
     function updateLevelUI(avatar, totalExp) {
         const level = Math.floor(totalExp / 100) + 1;
         const currentExp = totalExp % 100;
@@ -501,7 +481,7 @@ function enterApp(name) {
         });
     }
 
-    // --- 5. 月曆切換控制 ---
+    // --- 5. 月曆控制模組 ---
     function moveMonth(dir) {
         currentCalMonth += dir;
         if (currentCalMonth > 11) {
@@ -516,7 +496,6 @@ function enterApp(name) {
 
     function selectDate(dateStr) {
         selectedDateStr = dateStr;
-        // 同步更動月曆上的視覺外觀
         document.querySelectorAll('.day-cell').forEach(cell => {
             if(cell.dataset.date === dateStr) {
                 cell.classList.add('selected');
@@ -527,7 +506,6 @@ function enterApp(name) {
         renderDailyDetail();
     }
 
-    // 渲染上方整個月曆網格
     function renderCalendar() {
         const monthNames = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
         document.getElementById('calendar-year-month').innerText = `${currentCalYear} 年 ${monthNames[currentCalMonth]} 月`;
@@ -535,7 +513,6 @@ function enterApp(name) {
         const container = document.getElementById('calendar-grid-container');
         container.innerHTML = '';
 
-        // 星期欄位抬頭
         const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
         weekdays.forEach(w => {
             const div = document.createElement('div');
@@ -544,24 +521,20 @@ function enterApp(name) {
             container.appendChild(div);
         });
 
-        // 取得該月第一天與總天數
         const firstDayIndex = new Date(currentCalYear, currentCalMonth, 1).getDay();
         const totalDays = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
 
-        // 填塞上個月空白格
         for (let i = 0; i < firstDayIndex; i++) {
             const emptyCell = document.createElement('div');
             emptyCell.className = 'day-cell empty';
             container.appendChild(emptyCell);
         }
 
-        // 建立日期格
         for (let day = 1; day <= totalDays; day++) {
             const mStr = String(currentCalMonth + 1).padStart(2, '0');
             const dStr = String(day).padStart(2, '0');
             const fullDateStr = `${currentCalYear}-${mStr}-${dStr}`;
 
-            // 從現有陣列尋找是否有該日計畫
             const matchedPlan = userPlans.find(p => p.date === fullDateStr);
             const tasks = matchedPlan ? (matchedPlan.tasks || []) : [];
             const doneCount = tasks.filter(t => t.done).length;
@@ -576,7 +549,6 @@ function enterApp(name) {
 
             cell.onclick = () => selectDate(fullDateStr);
 
-            // 格子內容
             let innerHTML = `<span class="cell-num">${day}</span>`;
             if (totalCount > 0) {
                 innerHTML += `<span class="cell-task-count">📝 ${doneCount}/${totalCount}</span>`;
@@ -599,24 +571,20 @@ function enterApp(name) {
         renderDailyDetail();
     }
 
-    // 渲染「目前所選取之指定日期」的獨立進度條與卡片
     function renderDailyDetail() {
         const listContainer = document.getElementById('plan-list');
         listContainer.innerHTML = '';
 
-        // 尋找選定日期的計畫
         const matchedPlanIdx = userPlans.findIndex(p => p.date === selectedDateStr);
         const matchedPlan = matchedPlanIdx !== -1 ? userPlans[matchedPlanIdx] : null;
 
         const pBar = document.getElementById('main-bar');
         const pText = document.getElementById('percent-text');
 
-        // 改寫大標題：改顯示當前選擇的每日進度
         if (!matchedPlan || !matchedPlan.tasks || matchedPlan.tasks.length === 0) {
             pBar.style.width = "0%";
             pText.innerText = `📅 ${selectedDateStr}：本日尚未安排任何讀書計畫`;
             
-            // 訪客狀態下不顯示增加任務按鈕
             if (viewingUser === currentUser) {
                 listContainer.innerHTML = `
                     <div class="no-task-tip">
@@ -635,11 +603,9 @@ function enterApp(name) {
         const total = dayTasks.length;
         const percent = Math.round((done / total) * 100);
 
-        // 更新每日獨立進度條
         pBar.style.width = percent + "%";
         pText.innerText = `📅 ${selectedDateStr} 本日進度：${percent}% (${done}/${total})`;
 
-        // 生成當日詳細排程卡片
         const card = document.createElement('div');
         card.className = 'day-card';
         card.innerHTML = `
