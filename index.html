@@ -38,10 +38,35 @@
     }
 
     /* 登入註冊介面 */
-    #login-overlay {
-        position: fixed; inset: 0; background: var(--soft-bg);
-        display: flex; justify-content: center; align-items: center; z-index: 100;
-    }
+    <div id="login-overlay" style="flex-direction: column; gap: 20px;"> <div class="login-box">
+        <h2 style="color: var(--pink);" id="auth-title">讀書計畫登入</h2>
+        
+        <input type="text" id="username" placeholder="輸入帳號">
+        <input type="password" id="password" placeholder="輸入密碼">
+        
+        <div id="avatar-picker-zone" style="display:none;">
+            <p style="margin:5px 0; color:#666;">選擇你的個人頭像：</p>
+            <div class="avatar-selector">
+                <span class="avatar-option selected" onclick="selectAvatar('🐱', this)">🐱</span>
+                <span class="avatar-option" onclick="selectAvatar('🐰', this)">🐰</span>
+                <span class="avatar-option" onclick="selectAvatar('🦊', this)">🦊</span>
+                <span class="avatar-option" onclick="selectAvatar('🐻', this)">🐻</span>
+            </div>
+        </div>
+
+        <br>
+        <div id="auth-buttons" style="margin-top: 10px;">
+            <button class="btn btn-pink" onclick="handleLogin()">登入</button>
+            <p style="margin-top:15px; font-size:0.9em; color:#888;">還沒有帳號？ <a href="javascript:toggleAuthMode(true)" style="color:var(--purple)">點此註冊</a></p>
+        </div>
+    </div>
+
+    <div style="background: rgba(255, 255, 255, 0.85); padding: 15px 25px; border-radius: 20px; width: 320px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 2px dashed var(--pink); box-sizing: border-box;">
+        <h3 style="margin: 0 0 8px 0; color: #444; font-size: 1.2em;">公告</h3>
+        <p style="margin: 0; color: #666; font-size: 1.1em; line-height: 1.4;">後臺資料庫隨時可能炸掉，為避免破房不要一次加太多東西<br>小心隱私問題</p>
+    </div>
+
+</div>
     .login-box { 
         background: white; padding: 40px; border-radius: 20px; text-align: center;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 320px;
