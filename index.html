@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>讀書計畫</title>
+<title>讀書計畫 - 完整社交升級版</title>
 <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
 <style>
+    /* 載入指定字體 - 請確保 .ttf 檔案與 HTML 放在同一個資料夾 */
     @font-face {
         font-family: 'ChenYuluoyan';
         src: url('ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
@@ -62,6 +63,7 @@
     .user-profile-bar {
         display: flex; align-items: center; gap: 15px; margin-bottom: 20px;
         background: #fff5fa; padding: 15px; border-radius: 15px; border: 1px solid #ffe6f2;
+        flex-wrap: wrap;
     }
     .user-avatar { font-size: 2.5em; background: white; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .user-info { flex-grow: 1; }
@@ -97,9 +99,11 @@
     .task-item { display: flex; align-items: center; margin: 8px 0; gap: 10px; font-size: 1.2em; }
     input[type="checkbox"] { accent-color: var(--pink); width: 20px; height: 20px; }
 
+    /* 照片區 */
     .photo-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
     .photo-thumb { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 2px solid #fff5f9; cursor: pointer; }
 
+    /* 按鈕樣式 */
     .btn {
         font-family: 'ChenYuluoyan', sans-serif; cursor: pointer; border: none;
         padding: 8px 18px; border-radius: 12px; transition: 0.3s; font-size: 1.1em;
@@ -109,6 +113,7 @@
     .btn-purple { background: var(--purple); color: white; }
     .btn-purple:hover { opacity: 0.8; }
     .btn-outline { background: none; border: 1.5px dashed var(--pink); color: var(--pink); width: 100%; padding: 15px; }
+
     .upload-label { font-size: 0.9em; color: #888; cursor: pointer; text-decoration: underline; }
 </style>
 </head>
@@ -155,9 +160,15 @@
         <div style="font-size: 0.9em; color: #999; text-align: right;">
             <a href="javascript:location.reload()" style="color:var(--pink)">登出</a>
         </div>
+
+        <div style="width: 100%; margin-top: 12px; display: flex; gap: 8px; border-top: 1px dashed #ffd6ec; padding-top: 10px;">
+            <input type="text" id="friend-username" placeholder="輸入朋友的帳號密碼來找他..." style="flex-grow: 1; padding: 6px 12px; border: 1px solid #ffd6ec; border-radius: 8px; font-family: 'ChenYuluoyan'; font-size: 1em;">
+            <button class="btn btn-pink" style="font-size: 0.9em; padding: 6px 12px;" onclick="visitFriend()">去他房間</button>
+            <button class="btn" id="back-home-btn" style="font-size: 0.9em; padding: 6px 12px; background: #e4e8ff; color: #555; display: none;" onclick="goBackHome()">回我自己</button>
+        </div>
     </div>
 
-    <h1>讀書計畫進度</h1>
+    <h1 id="page-main-title">讀書計畫進度</h1>
 
     <div class="progress-section">
         <h3 id="percent-text">目前總進度 0%</h3>
@@ -166,7 +177,7 @@
 
     <div id="plan-list"></div>
 
-    <button class="btn btn-outline" onclick="addDay()">＋ 增加新的日期計畫</button>
+    <button class="btn btn-outline" id="add-day-btn" onclick="addDay()">＋ 增加新的日期計畫</button>
 </div>
 
 <script>
@@ -184,12 +195,13 @@
     const db = firebase.database();
     
     let currentUser = "";
+    let viewingUser = ""; // 目前正在觀看誰的房間 (空字串代表自己)
     let userPlans = [];
-    let userData = { avatar: "🐱", exp: 0 }; // 存放目前使用者的頭像與經驗值
-    let selectedAvatar = "🐱"; // 註冊時暫存選中的頭像
+    let userData = { avatar: "🐱", exp: 0 }; 
+    let selectedAvatar = "🐱"; 
     let isRegisterMode = false;
 
-    // 切換登入或註冊介面
+    // --- 2. 登入與註冊切換邏輯 ---
     function toggleAuthMode(toRegister) {
         isRegisterMode = toRegister;
         const title = document.getElementById('auth-title');
@@ -215,25 +227,21 @@
         }
     }
 
-    // 註冊時選擇頭像
     function selectAvatar(emoji, element) {
         selectedAvatar = emoji;
         document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
         element.classList.add('selected');
     }
 
-    // --- 2. 登入與註冊驗證邏輯 ---
     function handleRegister() {
         const name = document.getElementById('username').value.trim();
         const pass = document.getElementById('password').value.trim();
         if (!name || !pass) return alert("請填寫帳號與密碼！");
 
-        // 先檢查帳號使否存在
         db.ref('users/' + name).once('value', (snapshot) => {
             if (snapshot.exists()) {
                 alert("該帳號已被註冊，請換一個名字！");
             } else {
-                // 寫入新使用者帳密資料
                 const newProfile = { password: pass, avatar: selectedAvatar, exp: 0 };
                 db.ref('users/' + name).set(newProfile).then(() => {
                     alert("註冊成功！自動為您登入");
@@ -262,53 +270,122 @@
         });
     }
 
-    // 登入成功，開啟主程式並監聽
     function enterApp(name) {
         currentUser = name;
+        viewingUser = name;
         document.getElementById('display-user').innerText = currentUser;
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
 
-        // 監聽使用者個人資料 (頭像、經驗值)
+        // 監聽自己的個人頭像與 EXP
         db.ref('users/' + currentUser).on('value', (snapshot) => {
-            if (snapshot.exists()) {
+            if (snapshot.exists() && viewingUser === currentUser) {
                 const data = snapshot.val();
                 userData.avatar = data.avatar || "🐱";
                 userData.exp = data.exp || 0;
-                updateLevelUI();
+                updateLevelUI(userData.avatar, userData.exp);
             }
         });
 
-        // 監聽計畫資料
+        // 監聽自己的讀書計畫
         db.ref('plans/' + currentUser).on('value', (snapshot) => {
-            userPlans = snapshot.val() || [];
-            render(); 
+            if (viewingUser === currentUser) {
+                userPlans = snapshot.val() || [];
+                render(); 
+            }
         });
     }
 
-    // --- 3. 等級系統算法與 UI 更新 ---
-    function updateLevelUI() {
-        // 等級公式：每 100 EXP 一級
-        const level = Math.floor(userData.exp / 100) + 1;
-        const currentExp = userData.exp % 100;
+    // --- 3. 找朋友（造訪他人房間）邏輯 ---
+    function visitFriend() {
+        const friendName = document.getElementById('friend-username').value.trim();
+        if (!friendName) return alert("請輸入朋友的帳號！");
+        if (friendName === currentUser) return alert("這就是你自己的帳號呀！");
+
+        db.ref('users/' + friendName).once('value', (userSnap) => {
+            if (!userSnap.exists()) {
+                alert("找不到這個帳號，請確認名字有沒有打錯喔！");
+            } else {
+                // 卸載原本自己節點的監聽器
+                db.ref('plans/' + currentUser).off();
+                
+                viewingUser = friendName;
+                const friendData = userSnap.val();
+                
+                // 更新上方的頭像與等級為朋友的資訊
+                updateLevelUI(friendData.avatar || "🐱", friendData.exp || 0);
+                document.getElementById('page-main-title').innerText = `${viewingUser} 的讀書計畫`;
+                document.getElementById('back-home-btn').style.display = "inline-block";
+
+                // 開始實時監聽朋友的計畫
+                db.ref('plans/' + viewingUser).on('value', (planSnap) => {
+                    userPlans = planSnap.val() || [];
+                    render();
+                });
+                alert(`已成功進入 ${viewingUser} 的讀書房間！(目前為唯讀模式)`);
+            }
+        });
+    }
+
+    function goBackHome() {
+        // 解除朋友計畫的監聽
+        db.ref('plans/' + viewingUser).off();
         
-        document.getElementById('my-avatar').innerText = userData.avatar;
+        viewingUser = currentUser;
+        document.getElementById('friend-username').value = "";
+        document.getElementById('back-home-btn').style.display = "none";
+        document.getElementById('page-main-title').innerText = "讀書計畫進度";
+
+        // 重新拉回自己的頭像與等級
+        db.ref('users/' + currentUser).once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                updateLevelUI(data.avatar || "🐱", data.exp || 0);
+            }
+        });
+
+        // 重新掛載並監聽自己的計畫
+        db.ref('plans/' + currentUser).on('value', (snapshot) => {
+            userPlans = snapshot.val() || [];
+            render();
+        });
+    }
+
+    // 訪客唯讀防護鎖
+    function lockInterfaceForVisitor() {
+        const addDayBtn = document.getElementById('add-day-btn');
+        if (viewingUser !== currentUser) {
+            if (addDayBtn) addDayBtn.style.display = 'none';
+            document.querySelectorAll('.day-card button, .day-card label').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.day-card input[type="checkbox"]').forEach(el => el.disabled = true);
+            document.querySelectorAll('.day-card input[type="date"]').forEach(el => el.disabled = true);
+            document.querySelectorAll('.day-card span[contenteditable]').forEach(el => el.contentEditable = false);
+        } else {
+            if (addDayBtn) addDayBtn.style.display = 'block';
+        }
+    }
+
+    // --- 4. 等級與 EXP 介面更新 ---
+    function updateLevelUI(avatar, totalExp) {
+        const level = Math.floor(totalExp / 100) + 1;
+        const currentExp = totalExp % 100;
+        
+        document.getElementById('my-avatar').innerText = avatar;
         document.getElementById('my-level').innerText = `Lv.${level}`;
         document.getElementById('exp-text').innerText = `EXP: ${currentExp} / 100`;
         document.getElementById('my-exp-bar').style.width = currentExp + "%";
     }
 
-    // 當打勾或完成任務時，自動計算總打勾數更新 EXP (一個打勾 = 10 EXP)
+    // 自動依據打勾總數重新更新自己的 EXP 點數 (1個勾 = 10 EXP)
     function recalculateUserExp() {
+        if (viewingUser !== currentUser) return; // 看別人的時候不能更新自己的 EXP
         const all = userPlans.flatMap(p => p.tasks || []);
         const totalDoneCount = all.filter(t => t.done).length;
-        const newExp = totalDoneCount * 10; // 一個任務 10 經驗值
-        
-        // 更新到資料庫中的 users 節點下，這會觸發 updateLevelUI
+        const newExp = totalDoneCount * 10;
         db.ref('users/' + currentUser + '/exp').set(newExp);
     }
 
-    // --- 4. 畫面渲染 ---
+    // --- 5. 畫面渲染 ---
     function render() {
         const list = document.getElementById('plan-list');
         list.innerHTML = '';
@@ -356,9 +433,10 @@
             list.appendChild(card);
         });
         calculateTotal();
+        lockInterfaceForVisitor(); // 每次畫面畫完，如果是朋友的房間，立即啟動鎖定
     }
 
-    // --- 5. 進度條計算 ---
+    // --- 6. 進度條計算 ---
     function calculateTotal() {
         const all = userPlans.flatMap(p => p.tasks || []);
         const done = all.filter(t => t.done).length;
@@ -367,8 +445,9 @@
         document.getElementById('percent-text').innerText = `目前總進度 ${percent}% (${done}/${all.length})`;
     }
 
-    // --- 6. 功能與雲端儲存邏輯 ---
+    // --- 7. 功能與雲端儲存邏輯 ---
     function addDay() {
+        if (viewingUser !== currentUser) return;
         const lastDate = userPlans.length > 0 ? userPlans[userPlans.length-1].date : new Date().toISOString().split('T')[0];
         const next = new Date(lastDate);
         next.setDate(next.getDate() + 1);
@@ -377,6 +456,7 @@
     }
 
     function uploadPhoto(dIdx, input) {
+        if (viewingUser !== currentUser) return;
         const file = input.files[0];
         if (!file) return;
         const reader = new FileReader();
@@ -389,6 +469,7 @@
     }
 
     function deletePhoto(dIdx, pIdx) {
+        if (viewingUser !== currentUser) return;
         if (confirm("確定刪除這張照片筆記嗎？")) {
             userPlans[dIdx].photos.splice(pIdx, 1);
             save(); 
@@ -396,17 +477,34 @@
     }
 
     function save() {
+        if (viewingUser !== currentUser) return; // 防呆：不能儲存別人的資料
         db.ref('plans/' + currentUser).set(userPlans).then(() => {
-            // 每次儲存完畢，順便檢查並重新整理經驗值
             recalculateUserExp();
         });
     }
 
-    function deleteDay(idx) { if(confirm("確定要刪除這整天的計畫嗎？")) { userPlans.splice(idx, 1); save(); } }
-    function toggleTask(dIdx, tIdx) { userPlans[dIdx].tasks[tIdx].done = !userPlans[dIdx].tasks[tIdx].done; save(); }
-    function editTask(dIdx, tIdx, val) { userPlans[dIdx].tasks[tIdx].text = val; save(); }
-    function updateDate(dIdx, val) { userPlans[dIdx].date = val; save(); }
+    function deleteDay(idx) { 
+        if (viewingUser !== currentUser) return;
+        if(confirm("確定要刪除這整天的計畫嗎？")) { userPlans.splice(idx, 1); save(); } 
+    }
+    
+    function toggleTask(dIdx, tIdx) { 
+        if (viewingUser !== currentUser) return;
+        userPlans[dIdx].tasks[tIdx].done = !userPlans[dIdx].tasks[tIdx].done; save(); 
+    }
+    
+    function editTask(dIdx, tIdx, val) { 
+        if (viewingUser !== currentUser) return;
+        userPlans[dIdx].tasks[tIdx].text = val; save(); 
+    }
+    
+    function updateDate(dIdx, val) { 
+        if (viewingUser !== currentUser) return;
+        userPlans[dIdx].date = val; save(); 
+    }
+    
     function addTask(dIdx) { 
+        if (viewingUser !== currentUser) return;
         if (!userPlans[dIdx].tasks) userPlans[dIdx].tasks = [];
         userPlans[dIdx].tasks.push({text:"新任務", done:false}); 
         save(); 
@@ -414,4 +512,5 @@
 </script>
 
 </body>
+</html>
 </html>
