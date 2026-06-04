@@ -117,43 +117,46 @@
 </div>
 
 <script>
-   // --- 1. Firebase 配置 (已幫你填入你剛剛拿到的專屬金鑰) ---
-const firebaseConfig = {
-    apiKey: "AIzaSyAjOMkZ9s_8YLvEb4TdnND9p1GkLvSG6n8",
-    authDomain: "yuuuuuuuuu09-8c245.firebaseapp.com",
-    databaseURL: "https://yuuuuuuuuu09-8c245-default-rtdb.firebaseio.com", // 雲端資料庫核心
-    projectId: "yuuuuuuuuu09-8c245",
-    storageBucket: "yuuuuuuuuu09-8c245.firebasestorage.app",
-    appId: "1:972849961283:web:d309dc5cb8d3ab4f1b77f6"
-};
+    // --- 1. Firebase 配置 ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyAjOMkZ9s_8YLvEb4TdnND9p1GkLvSG6n8",
+        authDomain: "yuuuuuuuuu09-8c245.firebaseapp.com",
+        databaseURL: "https://yuuuuuuuuu09-8c245-default-rtdb.firebaseio.com", 
+        projectId: "yuuuuuuuuu09-8c245",
+        storageBucket: "yuuuuuuuuu09-8c245.firebasestorage.app",
+        appId: "1:972849961283:web:d309dc5cb8d3ab4f1b77f6"
+    };
 
-// 下面的初始化與 db 設定維持原樣即可
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    
     let currentUser = "";
     let userPlans = [];
 
+    // --- 2. 登入與雲端監聽 ---
     function login() {
-    const name = document.getElementById('username').value.trim();
-    if (!name) return alert("請輸入帳號！");
-    currentUser = name;
-    document.getElementById('display-user').innerText = currentUser;
-    document.getElementById('login-overlay').style.display = 'none';
-    document.getElementById('main-app').style.display = 'block';
+        const name = document.getElementById('username').value.trim();
+        if (!name) return alert("請輸入帳號！");
+        currentUser = name;
+        document.getElementById('display-user').innerText = currentUser;
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
 
-    db.ref('plans/' + currentUser).on('value', (snapshot) => {
-        userPlans = snapshot.val() || [];
-        render(); // 雲端一有新資料，就自動重新渲染畫面
-    });
-}
+        db.ref('plans/' + currentUser).on('value', (snapshot) => {
+            userPlans = snapshot.val() || [];
+            render(); 
+        });
+    }
 
+    // --- 3. 畫面渲染 ---
     function render() {
         const list = document.getElementById('plan-list');
         list.innerHTML = '';
 
         userPlans.forEach((day, dIdx) => {
-            const done = day.tasks.filter(t => t.done).length;
-            const total = day.tasks.length;
+            const dayTasks = day.tasks || []; // 安全防護：防範空任務
+            const done = dayTasks.filter(t => t.done).length;
+            const total = dayTasks.length;
             const percent = total > 0 ? Math.round((done/total)*100) : 0;
 
             const card = document.createElement('div');
@@ -162,13 +165,13 @@ const db = firebase.database();
                 <div class="card-header">
                     <div>
                         <span style="font-size:1.3em">Day ${dIdx + 1}</span>
-                        <input type="date" class="date-picker" value="${day.date}" onchange="updateDate(${dIdx}, this.value)">
+                        <input type="date" class="date-picker" value="${day.date || ''}" onchange="updateDate(${dIdx}, this.value)">
                     </div>
                     <div style="color: var(--pink)">本日完成度：${percent}%</div>
                 </div>
                 
                 <div class="task-list">
-                    ${day.tasks.map((t, tIdx) => `
+                    ${dayTasks.map((t, tIdx) => `
                         <div class="task-item">
                             <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${dIdx}, ${tIdx})">
                             <span contenteditable="true" onblur="editTask(${dIdx}, ${tIdx}, this.innerText)">${t.text}</span>
@@ -179,74 +182,7 @@ const db = firebase.database();
                 <div style="display:flex; gap:15px; align-items:center">
                     <button class="btn btn-pink" style="font-size:0.8em; padding:5px 10px" onclick="addTask(${dIdx})">+ 任務</button>
                     <label class="upload-label">📷 上傳筆記照片
-                        <input type="file" style="display:none" accept="image/*" onchange="uploadPhoto(${dIdx}, this)">
-                    </label>
-                    <button class="btn" style="background:#fff1f1; color:red; font-size:0.8em; margin-left:auto" onclick="deleteDay(${dIdx})">刪除此天</button>
-                </div>
-
-                <div class="photo-gallery">
-                    ${(day.photos || []).map((img, iIdx) => `
-                        <img src="${img}" class="photo-thumb" onclick="deletePhoto(${dIdx}, ${iIdx})" title="點擊刪除照片">
-                    `).join('')}
-                </div>
-            `;
-            list.appendChild(card);
-        });
-        calculateTotal();
-    }
-    function calculateTotal() {
-    const all = userPlans.flatMap(p => p.tasks || []);
-    const done = all.filter(t => t.done).length;
-    const percent = all.length > 0 ? Math.round((done / all.length) * 100) : 0;
-    document.getElementById('main-bar').style.width = percent + "%";
-    document.getElementById('percent-text').innerText = `目前總進度 ${percent}% (${done}/${all.length})`;
-}
-
-    // --- 功能邏輯 ---
-// --- 功能邏輯 (已修正完畢的版本) ---
-    function addDay() {
-        const lastDate = userPlans.length > 0 ? userPlans[userPlans.length-1].date : new Date().toISOString().split('T')[0];
-        const next = new Date(lastDate);
-        next.setDate(next.getDate() + 1);
-        userPlans.push({ date: next.toISOString().split('T')[0], tasks: [{text:"新計畫", done:false}], photos: [] });
-        save(); // ⭕ 改成 save()，讓雲端推播自動觸發 render
-    }
-
-    function uploadPhoto(dIdx, input) {
-        const file = input.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            if (!userPlans[dIdx].photos) userPlans[dIdx].photos = [];
-            userPlans[dIdx].photos.push(e.target.result);
-            save(); // ⭕ 改成 save()，照片才會真正存進雲端資料庫
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function deletePhoto(dIdx, pIdx) {
-        if (confirm("確定刪除這張照片筆記嗎？")) {
-            userPlans[dIdx].photos.splice(pIdx, 1);
-            save(); // ⭕ 改成 save()，雲端同步刪除
-        }
-    }
-
-    function save() {
-        db.ref('plans/' + currentUser).set(userPlans);
-        // 雲端架構下，save 只需要負責把資料 set 上去
-        // 畫面的進度條與渲染，會由 login 裡面的 .on('value') 自動接手處理！
-    }
-
-    // ⭕ 修正其餘所有按鈕，全部改呼叫 save() 來觸發雲端同步
-    function deleteDay(idx) { if(confirm("確定要刪除這整天的計畫嗎？")) { userPlans.splice(idx, 1); save(); } }
-    function toggleTask(dIdx, tIdx) { userPlans[dIdx].tasks[tIdx].done = !userPlans[dIdx].tasks[tIdx].done; save(); }
-    function editTask(dIdx, tIdx, val) { userPlans[dIdx].tasks[tIdx].text = val; save(); }
-    function updateDate(dIdx, val) { userPlans[dIdx].date = val; save(); }
-    function addTask(dIdx) { 
-        if (!userPlans[dIdx].tasks) userPlans[dIdx].tasks = [];
-        userPlans[dIdx].tasks.push({text:"新任務", done:false}); 
-        save(); 
-    }
+                        <input type="file" style="display:none" accept
 </script>
 
 </body>
