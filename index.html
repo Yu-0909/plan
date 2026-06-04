@@ -17,6 +17,7 @@
         --pink: #ff8ac9;
         --soft-bg: linear-gradient(135deg, #ffd6ec, #e4e8ff);
         --purple: #b5a2ff;
+        --grid-gray: #f9f9fb;
     }
 
     body {
@@ -28,7 +29,7 @@
     }
 
     .container {
-        max-width: 900px;
+        max-width: 950px;
         margin: auto;
         background: rgba(255, 255, 255, 0.95);
         padding: 30px;
@@ -72,28 +73,63 @@
 
     h1, h2, h3 { color: #444; font-weight: normal; }
 
-    /* 進度條樣式 */
-    .progress-section { margin-bottom: 20px; }
+    /* 📅 月曆樣式區塊 */
+    .calendar-wrapper {
+        background: white; border: 1px solid #ffe6f5; border-radius: 20px;
+        padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+    .calendar-header {
+        display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
+    }
+    .calendar-title { font-size: 1.4em; color: #444; display: flex; gap: 10px; align-items: center; }
+    .calendar-grid {
+        display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center;
+    }
+    .weekday { font-weight: bold; color: #888; padding: 5px 0; font-size: 1.1em; }
+    .day-cell {
+        background: var(--grid-gray); border-radius: 12px; min-height: 70px;
+        padding: 6px; display: flex; flex-direction: column; justify-content: space-between;
+        align-items: flex-start; cursor: pointer; transition: 0.2s; border: 2px solid transparent;
+        box-sizing: border-box; position: relative;
+    }
+    .day-cell:hover { background: #ffeef7; }
+    .day-cell.empty { background: none; cursor: default; }
+    .day-cell.empty:hover { background: none; }
+    .day-cell.selected { border-color: var(--pink); background: #fff0f7; }
+    .day-cell.has-tasks { background: #f3f2ff; }
+    .day-cell.has-tasks:hover { background: #e9e6ff; }
+    .day-cell.has-tasks.selected { background: #fff0f7; border-color: var(--pink); }
+    .cell-num { font-size: 1.1em; color: #555; font-weight: bold; }
+    
+    /* 小型的格子進度條 */
+    .cell-progress-mini {
+        width: 100%; height: 5px; background: #e0e0e0; border-radius: 3px; overflow: hidden; margin-top: 5px;
+    }
+    .cell-progress-bar { height: 100%; background: var(--pink); width: 0%; transition: width 0.3s; }
+    .cell-progress-bar.done { background: #7bdcb5; }
+    .cell-task-count { font-size: 0.8em; color: #888; margin-top: 2px; }
+
+    /* 📊 每日單獨進度條樣式 */
+    .progress-section { margin-bottom: 20px; background: #fff5fa; padding: 15px; border-radius: 15px; border: 1px solid #ffe6f2; }
     .progress { width: 100%; background: #eee; border-radius: 10px; height: 18px; margin: 10px 0; overflow: hidden; }
     .bar { height: 100%; width: 0%; background: var(--pink); transition: width 0.5s ease; }
 
-    /* 卡片式清單 */
+    /* 任務詳細卡片 */
     .day-card {
         background: #fff; border: 1px solid #ffe6f5; border-radius: 15px;
-        padding: 20px; margin-bottom: 20px; position: relative;
+        padding: 20px; margin-bottom: 20px; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
     }
     .card-header {
         display: flex; justify-content: space-between; align-items: center;
         border-bottom: 1.5px solid #fff0f7; margin-bottom: 15px; padding-bottom: 10px;
     }
-    .date-picker {
-        font-family: 'ChenYuluoyan', sans-serif;
-        border: 1px solid #ffd6ec; border-radius: 5px; padding: 5px; font-size: 1.1em;
-    }
 
     .task-list { margin-bottom: 15px; }
     .task-item { display: flex; align-items: center; margin: 8px 0; gap: 10px; font-size: 1.2em; }
     input[type="checkbox"] { accent-color: var(--pink); width: 20px; height: 20px; }
+    .task-text-span { flex-grow: 1; border-bottom: 1px dashed transparent; padding: 2px; }
+    .task-text-span[contenteditable="true"]:focus { border-bottom-color: var(--pink); outline: none; background: #fff9fc; }
+    .task-item.completed-text span { text-decoration: line-through; color: #aaa; }
 
     /* 照片區 */
     .photo-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
@@ -108,9 +144,10 @@
     .btn-pink:hover { opacity: 0.8; }
     .btn-purple { background: var(--purple); color: white; }
     .btn-purple:hover { opacity: 0.8; }
-    .btn-outline { background: none; border: 1.5px dashed var(--pink); color: var(--pink); width: 100%; padding: 15px; }
-
+    .btn-sm { padding: 4px 10px; font-size: 0.9em; border-radius: 8px; }
+    
     .upload-label { font-size: 0.9em; color: #888; cursor: pointer; text-decoration: underline; }
+    .no-task-tip { color: #999; text-align: center; padding: 30px; font-size: 1.2em; }
 </style>
 </head>
 <body>
@@ -153,6 +190,7 @@
 </div>
 
 <div class="container" id="main-app">
+    <!-- 使用者資訊區塊 -->
     <div class="user-profile-bar">
         <div class="user-avatar" id="my-avatar">🐱</div>
         <div class="user-info">
@@ -176,16 +214,30 @@
         </div>
     </div>
 
-    <h1 id="page-main-title">計畫完成進度</h1>
+    <h1 id="page-main-title">讀書計畫管理</h1>
 
-    <div class="progress-section">
-        <h3 id="percent-text">目前總進度 0%</h3>
+    <!-- 📅 核心組件：月曆排程 -->
+    <div class="calendar-wrapper">
+        <div class="calendar-header">
+            <button class="btn btn-purple btn-sm" onclick="moveMonth(-1)">◀ 上個月</button>
+            <div class="calendar-title">
+                <span id="calendar-year-month" style="font-weight: bold; font-size: 1.2em;">2026 年 06 月</span>
+            </div>
+            <button class="btn btn-purple btn-sm" onclick="moveMonth(1)">下個月 ▶</button>
+        </div>
+        <div class="calendar-grid" id="calendar-grid-container">
+            <!-- 由 JavaScript 動態生成 -->
+        </div>
+    </div>
+
+    <!-- 📊 每日專屬進度條 -->
+    <div class="progress-section" id="daily-progress-zone">
+        <h3 id="percent-text">請選擇上方日期查看今日進度</h3>
         <div class="progress"><div class="bar" id="main-bar"></div></div>
     </div>
 
+    <!-- 當日任務細節卡片 -->
     <div id="plan-list"></div>
-
-    <button class="btn btn-outline" id="add-day-btn" onclick="addDay()">＋ 增加新的日期計畫</button>
 </div>
 
 <script>
@@ -204,10 +256,21 @@
     
     let currentUser = "";
     let viewingUser = ""; 
-    let userPlans = [];
+    let userPlans = []; // 結構保持不變: [{date: 'YYYY-MM-DD', tasks:[...], photos:[...]}, ...]
     let userData = { avatar: "🐱", exp: 0 }; 
     let selectedAvatar = "🐱"; 
     let isRegisterMode = false;
+
+    // 月曆內部狀態
+    let currentCalYear = 2026;
+    let currentCalMonth = 5; // 0-11, 5 代表 6 月
+    let selectedDateStr = ""; // 目前選中的日期 'YYYY-MM-DD'
+
+    // 初始化當前系統時間
+    const today = new Date();
+    currentCalYear = today.getFullYear();
+    currentCalMonth = today.getMonth();
+    selectedDateStr = today.toISOString().split('T')[0];
 
     // --- 2. 登入與註冊切換邏輯 ---
     function toggleAuthMode(toRegister) {
@@ -243,7 +306,6 @@
 
     function handleRegister() {
         const name = document.getElementById('username').value.trim();
-        // 強制轉換為字串並完全去除可能干擾的空白
         const pass = String(document.getElementById('password').value).trim();
         if (!name || !pass) return alert("請填寫帳號與密碼！");
 
@@ -251,7 +313,6 @@
             if (snapshot.exists()) {
                 alert("該帳號已被註冊，請換一個名字！");
             } else {
-                // 確保存入資料庫的是乾淨的字串
                 const newProfile = { password: pass, avatar: selectedAvatar, exp: 0 };
                 db.ref('users/' + name).set(newProfile).then(() => {
                     alert("註冊成功！自動為您登入");
@@ -263,14 +324,12 @@
 
     function handleLogin() {
         const name = document.getElementById('username').value.trim();
-        // 同步轉換為字串並完全去除可能干擾的空白
         const pass = String(document.getElementById('password').value).trim();
         if (!name || !pass) return alert("請輸入帳號與密碼！");
 
         db.ref('users/' + name).once('value', (snapshot) => {
             if (snapshot.exists()) {
                 const info = snapshot.val();
-                // 用 String() 包起來做最嚴格且安全的字串比對
                 if (String(info.password).trim() === pass) {
                     enterApp(name);
                 } else {
@@ -281,6 +340,7 @@
             }
         });
     }
+
     function enterApp(name) {
         currentUser = name;
         viewingUser = name;
@@ -288,7 +348,6 @@
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
 
-        // 監聽自己的個人頭像與 EXP
         db.ref('users/' + currentUser).on('value', (snapshot) => {
             if (snapshot.exists() && viewingUser === currentUser) {
                 const data = snapshot.val();
@@ -298,7 +357,6 @@
             }
         });
 
-        // 監聽自己的讀書計畫
         db.ref('plans/' + currentUser).on('value', (snapshot) => {
             if (viewingUser === currentUser) {
                 userPlans = snapshot.val() || [];
@@ -307,7 +365,7 @@
         });
     }
 
-    // --- 3. 找朋友（造訪他人房間）邏輯 ---
+    // --- 3. 找朋友邏輯 ---
     function visitFriend() {
         const friendName = document.getElementById('friend-username').value.trim();
         if (!friendName) return alert("請輸入朋友的帳號！");
@@ -341,7 +399,7 @@
         viewingUser = currentUser;
         document.getElementById('friend-username').value = "";
         document.getElementById('back-home-btn').style.display = "none";
-        document.getElementById('page-main-title').innerText = "讀書計畫進度";
+        document.getElementById('page-main-title').innerText = "讀書計畫管理";
 
         db.ref('users/' + currentUser).once('value', (snapshot) => {
             if (snapshot.exists()) {
@@ -357,15 +415,10 @@
     }
 
     function lockInterfaceForVisitor() {
-        const addDayBtn = document.getElementById('add-day-btn');
         if (viewingUser !== currentUser) {
-            if (addDayBtn) addDayBtn.style.display = 'none';
             document.querySelectorAll('.day-card button, .day-card label').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.day-card input[type="checkbox"]').forEach(el => el.disabled = true);
-            document.querySelectorAll('.day-card input[type="date"]').forEach(el => el.disabled = true);
             document.querySelectorAll('.day-card span[contenteditable]').forEach(el => el.contentEditable = false);
-        } else {
-            if (addDayBtn) addDayBtn.style.display = 'block';
         }
     }
 
@@ -380,7 +433,6 @@
         document.getElementById('my-exp-bar').style.width = currentExp + "%";
     }
 
-    // 獨立累加制
     function changeExp(amount) {
         if (viewingUser !== currentUser) return; 
         
@@ -392,93 +444,244 @@
         });
     }
 
-    // --- 5. 畫面渲染 ---
-    function render() {
-        const list = document.getElementById('plan-list');
-        list.innerHTML = '';
+    // --- 5. 月曆切換控制 ---
+    function moveMonth(dir) {
+        currentCalMonth += dir;
+        if (currentCalMonth > 11) {
+            currentCalMonth = 0;
+            currentCalYear++;
+        } else if (currentCalMonth < 0) {
+            currentCalMonth = 11;
+            currentCalYear--;
+        }
+        renderCalendar();
+    }
 
-        userPlans.forEach((day, dIdx) => {
-            const dayTasks = day.tasks || []; 
-            const done = dayTasks.filter(t => t.done).length;
-            const total = dayTasks.length;
-            const percent = total > 0 ? Math.round((done/total)*100) : 0;
-
-            const card = document.createElement('div');
-            card.className = 'day-card';
-            card.innerHTML = `
-                <div class="card-header">
-                    <div>
-                        <span style="font-size:1.3em">Day ${dIdx + 1}</span>
-                        <input type="date" class="date-picker" value="${day.date || ''}" onchange="updateDate(${dIdx}, this.value)">
-                    </div>
-                    <div style="color: var(--pink)">本日完成度：${percent}%</div>
-                </div>
-                
-                <div class="task-list">
-                    ${dayTasks.map((t, tIdx) => `
-                        <div class="task-item">
-                            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${dIdx}, ${tIdx})">
-                            <span contenteditable="true" onblur="editTask(${dIdx}, ${tIdx}, this.innerText)">${t.text}</span>
-                        </div>
-                    `).join('')}
-                </div>
-
-                <div style="display:flex; gap:15px; align-items:center">
-                    <button class="btn btn-pink" style="font-size:0.8em; padding:5px 10px" onclick="addTask(${dIdx})">+ 任務</button>
-                    <label class="upload-label">📷 上傳筆記照片
-                        <input type="file" style="display:none" accept="image/*" onchange="uploadPhoto(${dIdx}, this)">
-                    </label>
-                    <button class="btn" style="background:#fff1f1; color:red; font-size:0.8em; margin-left:auto" onclick="deleteDay(${dIdx})">刪除此天</button>
-                </div>
-
-                <div class="photo-gallery">
-                    ${(day.photos || []).map((img, iIdx) => `
-                        <img src="${img}" class="photo-thumb" onclick="deletePhoto(${dIdx}, ${iIdx})" title="點擊刪除照片">
-                    `).join('')}
-                </div>
-            `;
-            list.appendChild(card);
+    function selectDate(dateStr) {
+        selectedDateStr = dateStr;
+        // 同步更動月曆上的視覺外觀
+        document.querySelectorAll('.day-cell').forEach(cell => {
+            if(cell.dataset.date === dateStr) {
+                cell.classList.add('selected');
+            } else {
+                cell.classList.remove('selected');
+            }
         });
-        calculateTotal();
+        renderDailyDetail();
+    }
+
+    // 渲染上方整個月曆網格
+    function renderCalendar() {
+        const monthNames = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+        document.getElementById('calendar-year-month').innerText = `${currentCalYear} 年 ${monthNames[currentCalMonth]} 月`;
+
+        const container = document.getElementById('calendar-grid-container');
+        container.innerHTML = '';
+
+        // 星期欄位抬頭
+        const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+        weekdays.forEach(w => {
+            const div = document.createElement('div');
+            div.className = 'weekday';
+            div.innerText = w;
+            container.appendChild(div);
+        });
+
+        // 取得該月第一天與總天數
+        const firstDayIndex = new Date(currentCalYear, currentCalMonth, 1).getDay();
+        const totalDays = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
+
+        // 填塞上個月空白格
+        for (let i = 0; i < firstDayIndex; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'day-cell empty';
+            container.appendChild(emptyCell);
+        }
+
+        // 建立日期格
+        for (let day = 1; day <= totalDays; day++) {
+            const mStr = String(currentCalMonth + 1).padStart(2, '0');
+            const dStr = String(day).padStart(2, '0');
+            const fullDateStr = `${currentCalYear}-${mStr}-${dStr}`;
+
+            // 從現有陣列尋找是否有該日計畫
+            const matchedPlan = userPlans.find(p => p.date === fullDateStr);
+            const tasks = matchedPlan ? (matchedPlan.tasks || []) : [];
+            const doneCount = tasks.filter(t => t.done).length;
+            const totalCount = tasks.length;
+            const percent = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+            cell.dataset.date = fullDateStr;
+            if (totalCount > 0) cell.classList.add('has-tasks');
+            if (fullDateStr === selectedDateStr) cell.classList.add('selected');
+
+            cell.onclick = () => selectDate(fullDateStr);
+
+            // 格子內容
+            let innerHTML = `<span class="cell-num">${day}</span>`;
+            if (totalCount > 0) {
+                innerHTML += `<span class="cell-task-count">📝 ${doneCount}/${totalCount}</span>`;
+                innerHTML += `
+                    <div class="cell-progress-mini">
+                        <div class="cell-progress-bar ${percent===100?'done':''}" style="width: ${percent}%"></div>
+                    </div>
+                `;
+            } else {
+                innerHTML += `<span class="cell-task-count" style="color:#ccc; font-size:0.75em;">+ 點擊排程</span>`;
+            }
+            cell.innerHTML = innerHTML;
+            container.appendChild(cell);
+        }
+    }
+
+    // --- 6. 畫面渲染與每日專屬進度條 ---
+    function render() {
+        renderCalendar();
+        renderDailyDetail();
+    }
+
+    // 渲染「目前所選取之指定日期」的獨立進度條與卡片
+    function renderDailyDetail() {
+        const listContainer = document.getElementById('plan-list');
+        listContainer.innerHTML = '';
+
+        // 尋找選定日期的計畫
+        const matchedPlanIdx = userPlans.findIndex(p => p.date === selectedDateStr);
+        const matchedPlan = matchedPlanIdx !== -1 ? userPlans[matchedPlanIdx] : null;
+
+        const pBar = document.getElementById('main-bar');
+        const pText = document.getElementById('percent-text');
+
+        // 改寫大標題：改顯示當前選擇的每日進度
+        if (!matchedPlan || !matchedPlan.tasks || matchedPlan.tasks.length === 0) {
+            pBar.style.width = "0%";
+            pText.innerText = `📅 ${selectedDateStr}：本日尚未安排任何讀書計畫`;
+            
+            // 訪客狀態下不顯示增加任務按鈕
+            if (viewingUser === currentUser) {
+                listContainer.innerHTML = `
+                    <div class="no-task-tip">
+                        <p>今天空空的唷！趕快動手排點進度吧！</p>
+                        <button class="btn btn-pink" onclick="createPlanForSelectedDate()">＋ 為此日新增任務</button>
+                    </div>
+                `;
+            } else {
+                listContainer.innerHTML = `<div class="no-task-tip">此帳號今日無計畫</div>`;
+            }
+            return;
+        }
+
+        const dayTasks = matchedPlan.tasks;
+        const done = dayTasks.filter(t => t.done).length;
+        const total = dayTasks.length;
+        const percent = Math.round((done / total) * 100);
+
+        // 更新每日獨立進度條
+        pBar.style.width = percent + "%";
+        pText.innerText = `📅 ${selectedDateStr} 本日進度：${percent}% (${done}/${total})`;
+
+        // 生成當日詳細排程卡片
+        const card = document.createElement('div');
+        card.className = 'day-card';
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <span style="font-size:1.4em; font-weight:bold; color:var(--purple);">✨ 當日目標排程</span>
+                </div>
+                <div style="color: var(--pink); font-size:1.2em;">本日完成度：${percent}%</div>
+            </div>
+            
+            <div class="task-list">
+                ${dayTasks.map((t, tIdx) => `
+                    <div class="task-item ${t.done ? 'completed-text' : ''}">
+                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${matchedPlanIdx}, ${tIdx})">
+                        <span class="task-text-span" contenteditable="true" onblur="editTask(${matchedPlanIdx}, ${tIdx}, this.innerText)">${t.text}</span>
+                    </div>
+                `).join('')}
+            </div>
+
+            <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+                <button class="btn btn-pink btn-sm" onclick="addTask(${matchedPlanIdx})">+ 新增項目</button>
+                <label class="upload-label">📷 上傳筆記照片
+                    <input type="file" style="display:none" accept="image/*" onchange="uploadPhoto(${matchedPlanIdx}, this)">
+                </label>
+                <button class="btn" style="background:#fff1f1; color:red; font-size:0.8em; margin-left:auto" onclick="deleteDay(${matchedPlanIdx})">清空此日所有計畫</button>
+            </div>
+
+            <div class="photo-gallery">
+                ${(matchedPlan.photos || []).map((img, iIdx) => `
+                    <img src="${img}" class="photo-thumb" onclick="deletePhoto(${matchedPlanIdx}, ${iIdx})" title="點擊刪除照片">
+                `).join('')}
+            </div>
+        `;
+        listContainer.appendChild(card);
         lockInterfaceForVisitor(); 
     }
 
-    // --- 6. 進度條計算 ---
-    function calculateTotal() {
-        const all = userPlans.flatMap(p => p.tasks || []);
-        const done = all.filter(t => t.done).length;
-        const percent = all.length > 0 ? Math.round((done / all.length) * 100) : 0;
-        document.getElementById('main-bar').style.width = percent + "%";
-        document.getElementById('percent-text').innerText = `目前總進度 ${percent}% (${done}/${all.length})`;
+    // --- 7. 功能與雲端儲存邏輯 ---
+    function createPlanForSelectedDate() {
+        if (viewingUser !== currentUser) return;
+        userPlans.push({
+            date: selectedDateStr,
+            tasks: [{text: "新讀書任務", done: false}],
+            photos: []
+        });
+        save();
     }
 
-    // --- 7. 功能與雲端儲存邏輯 ---
-    function addDay() {
+    function addTask(pIdx) { 
         if (viewingUser !== currentUser) return;
-        const lastDate = userPlans.length > 0 ? userPlans[userPlans.length-1].date : new Date().toISOString().split('T')[0];
-        const next = new Date(lastDate);
-        next.setDate(next.getDate() + 1);
-        userPlans.push({ date: next.toISOString().split('T')[0], tasks: [{text:"新計畫", done:false}], photos: [] });
+        if (!userPlans[pIdx].tasks) userPlans[pIdx].tasks = [];
+        userPlans[pIdx].tasks.push({text: "新任務", done: false}); 
         save(); 
     }
 
-    function uploadPhoto(dIdx, input) {
+    function toggleTask(pIdx, tIdx) { 
+        if (viewingUser !== currentUser) return;
+        
+        userPlans[pIdx].tasks[tIdx].done = !userPlans[pIdx].tasks[tIdx].done; 
+        
+        if (userPlans[pIdx].tasks[tIdx].done) {
+            changeExp(10); 
+        } else {
+            changeExp(-10); 
+        }
+        save(); 
+    }
+
+    function editTask(pIdx, tIdx, val) { 
+        if (viewingUser !== currentUser) return;
+        userPlans[pIdx].tasks[tIdx].text = val; 
+        save(); 
+    }
+
+    function deleteDay(pIdx) { 
+        if (viewingUser !== currentUser) return;
+        if(confirm("確定要清空這整天的計畫與照片嗎？")) { 
+            userPlans.splice(pIdx, 1); 
+            save(); 
+        } 
+    }
+
+    function uploadPhoto(pIdx, input) {
         if (viewingUser !== currentUser) return;
         const file = input.files[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-            if (!userPlans[dIdx].photos) userPlans[dIdx].photos = [];
-            userPlans[dIdx].photos.push(e.target.result);
+            if (!userPlans[pIdx].photos) userPlans[pIdx].photos = [];
+            userPlans[pIdx].photos.push(e.target.result);
             save(); 
         };
         reader.readAsDataURL(file);
     }
 
-    function deletePhoto(dIdx, pIdx) {
+    function deletePhoto(pIdx, pIdxPhoto) {
         if (viewingUser !== currentUser) return;
         if (confirm("確定刪除這張照片筆記嗎？")) {
-            userPlans[dIdx].photos.splice(pIdx, 1);
+            userPlans[pIdx].photos.splice(pIdxPhoto, 1);
             save(); 
         }
     }
@@ -486,41 +689,6 @@
     function save() {
         if (viewingUser !== currentUser) return; 
         db.ref('plans/' + currentUser).set(userPlans);
-    }
-
-    function deleteDay(idx) { 
-        if (viewingUser !== currentUser) return;
-        if(confirm("確定要刪除這整天的計畫嗎？")) { userPlans.splice(idx, 1); save(); } 
-    }
-    
-    function toggleTask(dIdx, tIdx) { 
-        if (viewingUser !== currentUser) return;
-        
-        userPlans[dIdx].tasks[tIdx].done = !userPlans[dIdx].tasks[tIdx].done; 
-        
-        if (userPlans[dIdx].tasks[tIdx].done) {
-            changeExp(10); 
-        } else {
-            changeExp(-10); 
-        }
-        save(); 
-    }
-    
-    function editTask(dIdx, tIdx, val) { 
-        if (viewingUser !== currentUser) return;
-        userPlans[dIdx].tasks[tIdx].text = val; save(); 
-    }
-    
-    function updateDate(dIdx, val) { 
-        if (viewingUser !== currentUser) return;
-        userPlans[dIdx].date = val; save(); 
-    }
-    
-    function addTask(dIdx) { 
-        if (viewingUser !== currentUser) return;
-        if (!userPlans[dIdx].tasks) userPlans[dIdx].tasks = [];
-        userPlans[dIdx].tasks.push({text:"新任務", done:false}); 
-        save(); 
     }
 </script>
 
