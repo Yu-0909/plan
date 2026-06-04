@@ -117,13 +117,19 @@
 </div>
 
 <script>
-    const firebaseConfig = {
-    apiKey: "你的API金鑰",
-    authDomain: "你的專案ID.firebaseapp.com",
-    databaseURL: "https://你的專案ID-default-rtdb.firebaseio.com",
-    projectId: "你的專案ID",
-    storageBucket: "你的專案ID.appspot.com",
+   // --- 1. Firebase 配置 (已幫你填入你剛剛拿到的專屬金鑰) ---
+const firebaseConfig = {
+    apiKey: "AIzaSyAjOMkZ9s_8YLvEb4TdnND9p1GkLvSG6n8",
+    authDomain: "yuuuuuuuuu09-8c245.firebaseapp.com",
+    databaseURL: "https://yuuuuuuuuu09-8c245-default-rtdb.firebaseio.com", // 雲端資料庫核心
+    projectId: "yuuuuuuuuu09-8c245",
+    storageBucket: "yuuuuuuuuu09-8c245.firebasestorage.app",
+    appId: "1:972849961283:web:d309dc5cb8d3ab4f1b77f6"
 };
+
+// 下面的初始化與 db 設定維持原樣即可
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
     let currentUser = "";
