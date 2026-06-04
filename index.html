@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>讀書計畫 - 完整社交升級版</title>
+<title>讀書計畫 - 社交與經驗完美防禦版</title>
 <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
 <style>
@@ -162,7 +162,7 @@
         </div>
 
         <div style="width: 100%; margin-top: 12px; display: flex; gap: 8px; border-top: 1px dashed #ffd6ec; padding-top: 10px;">
-            <input type="text" id="friend-username" placeholder="輸入朋友的帳號密碼來找他..." style="flex-grow: 1; padding: 6px 12px; border: 1px solid #ffd6ec; border-radius: 8px; font-family: 'ChenYuluoyan'; font-size: 1em;">
+            <input type="text" id="friend-username" placeholder="輸入朋友的帳號來找他..." style="flex-grow: 1; padding: 6px 12px; border: 1px solid #ffd6ec; border-radius: 8px; font-family: 'ChenYuluoyan'; font-size: 1em;">
             <button class="btn btn-pink" style="font-size: 0.9em; padding: 6px 12px;" onclick="visitFriend()">去他房間</button>
             <button class="btn" id="back-home-btn" style="font-size: 0.9em; padding: 6px 12px; background: #e4e8ff; color: #555; display: none;" onclick="goBackHome()">回我自己</button>
         </div>
@@ -195,7 +195,7 @@
     const db = firebase.database();
     
     let currentUser = "";
-    let viewingUser = ""; // 目前正在觀看誰的房間 (空字串代表自己)
+    let viewingUser = ""; 
     let userPlans = [];
     let userData = { avatar: "🐱", exp: 0 }; 
     let selectedAvatar = "🐱"; 
@@ -306,18 +306,15 @@
             if (!userSnap.exists()) {
                 alert("找不到這個帳號，請確認名字有沒有打錯喔！");
             } else {
-                // 卸載原本自己節點的監聽器
                 db.ref('plans/' + currentUser).off();
                 
                 viewingUser = friendName;
                 const friendData = userSnap.val();
                 
-                // 更新上方的頭像與等級為朋友的資訊
                 updateLevelUI(friendData.avatar || "🐱", friendData.exp || 0);
                 document.getElementById('page-main-title').innerText = `${viewingUser} 的讀書計畫`;
                 document.getElementById('back-home-btn').style.display = "inline-block";
 
-                // 開始實時監聽朋友的計畫
                 db.ref('plans/' + viewingUser).on('value', (planSnap) => {
                     userPlans = planSnap.val() || [];
                     render();
@@ -328,7 +325,6 @@
     }
 
     function goBackHome() {
-        // 解除朋友計畫的監聽
         db.ref('plans/' + viewingUser).off();
         
         viewingUser = currentUser;
@@ -336,7 +332,6 @@
         document.getElementById('back-home-btn').style.display = "none";
         document.getElementById('page-main-title').innerText = "讀書計畫進度";
 
-        // 重新拉回自己的頭像與等級
         db.ref('users/' + currentUser).once('value', (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
@@ -344,14 +339,12 @@
             }
         });
 
-        // 重新掛載並監聽自己的計畫
         db.ref('plans/' + currentUser).on('value', (snapshot) => {
             userPlans = snapshot.val() || [];
             render();
         });
     }
 
-    // 訪客唯讀防護鎖
     function lockInterfaceForVisitor() {
         const addDayBtn = document.getElementById('add-day-btn');
         if (viewingUser !== currentUser) {
@@ -365,7 +358,7 @@
         }
     }
 
-    // --- 4. 等級與 EXP 介面更新 ---
+    // --- 4. 等級與 EXP 核心加減系統 ---
     function updateLevelUI(avatar, totalExp) {
         const level = Math.floor(totalExp / 100) + 1;
         const currentExp = totalExp % 100;
@@ -376,13 +369,16 @@
         document.getElementById('my-exp-bar').style.width = currentExp + "%";
     }
 
-    // 自動依據打勾總數重新更新自己的 EXP 點數 (1個勾 = 10 EXP)
-    function recalculateUserExp() {
-        if (viewingUser !== currentUser) return; // 看別人的時候不能更新自己的 EXP
-        const all = userPlans.flatMap(p => p.tasks || []);
-        const totalDoneCount = all.filter(t => t.done).length;
-        const newExp = totalDoneCount * 10;
-        db.ref('users/' + currentUser + '/exp').set(newExp);
+    // 獨立累加制：直接修改雲端數值，從此刪除歷史天數再也不會連帶扣除經驗！
+    function changeExp(amount) {
+        if (viewingUser !== currentUser) return; 
+        
+        db.ref('users/' + currentUser + '/exp').once('value', (snapshot) => {
+            let currentExp = snapshot.val() || 0;
+            let newExp = currentExp + amount;
+            if (newExp < 0) newExp = 0; 
+            db.ref('users/' + currentUser + '/exp').set(newExp);
+        });
     }
 
     // --- 5. 畫面渲染 ---
@@ -433,7 +429,7 @@
             list.appendChild(card);
         });
         calculateTotal();
-        lockInterfaceForVisitor(); // 每次畫面畫完，如果是朋友的房間，立即啟動鎖定
+        lockInterfaceForVisitor(); 
     }
 
     // --- 6. 進度條計算 ---
@@ -477,10 +473,8 @@
     }
 
     function save() {
-        if (viewingUser !== currentUser) return; // 防呆：不能儲存別人的資料
-        db.ref('plans/' + currentUser).set(userPlans).then(() => {
-            recalculateUserExp();
-        });
+        if (viewingUser !== currentUser) return; 
+        db.ref('plans/' + currentUser).set(userPlans);
     }
 
     function deleteDay(idx) { 
@@ -490,7 +484,16 @@
     
     function toggleTask(dIdx, tIdx) { 
         if (viewingUser !== currentUser) return;
-        userPlans[dIdx].tasks[tIdx].done = !userPlans[dIdx].tasks[tIdx].done; save(); 
+        
+        userPlans[dIdx].tasks[tIdx].done = !userPlans[dIdx].tasks[tIdx].done; 
+        
+        // 觸發即時加減 EXP，不重新跑迴圈累計，完全杜絕網頁變慢與刪除歸零的問題
+        if (userPlans[dIdx].tasks[tIdx].done) {
+            changeExp(10); 
+        } else {
+            changeExp(-10); 
+        }
+        save(); 
     }
     
     function editTask(dIdx, tIdx, val) { 
@@ -512,5 +515,6 @@
 </script>
 
 </body>
+</html>
 </html>
 </html>
