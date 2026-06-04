@@ -181,6 +181,7 @@
         <h3 style="margin: 0 0 8px 0; color: #444; font-size: 1.2em;">公告</h3>
         <p style="margin: 0; color: #666; font-size: 1.1em; line-height: 1.4;">
             後臺資料庫隨時可能炸掉，為避免功虧一簣不要一次加太多東西<br>
+            如上所說，所以30天前的東西會被刪掉ㄛ<br>
             進入後建議將手機改成橫向<br>
             小心隱私問題<br>
             有任何問題請不要聯繫作者<br>
@@ -272,7 +273,62 @@
     currentCalYear = today.getFullYear();
     currentCalMonth = today.getMonth();
     selectedDateStr = today.toISOString().split('T')[0];
+function enterApp(name) {
+        currentUser = name;
+        viewingUser = name;
+        document.getElementById('display-user').innerText = currentUser;
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
 
+        // 🚀【核心防炸機制】登入時自動清理 30 天前的過期歷史計畫
+        cleanupExpiredPlans(currentUser);
+
+        // 監聽自己的個人頭像與 EXP
+        db.ref('users/' + currentUser).on('value', (snapshot) => {
+            if (snapshot.exists() && viewingUser === currentUser) {
+                const data = snapshot.val();
+                userData.avatar = data.avatar || "🐱";
+                userData.exp = data.exp || 0;
+                updateLevelUI(userData.avatar, userData.exp);
+            }
+        });
+
+        // 監聽自己的讀書計畫
+        db.ref('plans/' + currentUser).on('value', (snapshot) => {
+            if (viewingUser === currentUser) {
+                userPlans = snapshot.val() || [];
+                render(); 
+            }
+        });
+    }
+
+    // 🧹 自動大掃除函數：只保留 30 天內的計畫，經驗值完全不受影響！
+    function cleanupExpiredPlans(username) {
+        db.ref('plans/' + username).once('value', (snapshot) => {
+            if (!snapshot.exists()) return;
+            
+            const currentPlans = snapshot.val() || [];
+            
+            // 計算 30 天前的日期界線
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            // 將原本的陣列過濾，只留下「大於等於 30 天前」或「日期格式不正確」的資料
+            const filteredPlans = currentPlans.filter(plan => {
+                if (!plan || !plan.date) return false; // 異常資料直接丟棄
+                
+                const planDate = new Date(plan.date);
+                // 如果這天計畫的日期比 30 天前還要新，就保留 (true)
+                return planDate >= thirtyDaysAgo;
+            });
+            
+            // 如果數量有變少，代表有成功刪除老舊資料，這時才同步回雲端
+            if (filteredPlans.length !== currentPlans.length) {
+                db.ref('plans/' + username).set(filteredPlans);
+                console.log(`🧹 歷史資料大掃除完成！已自動清空 ${currentPlans.length - filteredPlans.length} 天前的過期備忘與圖片。`);
+            }
+        });
+    }
     // --- 2. 登入與註冊切換邏輯 ---
     function toggleAuthMode(toRegister) {
         isRegisterMode = toRegister;
