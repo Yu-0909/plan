@@ -243,13 +243,15 @@
 
     function handleRegister() {
         const name = document.getElementById('username').value.trim();
-        const pass = document.getElementById('password').value.trim();
+        // 強制轉換為字串並完全去除可能干擾的空白
+        const pass = String(document.getElementById('password').value).trim();
         if (!name || !pass) return alert("請填寫帳號與密碼！");
 
         db.ref('users/' + name).once('value', (snapshot) => {
             if (snapshot.exists()) {
                 alert("該帳號已被註冊，請換一個名字！");
             } else {
+                // 確保存入資料庫的是乾淨的字串
                 const newProfile = { password: pass, avatar: selectedAvatar, exp: 0 };
                 db.ref('users/' + name).set(newProfile).then(() => {
                     alert("註冊成功！自動為您登入");
@@ -261,13 +263,15 @@
 
     function handleLogin() {
         const name = document.getElementById('username').value.trim();
-        const pass = document.getElementById('password').value.trim();
+        // 同步轉換為字串並完全去除可能干擾的空白
+        const pass = String(document.getElementById('password').value).trim();
         if (!name || !pass) return alert("請輸入帳號與密碼！");
 
         db.ref('users/' + name).once('value', (snapshot) => {
             if (snapshot.exists()) {
                 const info = snapshot.val();
-                if (info.password === pass) {
+                // 用 String() 包起來做最嚴格且安全的字串比對
+                if (String(info.password).trim() === pass) {
                     enterApp(name);
                 } else {
                     alert("密碼錯誤！");
@@ -277,7 +281,6 @@
             }
         });
     }
-
     function enterApp(name) {
         currentUser = name;
         viewingUser = name;
