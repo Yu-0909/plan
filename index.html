@@ -143,103 +143,13 @@
     <div style="background: rgba(255, 255, 255, 0.85); padding: 15px 25px; border-radius: 20px; width: 320px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 2px dashed var(--pink); box-sizing: border-box;">
         <h3 style="margin: 0 0 8px 0; color: #444; font-size: 1.2em;">公告</h3>
         <p style="margin: 0; color: #666; font-size: 1.1em; line-height: 1.4;">
-            後臺資料庫隨時可能炸掉，為避免功虧一饋不要一次加太多東西<br>小心隱私問題<br>有任何問題請不要聯繫作者<br>特別感謝 <a href="https://www.instagram.com/chenyu.otf/" target="_blank" style="color: var(--purple); font-weight: bold; text-decoration: underline;">辰宇落雁體作者</a> 提供的手寫字體
+            後臺資料庫隨時可能炸掉，為避免功虧一簣不要一次加太多東西<br>
+            小心隱私問題<br>
+            有任何問題請不要聯繫作者<br>
+            特別感謝 <a href="https://www.instagram.com/chenyu.otf/" target="_blank" style="color: var(--purple); font-weight: bold; text-decoration: underline;">辰宇落雁體作者</a> 提供的手寫字體
         </p>
     </div>
 
-</div>
-
-    /* 頭像選擇器 */
-    .avatar-selector { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
-    .avatar-option { 
-        font-size: 2em; cursor: pointer; padding: 5px; border-radius: 50%; 
-        border: 2px solid transparent; transition: 0.2s; user-select: none;
-    }
-    .avatar-option.selected { border-color: var(--pink); background: #fff0f7; }
-
-    /* 使用者資訊區塊 */
-    .user-profile-bar {
-        display: flex; align-items: center; gap: 15px; margin-bottom: 20px;
-        background: #fff5fa; padding: 15px; border-radius: 15px; border: 1px solid #ffe6f2;
-        flex-wrap: wrap;
-    }
-    .user-avatar { font-size: 2.5em; background: white; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .user-info { flex-grow: 1; }
-    .level-badge { background: var(--purple); color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.9em; margin-left: 5px; }
-    
-    /* 經驗值條 */
-    .exp-section { margin-top: 5px; }
-    .exp-bar-container { width: 100%; background: #eef0f6; border-radius: 10px; height: 8px; overflow: hidden; margin-top: 4px;}
-    .exp-bar { height: 100%; width: 0%; background: var(--purple); transition: width 0.3s; }
-
-    h1, h2, h3 { color: #444; font-weight: normal; }
-
-    /* 進度條樣式 */
-    .progress-section { margin-bottom: 20px; }
-    .progress { width: 100%; background: #eee; border-radius: 10px; height: 18px; margin: 10px 0; overflow: hidden; }
-    .bar { height: 100%; width: 0%; background: var(--pink); transition: width 0.5s ease; }
-
-    /* 卡片式清單 */
-    .day-card {
-        background: #fff; border: 1px solid #ffe6f5; border-radius: 15px;
-        padding: 20px; margin-bottom: 20px; position: relative;
-    }
-    .card-header {
-        display: flex; justify-content: space-between; align-items: center;
-        border-bottom: 1.5px solid #fff0f7; margin-bottom: 15px; padding-bottom: 10px;
-    }
-    .date-picker {
-        font-family: 'ChenYuluoyan', sans-serif;
-        border: 1px solid #ffd6ec; border-radius: 5px; padding: 5px; font-size: 1.1em;
-    }
-
-    .task-list { margin-bottom: 15px; }
-    .task-item { display: flex; align-items: center; margin: 8px 0; gap: 10px; font-size: 1.2em; }
-    input[type="checkbox"] { accent-color: var(--pink); width: 20px; height: 20px; }
-
-    /* 照片區 */
-    .photo-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-    .photo-thumb { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 2px solid #fff5f9; cursor: pointer; }
-
-    /* 按鈕樣式 */
-    .btn {
-        font-family: 'ChenYuluoyan', sans-serif; cursor: pointer; border: none;
-        padding: 8px 18px; border-radius: 12px; transition: 0.3s; font-size: 1.1em;
-    }
-    .btn-pink { background: var(--pink); color: white; }
-    .btn-pink:hover { opacity: 0.8; }
-    .btn-purple { background: var(--purple); color: white; }
-    .btn-purple:hover { opacity: 0.8; }
-    .btn-outline { background: none; border: 1.5px dashed var(--pink); color: var(--pink); width: 100%; padding: 15px; }
-
-    .upload-label { font-size: 0.9em; color: #888; cursor: pointer; text-decoration: underline; }
-</style>
-</head>
-<body>
-
-<div id="login-overlay">
-    <div class="login-box">
-        <h2 style="color: var(--pink);" id="auth-title">讀書計畫登入</h2>
-        
-        <input type="text" id="username" placeholder="輸入帳號">
-        <input type="password" id="password" placeholder="輸入密碼">
-        
-        <div id="avatar-picker-zone" style="display:none;">
-            <p style="margin:5px 0; color:#666;">選擇你的個人頭像：</p>
-            <div class="avatar-selector">
-                <span class="avatar-option selected" onclick="selectAvatar('🐱', this)">🐱</span>
-                <span class="avatar-option" onclick="selectAvatar('🐰', this)">🐰</span>
-                <span class="avatar-option" onclick="selectAvatar('🦊', this)">🦊</span>
-                <span class="avatar-option" onclick="selectAvatar('🐻', this)">🐻</span>
-            </div>
-        </div>
-
-        <br>
-        <div id="auth-buttons" style="margin-top: 10px;">
-            <button class="btn btn-pink" onclick="handleLogin()">登入</button>
-            <p style="margin-top:15px; font-size:0.9em; color:#888;">還沒有帳號？ <a href="javascript:toggleAuthMode(true)" style="color:var(--purple)">點此註冊</a></p>
-        </div>
-    </div>
 </div>
 
 <div class="container" id="main-app">
@@ -467,7 +377,7 @@
         document.getElementById('my-exp-bar').style.width = currentExp + "%";
     }
 
-    // 獨立累加制：直接修改雲端數值，從此刪除歷史天數再也不會連帶扣除經驗！
+    // 獨立累加制
     function changeExp(amount) {
         if (viewingUser !== currentUser) return; 
         
@@ -585,7 +495,6 @@
         
         userPlans[dIdx].tasks[tIdx].done = !userPlans[dIdx].tasks[tIdx].done; 
         
-        // 觸發即時加減 EXP，不重新跑迴圈累計，完全杜絕網頁變慢與刪除歸零的問題
         if (userPlans[dIdx].tasks[tIdx].done) {
             changeExp(10); 
         } else {
@@ -613,6 +522,4 @@
 </script>
 
 </body>
-</html>
-</html>
 </html>
