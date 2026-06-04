@@ -37,8 +37,87 @@
         display: none;
     }
 
-    /* 登入註冊介面 */
-    <div id="login-overlay" style="flex-direction: column; gap: 20px;"> <div class="login-box">
+    /* 登入註冊介面樣式 */
+    .login-box { 
+        background: white; padding: 40px; border-radius: 20px; text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 320px;
+    }
+    .login-box input {
+        width: 90%; padding: 10px; margin: 8px 0; border-radius: 8px; 
+        border: 1px solid #ddd; font-family: 'ChenYuluoyan'; font-size: 1.1em;
+    }
+    
+    /* 頭像選擇器 */
+    .avatar-selector { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
+    .avatar-option { 
+        font-size: 2em; cursor: pointer; padding: 5px; border-radius: 50%; 
+        border: 2px solid transparent; transition: 0.2s; user-select: none;
+    }
+    .avatar-option.selected { border-color: var(--pink); background: #fff0f7; }
+
+    /* 使用者資訊區塊 */
+    .user-profile-bar {
+        display: flex; align-items: center; gap: 15px; margin-bottom: 20px;
+        background: #fff5fa; padding: 15px; border-radius: 15px; border: 1px solid #ffe6f2;
+        flex-wrap: wrap;
+    }
+    .user-avatar { font-size: 2.5em; background: white; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .user-info { flex-grow: 1; }
+    .level-badge { background: var(--purple); color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.9em; margin-left: 5px; }
+    
+    /* 經驗值條 */
+    .exp-section { margin-top: 5px; }
+    .exp-bar-container { width: 100%; background: #eef0f6; border-radius: 10px; height: 8px; overflow: hidden; margin-top: 4px;}
+    .exp-bar { height: 100%; width: 0%; background: var(--purple); transition: width 0.3s; }
+
+    h1, h2, h3 { color: #444; font-weight: normal; }
+
+    /* 進度條樣式 */
+    .progress-section { margin-bottom: 20px; }
+    .progress { width: 100%; background: #eee; border-radius: 10px; height: 18px; margin: 10px 0; overflow: hidden; }
+    .bar { height: 100%; width: 0%; background: var(--pink); transition: width 0.5s ease; }
+
+    /* 卡片式清單 */
+    .day-card {
+        background: #fff; border: 1px solid #ffe6f5; border-radius: 15px;
+        padding: 20px; margin-bottom: 20px; position: relative;
+    }
+    .card-header {
+        display: flex; justify-content: space-between; align-items: center;
+        border-bottom: 1.5px solid #fff0f7; margin-bottom: 15px; padding-bottom: 10px;
+    }
+    .date-picker {
+        font-family: 'ChenYuluoyan', sans-serif;
+        border: 1px solid #ffd6ec; border-radius: 5px; padding: 5px; font-size: 1.1em;
+    }
+
+    .task-list { margin-bottom: 15px; }
+    .task-item { display: flex; align-items: center; margin: 8px 0; gap: 10px; font-size: 1.2em; }
+    input[type="checkbox"] { accent-color: var(--pink); width: 20px; height: 20px; }
+
+    /* 照片區 */
+    .photo-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+    .photo-thumb { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 2px solid #fff5f9; cursor: pointer; }
+
+    /* 按鈕樣式 */
+    .btn {
+        font-family: 'ChenYuluoyan', sans-serif; cursor: pointer; border: none;
+        padding: 8px 18px; border-radius: 12px; transition: 0.3s; font-size: 1.1em;
+    }
+    .btn-pink { background: var(--pink); color: white; }
+    .btn-pink:hover { opacity: 0.8; }
+    .btn-purple { background: var(--purple); color: white; }
+    .btn-purple:hover { opacity: 0.8; }
+    .btn-outline { background: none; border: 1.5px dashed var(--pink); color: var(--pink); width: 100%; padding: 15px; }
+
+    .upload-label { font-size: 0.9em; color: #888; cursor: pointer; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div id="login-overlay" style="position: fixed; inset: 0; background: var(--soft-bg); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; z-index: 100;">
+    
+    <div class="login-box">
         <h2 style="color: var(--pink);" id="auth-title">讀書計畫登入</h2>
         
         <input type="text" id="username" placeholder="輸入帳號">
@@ -63,18 +142,12 @@
 
     <div style="background: rgba(255, 255, 255, 0.85); padding: 15px 25px; border-radius: 20px; width: 320px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 2px dashed var(--pink); box-sizing: border-box;">
         <h3 style="margin: 0 0 8px 0; color: #444; font-size: 1.2em;">公告</h3>
-        <p style="margin: 0; color: #666; font-size: 1.1em; line-height: 1.4;">後臺資料庫隨時可能炸掉，為避免破房不要一次加太多東西<br>小心隱私問題</p>
+        <p style="margin: 0; color: #666; font-size: 1.1em; line-height: 1.4;">
+            後臺資料庫隨時可能炸掉，為避免破房不要一次加太多東西<br>小心隱私問題
+        </p>
     </div>
 
 </div>
-    .login-box { 
-        background: white; padding: 40px; border-radius: 20px; text-align: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 320px;
-    }
-    .login-box input {
-        width: 90%; padding: 10px; margin: 8px 0; border-radius: 8px; 
-        border: 1px solid #ddd; font-family: 'ChenYuluoyan'; font-size: 1.1em;
-    }
 
     /* 頭像選擇器 */
     .avatar-selector { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
