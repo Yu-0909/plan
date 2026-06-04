@@ -182,7 +182,72 @@
                 <div style="display:flex; gap:15px; align-items:center">
                     <button class="btn btn-pink" style="font-size:0.8em; padding:5px 10px" onclick="addTask(${dIdx})">+ 任務</button>
                     <label class="upload-label">📷 上傳筆記照片
-                        <input type="file" style="display:none" accept
+                        <input type="file" style="display:none" accept="image/*" onchange="uploadPhoto(${dIdx}, this)">
+                    </label>
+                    <button class="btn" style="background:#fff1f1; color:red; font-size:0.8em; margin-left:auto" onclick="deleteDay(${dIdx})">刪除此天</button>
+                </div>
+
+                <div class="photo-gallery">
+                    ${(day.photos || []).map((img, iIdx) => `
+                        <img src="${img}" class="photo-thumb" onclick="deletePhoto(${dIdx}, ${iIdx})" title="點擊刪除照片">
+                    `).join('')}
+                </div>
+            `;
+            list.appendChild(card);
+        });
+        calculateTotal();
+    }
+
+    // --- 4. 進度條計算 ---
+    function calculateTotal() {
+        const all = userPlans.flatMap(p => p.tasks || []);
+        const done = all.filter(t => t.done).length;
+        const percent = all.length > 0 ? Math.round((done / all.length) * 100) : 0;
+        document.getElementById('main-bar').style.width = percent + "%";
+        document.getElementById('percent-text').innerText = `目前總進度 ${percent}% (${done}/${all.length})`;
+    }
+
+    // --- 5. 功能與雲端儲存邏輯 ---
+    function addDay() {
+        const lastDate = userPlans.length > 0 ? userPlans[userPlans.length-1].date : new Date().toISOString().split('T')[0];
+        const next = new Date(lastDate);
+        next.setDate(next.getDate() + 1);
+        userPlans.push({ date: next.toISOString().split('T')[0], tasks: [{text:"新計畫", done:false}], photos: [] });
+        save(); 
+    }
+
+    function uploadPhoto(dIdx, input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if (!userPlans[dIdx].photos) userPlans[dIdx].photos = [];
+            userPlans[dIdx].photos.push(e.target.result);
+            save(); 
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function deletePhoto(dIdx, pIdx) {
+        if (confirm("確定刪除這張照片筆記嗎？")) {
+            userPlans[dIdx].photos.splice(pIdx, 1);
+            save(); 
+        }
+    }
+
+    function save() {
+        db.ref('plans/' + currentUser).set(userPlans);
+    }
+
+    function deleteDay(idx) { if(confirm("確定要刪除這整天的計畫嗎？")) { userPlans.splice(idx, 1); save(); } }
+    function toggleTask(dIdx, tIdx) { userPlans[dIdx].tasks[tIdx].done = !userPlans[dIdx].tasks[tIdx].done; save(); }
+    function editTask(dIdx, tIdx, val) { userPlans[dIdx].tasks[tIdx].text = val; save(); }
+    function updateDate(dIdx, val) { userPlans[dIdx].date = val; save(); }
+    function addTask(dIdx) { 
+        if (!userPlans[dIdx].tasks) userPlans[dIdx].tasks = [];
+        userPlans[dIdx].tasks.push({text:"新任務", done:false}); 
+        save(); 
+    }
 </script>
 
 </body>
