@@ -130,6 +130,13 @@
     .task-text-span { flex-grow: 1; border-bottom: 1px dashed transparent; padding: 2px; }
     .task-text-span[contenteditable="true"]:focus { border-bottom-color: var(--pink); outline: none; background: #fff9fc; }
     .task-item.completed-text span { text-decoration: line-through; color: #aaa; }
+    
+    /* 個別刪除按鈕小樣式 */
+    .btn-delete-task {
+        background: none; border: none; color: #ffb3b3; cursor: pointer; 
+        font-size: 0.9em; transition: 0.2s; padding: 0 5px; font-family: sans-serif;
+    }
+    .btn-delete-task:hover { color: #ff4d4d; transform: scale(1.15); }
 
     /* 照片區 */
     .photo-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
@@ -190,7 +197,6 @@
 </div>
 
 <div class="container" id="main-app">
-    <!-- 使用者資訊區塊 -->
     <div class="user-profile-bar">
         <div class="user-avatar" id="my-avatar">🐱</div>
         <div class="user-info">
@@ -216,7 +222,6 @@
 
     <h1 id="page-main-title">讀書計畫管理</h1>
 
-    <!-- 📅 月曆組件 -->
     <div class="calendar-wrapper">
         <div class="calendar-header">
             <button class="btn btn-purple btn-sm" onclick="moveMonth(-1)">◀ 上個月</button>
@@ -226,17 +231,14 @@
             <button class="btn btn-purple btn-sm" onclick="moveMonth(1)">下個月 ▶</button>
         </div>
         <div class="calendar-grid" id="calendar-grid-container">
-            <!-- 由 JavaScript 動態生成 -->
-        </div>
+            </div>
     </div>
 
-    <!-- 📊 每日專屬進度條 -->
     <div class="progress-section" id="daily-progress-zone">
         <h3 id="percent-text">請選擇上方日期查看今日進度</h3>
         <div class="progress"><div class="bar" id="main-bar"></div></div>
     </div>
 
-    <!-- 當日任務細節卡片 -->
     <div id="plan-list"></div>
 </div>
 
@@ -370,7 +372,7 @@
         });
     }
 
-    // 🧹 核心防炸大掃除（修正 Firebase 陣列尾端殘留 Bug 版）
+    // 🧹 核心防炸大掃除
     function cleanupExpiredPlans(username) {
         db.ref('plans/' + username).once('value', (snapshot) => {
             if (!snapshot.exists()) return;
@@ -390,9 +392,7 @@
             
             // 如果數量變少了，代表有過期老資料
             if (filteredPlans.length !== currentPlans.length) {
-                // 1. 先徹底連根拔除舊的 plans 房間，消除尾端殘留
                 db.ref('plans/' + username).remove().then(() => {
-                    // 2. 重新塞入篩選後乾淨無毒的新陣列
                     if (filteredPlans.length > 0) {
                         db.ref('plans/' + username).set(filteredPlans);
                     }
@@ -453,7 +453,7 @@
 
     function lockInterfaceForVisitor() {
         if (viewingUser !== currentUser) {
-            document.querySelectorAll('.day-card button, .day-card label').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.day-card button, .day-card label, .btn-delete-task').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.day-card input[type="checkbox"]').forEach(el => el.disabled = true);
             document.querySelectorAll('.day-card span[contenteditable]').forEach(el => el.contentEditable = false);
         }
@@ -621,6 +621,7 @@
                     <div class="task-item ${t.done ? 'completed-text' : ''}">
                         <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${matchedPlanIdx}, ${tIdx})">
                         <span class="task-text-span" contenteditable="true" onblur="editTask(${matchedPlanIdx}, ${tIdx}, this.innerText)">${t.text}</span>
+                        <button class="btn-delete-task" onclick="deleteSingleTask(${matchedPlanIdx}, ${tIdx})" title="刪除此項目">❌</button>
                     </div>
                 `).join('')}
             </div>
@@ -654,6 +655,29 @@
         save();
     }
 
+    // 🗑️ 【新功能】單獨刪除某一項任務
+    function deleteSingleTask(pIdx, tIdx) {
+        if (viewingUser !== currentUser) return;
+        
+        const targetTask = userPlans[pIdx].tasks[tIdx];
+        
+        // 防呆：如果刪除的是「已經打勾完成」的項目，必須把應得的經驗值扣回來
+        if (targetTask.done) {
+            changeExp(-10);
+        }
+        
+        // 從陣列中移除該任務
+        userPlans[pIdx].tasks.splice(tIdx, 1);
+        
+        // 如果刪完之後這天已經沒有任何任務，也沒有照片了，就直接把這整天從雲端移除，省空間！
+        const hasPhotos = userPlans[pIdx].photos && userPlans[pIdx].photos.length > 0;
+        if (userPlans[pIdx].tasks.length === 0 && !hasPhotos) {
+            userPlans.splice(pIdx, 1);
+        }
+        
+        save();
+    }
+
     function addTask(pIdx) { 
         if (viewingUser !== currentUser) return;
         if (!userPlans[pIdx].tasks) userPlans[pIdx].tasks = [];
@@ -683,6 +707,12 @@
     function deleteDay(pIdx) { 
         if (viewingUser !== currentUser) return;
         if(confirm("確定要清空這整天的計畫與照片嗎？")) { 
+            // 扣除該天所有已完成項目的經驗值
+            if (userPlans[pIdx].tasks) {
+                userPlans[pIdx].tasks.forEach(t => {
+                    if (t.done) changeExp(-10);
+                });
+            }
             userPlans.splice(pIdx, 1); 
             save(); 
         } 
