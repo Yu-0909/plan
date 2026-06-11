@@ -12,7 +12,28 @@
         font-family: 'ChenYuluoyan';
         src: url('ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
     }
+/* 當網頁被加上 .sans-font 類別時，切換成乾淨好讀的黑體 */
+    body.sans-font, 
+    body.sans-font input, 
+    body.sans-font button, 
+    body.sans-font span[contenteditable] {
+        font-family: "PingFang TC", "Heiti TC", "Microsoft JhengHei", "Helvetica Neue", sans-serif !important;
+    }
 
+    /* 字體切換按鈕的樣式 */
+    .font-toggle-btn {
+        background: #f0f0f0;
+        color: #555;
+        border: 1px solid #ddd;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.85em;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .font-toggle-btn:hover {
+        background: #e0e0e0;
+    }
     :root {
         --pink: #ff8ac9;
         --soft-bg: linear-gradient(135deg, #ffd6ec, #e4e8ff);
@@ -209,9 +230,10 @@
                 <div class="exp-bar-container"><div class="exp-bar" id="my-exp-bar"></div></div>
             </div>
         </div>
-        <div style="font-size: 0.9em; color: #999; text-align: right;">
-            <a href="javascript:location.reload()" style="color:var(--pink)">登出</a>
-        </div>
+        <div style="font-size: 0.9em; color: #999; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+    <a href="javascript:location.reload()" style="color:var(--pink); text-decoration: none;">🚪 登出</a>
+    <button class="font-toggle-btn" onclick="toggleFont()"> 切換字體</button>
+</div>
 
         <div style="width: 100%; margin-top: 12px; display: flex; gap: 8px; border-top: 1px dashed #ffd6ec; padding-top: 10px;">
             <input type="text" id="friend-username" placeholder="輸入朋友的帳號來找他..." style="flex-grow: 1; padding: 6px 12px; border: 1px solid #ffd6ec; border-radius: 8px; font-family: 'ChenYuluoyan'; font-size: 1em;">
@@ -743,6 +765,30 @@
         if (viewingUser !== currentUser) return; 
         db.ref('plans/' + currentUser).set(userPlans);
     }
+    // --- 8. 字體切換與記憶功能 ---
+    function toggleFont() {
+        // 切換 body 的 .sans-font 狀態
+        const isSans = document.body.classList.toggle('sans-font');
+        
+        // 變更按鈕文字提示
+        const btn = document.querySelector('.font-toggle-btn');
+        if (btn) {
+            btn.innerText = isSans ? " 切換字體" : "切換字體";
+        }
+        
+        // 記住使用者的選擇在瀏覽器裡，下次打開不用重新點
+        localStorage.setItem('user_font_preference', isSans ? 'sans' : 'handwritten');
+    }
+
+    // 網頁一打開，自動讀取上次讀書時設定的字體
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedFont = localStorage.getItem('user_font_preference');
+        if (savedFont === 'sans') {
+            document.body.classList.add('sans-font');
+            const btn = document.querySelector('.font-toggle-btn');
+            if (btn) btn.innerText = " 切換字體";
+        }
+    });
 </script>
 
 </body>
